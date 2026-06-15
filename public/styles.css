@@ -268,13 +268,48 @@ main {
 .word-popover {
   position: absolute;
   z-index: 50;
-  max-width: 260px;
+  max-width: 320px;
+  max-height: 340px;
+  overflow-y: auto;
   background: var(--bg-card);
   border: 1px solid var(--line);
   border-radius: 12px;
   box-shadow: 0 10px 34px rgba(60, 45, 30, 0.18);
   padding: 0.7rem 0.9rem;
   font-family: "Inter", system-ui, sans-serif;
+}
+
+.word-popover .wp-entry {
+  margin-top: 0.6rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--line);
+}
+
+.word-popover .wp-pos {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--green);
+  margin-bottom: 0.25rem;
+}
+
+.word-popover .wp-defs {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+}
+
+.word-popover .wp-defs li {
+  margin-bottom: 0.35rem;
+}
+
+.word-popover .wp-example {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  font-style: italic;
 }
 
 .word-popover .wp-head {

@@ -177,8 +177,8 @@ async function onWordClick(e, raw) {
   try {
     const res = await fetch(`/api/word?q=${encodeURIComponent(word)}`);
     const data = await res.json();
-    if (data.translation) {
-      showPopover(anchor, popoverHtml(raw, data.translation, ""));
+    if (data.translation || (data.entries && data.entries.length)) {
+      showPopover(anchor, popoverRich(raw, data));
     } else {
       showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">No translation found.</div>`);
     }
@@ -188,6 +188,27 @@ async function onWordClick(e, raw) {
       `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Offline — only common words are available without a connection.</div>`
     );
   }
+}
+
+// Build a popover from an online result: a quick gloss plus Wiktionary
+// entries (part of speech, senses, examples).
+function popoverRich(word, data) {
+  let html = `<div class="wp-head">${escapeHtml(word)}</div>`;
+  if (data.translation) html += `<div class="wp-en">${escapeHtml(data.translation)}</div>`;
+  for (const entry of data.entries || []) {
+    html += `<div class="wp-entry">`;
+    if (entry.partOfSpeech) html += `<div class="wp-pos">${escapeHtml(entry.partOfSpeech)}</div>`;
+    html += `<ol class="wp-defs">`;
+    for (const def of entry.definitions || []) {
+      html += `<li>${escapeHtml(def.definition)}`;
+      for (const ex of def.examples || []) {
+        html += `<span class="wp-example">${escapeHtml(ex)}</span>`;
+      }
+      html += `</li>`;
+    }
+    html += `</ol></div>`;
+  }
+  return html;
 }
 
 function renderLesson(lesson) {
