@@ -42,9 +42,43 @@ app.get("/api/lesson", (req, res) => {
 });
 
 // The whole offline word dictionary, fetched once by the client so that
-// tapping any word works with no further requests.
+// tapping common words works with no further requests.
 app.get("/api/dictionary", (_req, res) => {
   res.json(DICTIONARY);
+});
+
+// Online fallback for words not in the offline dictionary. Uses the free
+// MyMemory translation API (no key). The app works fully offline without
+// this — it's only reached for words the bundled dictionary doesn't cover.
+const wordCache = new Map();
+
+app.get("/api/word", async (req, res) => {
+  const q = String(req.query.q || "").trim();
+  if (!q) return res.status(400).json({ error: "Missing query" });
+
+  const key = q.toLowerCase();
+  if (wordCache.has(key)) return res.json(wordCache.get(key));
+
+  const params = new URLSearchParams({ q, langpair: "de|en" });
+  if (process.env.MYMEMORY_EMAIL) params.set("de", process.env.MYMEMORY_EMAIL);
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+  try {
+    const r = await fetch(`https://api.mymemory.translated.net/get?${params}`, {
+      signal: controller.signal,
+    });
+    const data = await r.json();
+    const translation = (data?.responseData?.translatedText || "").trim();
+    const ok = translation && !/^(NO QUERY|PLEASE|INVALID|'')/i.test(translation);
+    const result = { word: q, translation: ok ? translation : "", source: "online" };
+    if (ok) wordCache.set(key, result);
+    res.json(result);
+  } catch {
+    res.status(502).json({ word: q, translation: "", error: "lookup_failed" });
+  } finally {
+    clearTimeout(timeout);
+  }
 });
 
 app.listen(PORT, () => {

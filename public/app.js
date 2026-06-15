@@ -151,20 +151,20 @@ function popoverHtml(de, en, note) {
   );
 }
 
-function onWordClick(e, raw) {
+async function onWordClick(e, raw) {
   e.stopPropagation();
   const anchor = e.currentTarget;
   document.querySelectorAll(".word.active").forEach((el) => el.classList.remove("active"));
   anchor.classList.add("active");
 
-  // 1) The current lesson's own vocabulary — richest, with notes.
+  // 1) The current lesson's own vocabulary — richest, with notes. (offline)
   const local = findInVocab(raw);
   if (local) {
     showPopover(anchor, popoverHtml(local.german, local.english, local.note));
     return;
   }
 
-  // 2) The bundled offline dictionary of common words.
+  // 2) The bundled offline dictionary of common words. (offline)
   const word = normalizeWord(raw);
   const entry = state.dictionary[word];
   if (entry) {
@@ -172,11 +172,22 @@ function onWordClick(e, raw) {
     return;
   }
 
-  // 3) Not found — everything is offline, so just say so.
-  showPopover(
-    anchor,
-    `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Not in the offline dictionary. Check the vocabulary list or translation.</div>`
-  );
+  // 3) Online dictionary fallback for everything else.
+  showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Looking up…</div>`);
+  try {
+    const res = await fetch(`/api/word?q=${encodeURIComponent(word)}`);
+    const data = await res.json();
+    if (data.translation) {
+      showPopover(anchor, popoverHtml(raw, data.translation, ""));
+    } else {
+      showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">No translation found.</div>`);
+    }
+  } catch {
+    showPopover(
+      anchor,
+      `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Offline — only common words are available without a connection.</div>`
+    );
+  }
 }
 
 function renderLesson(lesson) {

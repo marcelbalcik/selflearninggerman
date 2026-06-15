@@ -14,9 +14,13 @@ No accounts, no API keys, no internet required — everything ships with the app
   has a German text, an English translation, a vocabulary list, and 2–3 grammar
   points demonstrated by the text. "Get a new text" picks another one at random
   (without immediately repeating the last).
-- **Tap any word** in the text to see its meaning. Lookups are fully offline:
-  the app checks the lesson's own vocabulary first, then a bundled dictionary of
-  ~360 common German words and forms.
+- **Tap any word** in the text to see its meaning. Lookups are offline-first:
+  1. the lesson's own vocabulary (richest, with notes),
+  2. a bundled dictionary of ~360 common German words and forms,
+  3. then, for anything else, the free online [MyMemory](https://mymemory.translated.net/)
+     dictionary. This last step is the only part that uses the internet — common
+     words still resolve instantly offline, and if you're offline the app just
+     says so.
 
 ## Run it
 
@@ -44,6 +48,13 @@ public/app.js        Frontend logic (clickable words, lookups)
 - `GET /api/levels` — levels, grammar focus, and how many texts each level has.
 - `GET /api/lesson?level=B1&exclude=<id>` — a random lesson for the level.
 - `GET /api/dictionary` — the offline word dictionary (loaded once by the client).
+- `GET /api/word?q=Haus` — online fallback lookup (German→English) for words not
+  in the offline dictionary.
+
+> The lesson archive and the ~360-word dictionary are fully offline. Only the
+> `/api/word` fallback reaches the internet. If you run in a locked-down
+> environment, allow the host `api.mymemory.translated.net`. You can optionally
+> set `MYMEMORY_EMAIL=you@example.com` to raise the free rate limit.
 
 ## Adding more content
 
