@@ -1,8 +1,8 @@
 const state = {
   level: "A1",
   levels: [],
-  mode: "offline",
   lesson: null,
+  dictionary: {},
 };
 
 const els = {
@@ -25,6 +25,10 @@ function setActiveLevel(code) {
   state.level = code;
   const meta = state.levels.find((l) => l.code === code);
   els.levelSummary.textContent = meta ? meta.summary : "";
+  if (meta && typeof meta.count === "number") {
+    els.modeBadge.hidden = false;
+    els.modeBadge.textContent = `${meta.count} text${meta.count === 1 ? "" : "s"}`;
+  }
   [...els.levelRow.children].forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.code === code);
   });
@@ -147,30 +151,32 @@ function popoverHtml(de, en, note) {
   );
 }
 
-async function onWordClick(e, raw) {
+function onWordClick(e, raw) {
   e.stopPropagation();
   const anchor = e.currentTarget;
   document.querySelectorAll(".word.active").forEach((el) => el.classList.remove("active"));
   anchor.classList.add("active");
 
+  // 1) The current lesson's own vocabulary — richest, with notes.
   const local = findInVocab(raw);
   if (local) {
     showPopover(anchor, popoverHtml(local.german, local.english, local.note));
     return;
   }
 
-  showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Looking up…</div>`);
-  try {
-    const res = await fetch(`/api/word?q=${encodeURIComponent(normalizeWord(raw))}`);
-    const data = await res.json();
-    if (data.translation) {
-      showPopover(anchor, popoverHtml(raw, data.translation, ""));
-    } else {
-      showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">No translation found.</div>`);
-    }
-  } catch {
-    showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Lookup unavailable right now.</div>`);
+  // 2) The bundled offline dictionary of common words.
+  const word = normalizeWord(raw);
+  const entry = state.dictionary[word];
+  if (entry) {
+    showPopover(anchor, popoverHtml(raw, entry, ""));
+    return;
   }
+
+  // 3) Not found — everything is offline, so just say so.
+  showPopover(
+    anchor,
+    `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Not in the offline dictionary. Check the vocabulary list or translation.</div>`
+  );
 }
 
 function renderLesson(lesson) {
@@ -207,13 +213,6 @@ function renderLesson(lesson) {
     });
     els.grammarList.appendChild(block);
   });
-
-  if (lesson.source === "fallback") {
-    els.modeBadge.hidden = false;
-    els.modeBadge.textContent = "offline sample";
-  } else {
-    els.modeBadge.hidden = state.mode !== "offline";
-  }
 }
 
 function setLoading(loading) {
@@ -228,7 +227,8 @@ function setLoading(loading) {
 async function fetchLesson() {
   setLoading(true);
   try {
-    const res = await fetch(`/api/lesson?level=${encodeURIComponent(state.level)}`);
+    const exclude = state.lesson?.id ? `&exclude=${encodeURIComponent(state.lesson.id)}` : "";
+    const res = await fetch(`/api/lesson?level=${encodeURIComponent(state.level)}${exclude}`);
     if (!res.ok) throw new Error(`Request failed: ${res.status}`);
     const lesson = await res.json();
     renderLesson(lesson);
@@ -244,16 +244,15 @@ async function fetchLesson() {
 
 async function init() {
   try {
-    const res = await fetch("/api/levels");
-    const data = await res.json();
+    const [levelsRes, dictRes] = await Promise.all([
+      fetch("/api/levels"),
+      fetch("/api/dictionary"),
+    ]);
+    const data = await levelsRes.json();
     state.levels = data.levels;
-    state.mode = data.mode;
-    if (data.mode === "offline") {
-      els.modeBadge.hidden = false;
-      els.modeBadge.textContent = "offline mode · sample texts";
-    }
+    state.dictionary = await dictRes.json();
   } catch {
-    // Fall back to a minimal hard-coded set if the levels endpoint fails.
+    // Fall back to a minimal hard-coded set if the endpoints fail.
     state.levels = ["A1", "A2", "B1", "B2", "C1", "C2"].map((code) => ({
       code,
       label: `${code} · `,

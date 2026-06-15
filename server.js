@@ -1,182 +1,54 @@
 import express from "express";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import Anthropic from "@anthropic-ai/sdk";
 
-import { LEVELS, LEVEL_CODES, TOPICS } from "./data/levels.js";
-import { FALLBACK_LESSONS } from "./data/fallback.js";
+import { LEVELS, LEVEL_CODES } from "./data/levels.js";
+import { LESSONS } from "./data/lessons.js";
+import { DICTIONARY } from "./data/dictionary.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const MODEL = "claude-opus-4-8";
-
-// The SDK reads ANTHROPIC_API_KEY from the environment. If it's absent we run
-// in "offline" mode and serve the curated fallback lessons instead.
-const hasApiKey = Boolean(process.env.ANTHROPIC_API_KEY);
-const client = hasApiKey ? new Anthropic() : null;
 
 app.use(express.static(join(__dirname, "public")));
 
-// JSON schema the model must fill in. Structured outputs guarantee the first
-// text block is valid JSON in exactly this shape.
-const LESSON_SCHEMA = {
-  type: "object",
-  properties: {
-    title: { type: "string" },
-    text: { type: "string" },
-    translation: { type: "string" },
-    vocabulary: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          german: { type: "string" },
-          english: { type: "string" },
-          note: { type: "string" },
-        },
-        required: ["german", "english", "note"],
-        additionalProperties: false,
-      },
-    },
-    grammar: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          point: { type: "string" },
-          explanation: { type: "string" },
-          examples: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                german: { type: "string" },
-                english: { type: "string" },
-              },
-              required: ["german", "english"],
-              additionalProperties: false,
-            },
-          },
-        },
-        required: ["point", "explanation", "examples"],
-        additionalProperties: false,
-      },
-    },
-  },
-  required: ["title", "text", "translation", "vocabulary", "grammar"],
-  additionalProperties: false,
-};
-
-function pick(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+function pickRandom(arr, excludeId) {
+  const pool = arr.length > 1 && excludeId ? arr.filter((l) => l.id !== excludeId) : arr;
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
-function buildPrompt(levelCode, topic) {
-  const level = LEVELS[levelCode];
-  const focus = level.grammarFocus.map((g) => `- ${g}`).join("\n");
-  return `Create a short German reading lesson for a self-study learner at CEFR level ${levelCode} (${level.label}).
-
-Topic to write about: ${topic}.
-
-Requirements for the German text:
-- Write an interesting, natural-sounding passage of about ${
-    levelCode === "A1" ? "4-6" : levelCode === "A2" ? "5-7" : "5-8"
-  } sentences.
-- The vocabulary and sentence complexity MUST be appropriate for ${levelCode}. Do not write above the level.
-- The text should clearly showcase grammar that is characteristic of ${levelCode}, drawing from:
-${focus}
-
-Then provide:
-- A natural, fluent English translation of the whole text.
-- 4-6 useful vocabulary items from the text (German headword, English meaning, and a short note such as gender, separable prefix, or a usage tip; use an empty string for the note if there is nothing helpful to add).
-- 2-3 grammar points that the text demonstrates. For each: the name of the point, a one- or two-sentence explanation aimed at a learner, and 1-2 example sentences taken from or based on the text with English translations.
-
-Keep explanations concise and learner-friendly. Use real, correct German.`;
-}
-
-async function generateLesson(levelCode) {
-  const topic = pick(TOPICS);
-  const response = await client.messages.create({
-    model: MODEL,
-    max_tokens: 4000,
-    output_config: {
-      effort: "medium",
-      format: { type: "json_schema", schema: LESSON_SCHEMA },
-    },
-    messages: [{ role: "user", content: buildPrompt(levelCode, topic) }],
-  });
-
-  const textBlock = response.content.find((b) => b.type === "text");
-  if (!textBlock) throw new Error("No text block in model response");
-
-  const lesson = JSON.parse(textBlock.text);
-  return { level: levelCode, topic, ...lesson, source: "generated" };
-}
-
+// Level metadata + how many texts are available at each level.
 app.get("/api/levels", (_req, res) => {
   res.json({
-    levels: LEVEL_CODES.map((code) => ({ code, ...LEVELS[code] })),
-    mode: hasApiKey ? "live" : "offline",
+    levels: LEVEL_CODES.map((code) => ({
+      code,
+      ...LEVELS[code],
+      count: (LESSONS[code] || []).length,
+    })),
   });
 });
 
-app.get("/api/lesson", async (req, res) => {
+// A random lesson from the offline archive for the chosen level.
+// Pass ?exclude=<id> to avoid repeating the text the learner just read.
+app.get("/api/lesson", (req, res) => {
   const levelCode = String(req.query.level || "A1").toUpperCase();
-  if (!LEVELS[levelCode]) {
+  const lessons = LESSONS[levelCode];
+  if (!lessons || lessons.length === 0) {
     return res.status(400).json({ error: `Unknown level: ${levelCode}` });
   }
-
-  if (!client) {
-    return res.json({ ...FALLBACK_LESSONS[levelCode], source: "fallback" });
-  }
-
-  try {
-    const lesson = await generateLesson(levelCode);
-    res.json(lesson);
-  } catch (err) {
-    console.error("Generation failed, serving fallback:", err.message);
-    res.json({ ...FALLBACK_LESSONS[levelCode], source: "fallback" });
-  }
+  const exclude = req.query.exclude ? String(req.query.exclude) : null;
+  res.json(pickRandom(lessons, exclude));
 });
 
-// Single-word lookup for the "tap a word" feature. Uses the free MyMemory
-// translation service (no key, no Opus) so word-checking works without any
-// paid API access. Results are cached in memory to stay within rate limits.
-const wordCache = new Map();
-
-app.get("/api/word", async (req, res) => {
-  const q = String(req.query.q || "").trim();
-  if (!q) return res.status(400).json({ error: "Missing query" });
-
-  const key = q.toLowerCase();
-  if (wordCache.has(key)) return res.json(wordCache.get(key));
-
-  const params = new URLSearchParams({ q, langpair: "de|en" });
-  if (process.env.MYMEMORY_EMAIL) params.set("de", process.env.MYMEMORY_EMAIL);
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
-  try {
-    const r = await fetch(`https://api.mymemory.translated.net/get?${params}`, {
-      signal: controller.signal,
-    });
-    const data = await r.json();
-    const translation = (data?.responseData?.translatedText || "").trim();
-    const ok = translation && !/^(NO QUERY|PLEASE|INVALID)/i.test(translation);
-    const result = { word: q, translation: ok ? translation : "", source: "dictionary" };
-    if (ok) wordCache.set(key, result);
-    res.json(result);
-  } catch (err) {
-    res.status(502).json({ word: q, translation: "", error: "lookup_failed" });
-  } finally {
-    clearTimeout(timeout);
-  }
+// The whole offline word dictionary, fetched once by the client so that
+// tapping any word works with no further requests.
+app.get("/api/dictionary", (_req, res) => {
+  res.json(DICTIONARY);
 });
-
 
 app.listen(PORT, () => {
+  const total = Object.values(LESSONS).reduce((n, arr) => n + arr.length, 0);
   console.log(`German learning app running at http://localhost:${PORT}`);
-  console.log(hasApiKey ? "Mode: live (Claude API)" : "Mode: offline (curated lessons)");
+  console.log(`Offline archive: ${total} texts across ${LEVEL_CODES.length} levels.`);
 });

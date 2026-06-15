@@ -1,74 +1,56 @@
 # Deutsch lesen — Self-Learning German
 
-A simple web app for learning German from short, interesting texts. Pick your
-CEFR level (A1 → C2), get a fresh passage, then study its **translation**,
-**vocabulary**, and the **grammar that level is meant to teach** — all drawn
-from the text you just read.
+A simple, **fully offline** web app for learning German from short, interesting
+texts. Pick your CEFR level (A1 → C2), get a text from the archive, then study
+its **translation**, **vocabulary**, and the **grammar that level is meant to
+teach** — all drawn from the text you just read. Tap any word to check its
+meaning.
 
-It's the same idea as a conversation-practice app, but built around authentic
-reading snippets instead of dialogues.
+No accounts, no API keys, no internet required — everything ships with the app.
 
 ## How it works
 
-- The backend asks **Claude** (`claude-opus-4-8`) to write an interesting German
-  passage at the selected level, then return a fluent translation, a short
-  vocabulary list, and 2–3 grammar points demonstrated by the text.
-- Responses use **structured outputs**, so the model always returns clean,
-  predictable JSON that the frontend renders into cards.
-- If no API key is set (or a request fails), the app falls back to a set of
-  hand-written sample lessons — one per level — so it always works.
-- **Tap any word** in the text to see its meaning. This does **not** use Opus:
-  it checks the lesson's own vocabulary first (instant, offline), then falls
-  back to the free [MyMemory](https://mymemory.translated.net/) translation
-  service for any other word — so word-checking is free regardless of whether
-  you have API access.
-
-## Do I need a paid plan?
-
-A **Claude Pro/Max subscription does not include API access** — the API is
-billed separately via [console.anthropic.com](https://console.anthropic.com)
-(pay-as-you-go). You only need that to generate **fresh** AI texts. The app is
-fully usable without it: the curated sample lessons and the tap-to-check-words
-feature both work with no API key.
-
-> If you deploy in a sandbox with network egress restrictions, allow the host
-> `api.mymemory.translated.net` so word lookup can reach the dictionary.
-> Optionally set `MYMEMORY_EMAIL` to raise the free rate limit.
+- A built-in **archive of 36 hand-written lessons** (6 per level). Each lesson
+  has a German text, an English translation, a vocabulary list, and 2–3 grammar
+  points demonstrated by the text. "Get a new text" picks another one at random
+  (without immediately repeating the last).
+- **Tap any word** in the text to see its meaning. Lookups are fully offline:
+  the app checks the lesson's own vocabulary first, then a bundled dictionary of
+  ~360 common German words and forms.
 
 ## Run it
 
 ```bash
 npm install
-cp .env.example .env      # then add your ANTHROPIC_API_KEY (optional)
 npm start
 ```
 
-Open http://localhost:3000.
-
-- **With an API key:** every "Get a new text" generates a fresh, level-tailored
-  passage on a random interesting topic.
-- **Without a key:** the app runs in offline mode and serves the curated
-  sample lessons.
+Open http://localhost:3000. That's it — no configuration needed.
 
 ## Project structure
 
 ```
-server.js            Express server + Claude lesson generation
-data/levels.js       CEFR levels, their grammar focus, and topic pool
-data/fallback.js     Curated sample lessons (one per level)
+server.js            Tiny Express server (serves the archive + dictionary)
+data/levels.js       CEFR levels and their grammar focus
+data/lessons.js      The lesson archive (6 texts per level)
+data/dictionary.js   Offline German→English common-word dictionary
 public/index.html    UI
 public/styles.css    Styling
-public/app.js         Frontend logic
+public/app.js        Frontend logic (clickable words, lookups)
 ```
 
 ## API
 
-- `GET /api/levels` — list of levels and whether the server is in live/offline mode.
-- `GET /api/lesson?level=B1` — a lesson for the given level (`A1`–`C2`).
-- `GET /api/word?q=Haus` — German→English translation of a single word (free, no Opus).
+- `GET /api/levels` — levels, grammar focus, and how many texts each level has.
+- `GET /api/lesson?level=B1&exclude=<id>` — a random lesson for the level.
+- `GET /api/dictionary` — the offline word dictionary (loaded once by the client).
+
+## Adding more content
+
+- **More texts:** add entries to the arrays in `data/lessons.js` (give each a
+  unique `id`). They're picked up automatically.
+- **More words:** add lowercase keys to `data/dictionary.js`.
 
 ## Notes
 
-- Requires Node 18+.
-- The model is configured in `server.js` (`MODEL`). `medium` effort keeps
-  generation reasonably fast for an interactive app.
+- Requires Node 18+ (only dependency is Express).

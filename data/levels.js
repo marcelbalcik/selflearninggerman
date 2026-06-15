@@ -65,22 +65,3 @@ export const LEVELS = {
 };
 
 export const LEVEL_CODES = Object.keys(LEVELS);
-
-// A pool of topics to keep generated texts varied and "interesting".
-export const TOPICS = [
-  "an unusual local tradition",
-  "a small everyday moment that became memorable",
-  "a surprising fact about science",
-  "city life versus the countryside",
-  "a piece of German or Austrian history",
-  "food and what it says about a culture",
-  "how technology changes daily habits",
-  "a short story about a journey",
-  "an interview-style snippet about someone's job",
-  "nature and the changing seasons",
-  "music and how it connects people",
-  "a curious animal and its behaviour",
-  "books, reading, and learning",
-  "a festival or holiday and its customs",
-  "the future of work",
-];
