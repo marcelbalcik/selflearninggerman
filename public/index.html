@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deutsch lernen · Read &amp; Learn German</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <span class="flag" aria-hidden="true"></span>
+        <h1>Deutsch&nbsp;lesen</h1>
+      </div>
+      <p class="tagline">
+        Short, interesting texts — with translation and the grammar behind them.
+      </p>
+    </header>
+
+    <main>
+      <section class="controls" aria-label="Choose your level">
+        <div class="level-row" id="level-row"><!-- level buttons injected here --></div>
+        <p class="level-summary" id="level-summary"></p>
+        <div class="action-row">
+          <button id="new-text-btn" class="primary-btn">
+            <span class="btn-label">Get a new text</span>
+          </button>
+          <span class="mode-badge" id="mode-badge" hidden></span>
+        </div>
+      </section>
+
+      <section id="lesson" class="lesson" aria-live="polite" hidden>
+        <article class="card text-card">
+          <div class="card-head">
+            <h2 id="lesson-title"></h2>
+            <button
+              id="toggle-translation"
+              class="ghost-btn"
+              type="button"
+              aria-pressed="false"
+            >
+              Show translation
+            </button>
+          </div>
+          <p class="german-text" id="german-text"></p>
+          <p class="translation-text" id="translation-text" hidden></p>
+        </article>
+
+        <div class="grid">
+          <article class="card">
+            <h3 class="card-title">Vocabulary</h3>
+            <ul class="vocab-list" id="vocab-list"></ul>
+          </article>
+
+          <article class="card">
+            <h3 class="card-title">Grammar in this text</h3>
+            <div class="grammar-list" id="grammar-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="placeholder" class="placeholder">
+        <p>Pick a level and tap <strong>Get a new text</strong> to start reading.</p>
+      </section>
+
+      <section id="loader" class="loader" hidden>
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Writing a fresh German text for you…</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Built for self-paced German learning · A1 → C2</p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "selflearninggerman",
+  "version": "1.0.0",
+  "description": "Self-paced German learning from short, interesting texts with translation and level-appropriate grammar.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.40.1",
+    "express": "^4.19.2"
+  }
+}
