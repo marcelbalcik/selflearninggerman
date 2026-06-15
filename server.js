@@ -141,6 +141,41 @@ app.get("/api/lesson", async (req, res) => {
   }
 });
 
+// Single-word lookup for the "tap a word" feature. Uses the free MyMemory
+// translation service (no key, no Opus) so word-checking works without any
+// paid API access. Results are cached in memory to stay within rate limits.
+const wordCache = new Map();
+
+app.get("/api/word", async (req, res) => {
+  const q = String(req.query.q || "").trim();
+  if (!q) return res.status(400).json({ error: "Missing query" });
+
+  const key = q.toLowerCase();
+  if (wordCache.has(key)) return res.json(wordCache.get(key));
+
+  const params = new URLSearchParams({ q, langpair: "de|en" });
+  if (process.env.MYMEMORY_EMAIL) params.set("de", process.env.MYMEMORY_EMAIL);
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+  try {
+    const r = await fetch(`https://api.mymemory.translated.net/get?${params}`, {
+      signal: controller.signal,
+    });
+    const data = await r.json();
+    const translation = (data?.responseData?.translatedText || "").trim();
+    const ok = translation && !/^(NO QUERY|PLEASE|INVALID)/i.test(translation);
+    const result = { word: q, translation: ok ? translation : "", source: "dictionary" };
+    if (ok) wordCache.set(key, result);
+    res.json(result);
+  } catch (err) {
+    res.status(502).json({ word: q, translation: "", error: "lookup_failed" });
+  } finally {
+    clearTimeout(timeout);
+  }
+});
+
+
 app.listen(PORT, () => {
   console.log(`German learning app running at http://localhost:${PORT}`);
   console.log(hasApiKey ? "Mode: live (Claude API)" : "Mode: offline (curated lessons)");

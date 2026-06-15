@@ -2,6 +2,7 @@ const state = {
   level: "A1",
   levels: [],
   mode: "offline",
+  lesson: null,
 };
 
 const els = {
@@ -50,9 +51,133 @@ function showTranslation(show) {
   els.toggleTranslation.textContent = show ? "Hide translation" : "Show translation";
 }
 
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) => {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+
+// Split the German text into clickable word tokens, preserving spacing and
+// punctuation. Letters include German umlauts and ß (covered by À-ÿ).
+function renderGermanText(text) {
+  els.germanText.innerHTML = "";
+  const wordRe = /[A-Za-zÀ-ÿ]+(?:[-'’][A-Za-zÀ-ÿ]+)*/g;
+  let last = 0;
+  let match;
+  while ((match = wordRe.exec(text))) {
+    if (match.index > last) {
+      els.germanText.appendChild(document.createTextNode(text.slice(last, match.index)));
+    }
+    const word = match[0];
+    const span = document.createElement("span");
+    span.className = "word";
+    span.tabIndex = 0;
+    span.setAttribute("role", "button");
+    span.textContent = word;
+    span.addEventListener("click", (e) => onWordClick(e, word));
+    span.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onWordClick(e, word);
+      }
+    });
+    els.germanText.appendChild(span);
+    last = match.index + word.length;
+  }
+  if (last < text.length) {
+    els.germanText.appendChild(document.createTextNode(text.slice(last)));
+  }
+}
+
+function normalizeWord(word) {
+  return word.toLowerCase().replace(/^[^a-zà-ÿ]+|[^a-zà-ÿ]+$/gi, "");
+}
+
+// Check the current lesson's own vocabulary first — instant and offline.
+function findInVocab(word) {
+  const n = normalizeWord(word);
+  for (const v of state.lesson?.vocabulary || []) {
+    const stripped = v.german.toLowerCase().replace(/^(der|die|das|ein|eine)\s+/, "");
+    if (stripped === n || stripped.split(/\s+/).includes(n)) return v;
+  }
+  return null;
+}
+
+let popover;
+
+function ensurePopover() {
+  if (popover) return popover;
+  popover = document.createElement("div");
+  popover.className = "word-popover";
+  popover.hidden = true;
+  document.body.appendChild(popover);
+  document.addEventListener("click", (e) => {
+    if (!popover.contains(e.target) && !e.target.classList.contains("word")) hidePopover();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") hidePopover();
+  });
+  window.addEventListener("resize", hidePopover);
+  return popover;
+}
+
+function hidePopover() {
+  if (popover) popover.hidden = true;
+  document.querySelectorAll(".word.active").forEach((el) => el.classList.remove("active"));
+}
+
+function showPopover(anchor, html) {
+  const p = ensurePopover();
+  p.innerHTML = html;
+  p.hidden = false;
+  const rect = anchor.getBoundingClientRect();
+  const top = rect.bottom + window.scrollY + 8;
+  let left = rect.left + window.scrollX;
+  const maxLeft = window.scrollX + document.documentElement.clientWidth - p.offsetWidth - 12;
+  left = Math.max(window.scrollX + 12, Math.min(left, maxLeft));
+  p.style.top = `${top}px`;
+  p.style.left = `${left}px`;
+}
+
+function popoverHtml(de, en, note) {
+  return (
+    `<div class="wp-head">${escapeHtml(de)}</div>` +
+    `<div class="wp-en">${escapeHtml(en)}</div>` +
+    (note ? `<div class="wp-note">${escapeHtml(note)}</div>` : "")
+  );
+}
+
+async function onWordClick(e, raw) {
+  e.stopPropagation();
+  const anchor = e.currentTarget;
+  document.querySelectorAll(".word.active").forEach((el) => el.classList.remove("active"));
+  anchor.classList.add("active");
+
+  const local = findInVocab(raw);
+  if (local) {
+    showPopover(anchor, popoverHtml(local.german, local.english, local.note));
+    return;
+  }
+
+  showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Looking up…</div>`);
+  try {
+    const res = await fetch(`/api/word?q=${encodeURIComponent(normalizeWord(raw))}`);
+    const data = await res.json();
+    if (data.translation) {
+      showPopover(anchor, popoverHtml(raw, data.translation, ""));
+    } else {
+      showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">No translation found.</div>`);
+    }
+  } catch {
+    showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Lookup unavailable right now.</div>`);
+  }
+}
+
 function renderLesson(lesson) {
+  state.lesson = lesson;
+  hidePopover();
   els.title.textContent = lesson.title;
-  els.germanText.textContent = lesson.text;
+  renderGermanText(lesson.text);
   els.translationText.textContent = lesson.translation;
   showTranslation(false);
 
