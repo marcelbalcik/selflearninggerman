@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["claude/kind-archimedes-4z8wv9"]
+    branches: ["claude/admiring-ptolemy-tqsy2b"]
   workflow_dispatch:
 
 permissions:
