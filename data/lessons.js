@@ -220,6 +220,346 @@ export const LESSONS = {
         },
       ],
     },
+    {
+      id: "a1-fussball",
+      level: "A1",
+      title: "Fußball in Deutschland",
+      topic: "sports",
+      text: "Fußball ist in Deutschland sehr beliebt. Viele Menschen spielen Fußball. Am Wochenende gehen sie ins Stadion. Die Spieler tragen bunte Trikots. Die Fans singen laut. Manchmal gewinnt die Mannschaft, manchmal verliert sie.",
+      translation:
+        "Football is very popular in Germany. Many people play football. At the weekend they go to the stadium. The players wear colourful jerseys. The fans sing loudly. Sometimes the team wins, sometimes it loses.",
+      vocabulary: [
+        { german: "beliebt", english: "popular", note: "" },
+        { german: "das Stadion", english: "stadium", note: "" },
+        { german: "der Spieler", english: "player", note: "plural: die Spieler" },
+        { german: "das Trikot", english: "jersey / shirt", note: "" },
+        { german: "die Mannschaft", english: "team", note: "" },
+        { german: "gewinnen", english: "to win", note: "opposite: verlieren" },
+      ],
+      grammar: [
+        {
+          point: "Present tense",
+          explanation: "Simple statements of fact use the present tense.",
+          examples: [{ german: "Viele Menschen spielen Fußball.", english: "Many people play football." }],
+        },
+        {
+          point: "Time phrase first",
+          explanation: "When a time phrase opens the sentence, the verb stays in second place.",
+          examples: [{ german: "Am Wochenende gehen sie ins Stadion.", english: "At the weekend they go to the stadium." }],
+        },
+        {
+          point: "Plural nouns",
+          explanation: "Some nouns keep the same form in the plural: der Spieler → die Spieler.",
+          examples: [{ german: "Die Spieler tragen bunte Trikots.", english: "The players wear colourful jerseys." }],
+        },
+      ],
+    },
+    {
+      id: "a1-mauer",
+      level: "A1",
+      title: "Die Berliner Mauer",
+      topic: "history",
+      text: "Die Berliner Mauer ist heute berühmt. Viele Touristen kommen nach Berlin. Sie machen Fotos von der Mauer. Früher war die Stadt geteilt. Die Mauer war lang und grau. Heute ist Berlin frei und bunt.",
+      translation:
+        "The Berlin Wall is famous today. Many tourists come to Berlin. They take photos of the wall. In the past the city was divided. The wall was long and grey. Today Berlin is free and colourful.",
+      vocabulary: [
+        { german: "berühmt", english: "famous", note: "" },
+        { german: "der Tourist", english: "tourist", note: "plural: die Touristen" },
+        { german: "die Mauer", english: "wall", note: "" },
+        { german: "geteilt", english: "divided", note: "" },
+        { german: "grau", english: "grey", note: "" },
+        { german: "frei", english: "free", note: "" },
+      ],
+      grammar: [
+        {
+          point: "war (simple past of sein)",
+          explanation: "To talk about the past, A1 often just uses war (was) and waren (were).",
+          examples: [{ german: "Früher war die Stadt geteilt.", english: "In the past the city was divided." }],
+        },
+        {
+          point: "Früher … / Heute …",
+          explanation: "Contrasting then and now; the verb follows the time word.",
+          examples: [{ german: "Heute ist Berlin frei.", english: "Today Berlin is free." }],
+        },
+        {
+          point: "von + dative",
+          explanation: "von always takes the dative: von der Mauer.",
+          examples: [{ german: "Sie machen Fotos von der Mauer.", english: "They take photos of the wall." }],
+        },
+      ],
+    },
+    {
+      id: "a1-grimm",
+      level: "A1",
+      title: "Die Brüder Grimm",
+      topic: "literature",
+      text: "Die Brüder Grimm sind sehr berühmt. Sie sammeln alte Märchen. Viele Kinder kennen ihre Geschichten. „Hänsel und Gretel“ ist ein Märchen. „Schneewittchen“ ist auch von den Brüdern Grimm. Heute lesen Eltern die Märchen ihren Kindern vor.",
+      translation:
+        "The Brothers Grimm are very famous. They collect old fairy tales. Many children know their stories. 'Hansel and Gretel' is a fairy tale. 'Snow White' is also by the Brothers Grimm. Today parents read the fairy tales to their children.",
+      vocabulary: [
+        { german: "das Märchen", english: "fairy tale", note: "plural: die Märchen" },
+        { german: "sammeln", english: "to collect", note: "" },
+        { german: "die Geschichte", english: "story", note: "" },
+        { german: "kennen", english: "to know (be familiar with)", note: "" },
+        { german: "vorlesen", english: "to read aloud", note: "separable: liest … vor" },
+        { german: "die Eltern", english: "parents", note: "always plural" },
+      ],
+      grammar: [
+        {
+          point: "Separable verb: vorlesen",
+          explanation: "The prefix vor- moves to the end of the clause.",
+          examples: [{ german: "Eltern lesen die Märchen vor.", english: "Parents read the fairy tales aloud." }],
+        },
+        {
+          point: "Possessive: ihre",
+          explanation: "ihre means 'their' (and 'her'); it agrees with the noun.",
+          examples: [{ german: "Kinder kennen ihre Geschichten.", english: "Children know their stories." }],
+        },
+        {
+          point: "von + dative (plural)",
+          explanation: "von den Brüdern Grimm — plural nouns add -n in the dative.",
+          examples: [{ german: "„Schneewittchen“ ist von den Brüdern Grimm.", english: "'Snow White' is by the Brothers Grimm." }],
+        },
+      ],
+    },
+    {
+      id: "a1-beethoven",
+      level: "A1",
+      title: "Ludwig van Beethoven",
+      topic: "music",
+      text: "Ludwig van Beethoven ist ein berühmter Komponist. Er kommt aus Bonn. Seine Musik ist sehr schön. Viele Menschen hören seine Musik gern. Beethoven kann später nicht mehr gut hören. Trotzdem schreibt er wunderbare Musik.",
+      translation:
+        "Ludwig van Beethoven is a famous composer. He comes from Bonn. His music is very beautiful. Many people like to listen to his music. Later, Beethoven can no longer hear well. Nevertheless he writes wonderful music.",
+      vocabulary: [
+        { german: "der Komponist", english: "composer", note: "" },
+        { german: "die Musik", english: "music", note: "" },
+        { german: "hören", english: "to hear / listen", note: "" },
+        { german: "schön", english: "beautiful", note: "" },
+        { german: "schreiben", english: "to write", note: "" },
+        { german: "wunderbar", english: "wonderful", note: "" },
+      ],
+      grammar: [
+        {
+          point: "kommen aus (origin)",
+          explanation: "To say where someone is from: kommen aus + place.",
+          examples: [{ german: "Er kommt aus Bonn.", english: "He comes from Bonn." }],
+        },
+        {
+          point: "Modal verb: können",
+          explanation: "können (can) sends the main verb to the end as an infinitive.",
+          examples: [{ german: "Beethoven kann nicht mehr gut hören.", english: "Beethoven can no longer hear well." }],
+        },
+        {
+          point: "gern (to like doing)",
+          explanation: "gern after a verb means you enjoy the action.",
+          examples: [{ german: "Menschen hören seine Musik gern.", english: "People like listening to his music." }],
+        },
+      ],
+    },
+    {
+      id: "a1-einstein",
+      level: "A1",
+      title: "Albert Einstein",
+      topic: "science",
+      text: "Albert Einstein ist ein berühmter Wissenschaftler. Er kommt aus Deutschland. Einstein denkt viel über Zeit und Raum nach. Seine Ideen sind sehr wichtig. Viele Menschen finden Physik schwer. Aber Einstein liebt die Physik.",
+      translation:
+        "Albert Einstein is a famous scientist. He comes from Germany. Einstein thinks a lot about time and space. His ideas are very important. Many people find physics difficult. But Einstein loves physics.",
+      vocabulary: [
+        { german: "der Wissenschaftler", english: "scientist", note: "" },
+        { german: "nachdenken", english: "to think (about)", note: "separable; über + acc." },
+        { german: "die Idee", english: "idea", note: "plural: die Ideen" },
+        { german: "wichtig", english: "important", note: "" },
+        { german: "die Physik", english: "physics", note: "" },
+        { german: "schwer", english: "difficult / hard", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Separable verb: nachdenken",
+          explanation: "nach- goes to the end: er denkt … nach.",
+          examples: [{ german: "Einstein denkt über Zeit nach.", english: "Einstein thinks about time." }],
+        },
+        {
+          point: "finden + adjective",
+          explanation: "finden expresses an opinion: etwas schwer finden = to find something hard.",
+          examples: [{ german: "Viele finden Physik schwer.", english: "Many find physics hard." }],
+        },
+        {
+          point: "aber (but)",
+          explanation: "aber joins two ideas and does not change the word order.",
+          examples: [{ german: "Aber Einstein liebt die Physik.", english: "But Einstein loves physics." }],
+        },
+      ],
+    },
+    {
+      id: "a1-alpen",
+      level: "A1",
+      title: "Die Alpen",
+      topic: "geography and nature",
+      text: "Die Alpen sind hohe Berge in Europa. Sie liegen im Süden von Deutschland. Im Winter liegt viel Schnee auf den Bergen. Viele Menschen fahren dort Ski. Im Sommer wandern sie gern. Die Luft in den Bergen ist frisch und klar.",
+      translation:
+        "The Alps are high mountains in Europe. They lie in the south of Germany. In winter there is a lot of snow on the mountains. Many people ski there. In summer they like to hike. The air in the mountains is fresh and clear.",
+      vocabulary: [
+        { german: "der Berg", english: "mountain", note: "plural: die Berge" },
+        { german: "der Schnee", english: "snow", note: "" },
+        { german: "Ski fahren", english: "to ski", note: "" },
+        { german: "wandern", english: "to hike", note: "" },
+        { german: "die Luft", english: "air", note: "" },
+        { german: "frisch", english: "fresh", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Location with in + dative",
+          explanation: "No movement → dative: in den Bergen, im Süden.",
+          examples: [{ german: "Die Luft in den Bergen ist frisch.", english: "The air in the mountains is fresh." }],
+        },
+        {
+          point: "Im Winter / Im Sommer",
+          explanation: "Seasons start the sentence; the verb stays second.",
+          examples: [{ german: "Im Sommer wandern sie gern.", english: "In summer they like to hike." }],
+        },
+        {
+          point: "Plural: hohe Berge",
+          explanation: "Adjectives before plural nouns take -e: hohe Berge.",
+          examples: [{ german: "Die Alpen sind hohe Berge.", english: "The Alps are high mountains." }],
+        },
+      ],
+    },
+    {
+      id: "a1-brot",
+      level: "A1",
+      title: "Das deutsche Brot",
+      topic: "food and culture",
+      text: "In Deutschland gibt es sehr viel Brot. Es gibt mehr als dreihundert Sorten. Die Menschen kaufen Brot beim Bäcker. Am Morgen essen viele Leute Brot mit Marmelade. Das Brot ist frisch und lecker. Viele Touristen mögen das deutsche Brot.",
+      translation:
+        "In Germany there is a lot of bread. There are more than three hundred kinds. People buy bread at the baker's. In the morning many people eat bread with jam. The bread is fresh and tasty. Many tourists like German bread.",
+      vocabulary: [
+        { german: "das Brot", english: "bread", note: "" },
+        { german: "die Sorte", english: "kind / type", note: "plural: die Sorten" },
+        { german: "der Bäcker", english: "baker", note: "beim Bäcker = at the baker's" },
+        { german: "die Marmelade", english: "jam", note: "" },
+        { german: "lecker", english: "tasty", note: "" },
+        { german: "mögen", english: "to like", note: "ich mag, sie mögen" },
+      ],
+      grammar: [
+        {
+          point: "es gibt + accusative",
+          explanation: "es gibt means 'there is/are' and is followed by the accusative.",
+          examples: [{ german: "Es gibt sehr viel Brot.", english: "There is a lot of bread." }],
+        },
+        {
+          point: "beim (bei + dem)",
+          explanation: "bei dem contracts to beim: beim Bäcker.",
+          examples: [{ german: "Die Menschen kaufen Brot beim Bäcker.", english: "People buy bread at the baker's." }],
+        },
+        {
+          point: "mögen (to like)",
+          explanation: "mögen is a modal-type verb used to say what you like.",
+          examples: [{ german: "Touristen mögen das deutsche Brot.", english: "Tourists like German bread." }],
+        },
+      ],
+    },
+    {
+      id: "a1-bienen",
+      level: "A1",
+      title: "Die Bienen",
+      topic: "nature",
+      text: "Bienen sind kleine Tiere. Sie fliegen von Blume zu Blume. Bienen machen Honig. Der Honig ist süß und gesund. Bienen sind sehr wichtig für die Natur. Ohne Bienen gibt es weniger Obst.",
+      translation:
+        "Bees are small animals. They fly from flower to flower. Bees make honey. Honey is sweet and healthy. Bees are very important for nature. Without bees there is less fruit.",
+      vocabulary: [
+        { german: "die Biene", english: "bee", note: "plural: die Bienen" },
+        { german: "das Tier", english: "animal", note: "plural: die Tiere" },
+        { german: "die Blume", english: "flower", note: "" },
+        { german: "der Honig", english: "honey", note: "" },
+        { german: "süß", english: "sweet", note: "" },
+        { german: "das Obst", english: "fruit", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Plural nouns and verbs",
+          explanation: "Plural subjects take the -en/-(e)n verb ending: Bienen sind, sie fliegen.",
+          examples: [{ german: "Bienen sind kleine Tiere.", english: "Bees are small animals." }],
+        },
+        {
+          point: "von … zu (dative)",
+          explanation: "Both von and zu take the dative: von Blume zu Blume.",
+          examples: [{ german: "Sie fliegen von Blume zu Blume.", english: "They fly from flower to flower." }],
+        },
+        {
+          point: "ohne + accusative",
+          explanation: "ohne (without) takes the accusative case.",
+          examples: [{ german: "Ohne Bienen gibt es weniger Obst.", english: "Without bees there is less fruit." }],
+        },
+      ],
+    },
+    {
+      id: "a1-goethe",
+      level: "A1",
+      title: "Johann Wolfgang von Goethe",
+      topic: "literature",
+      text: "Johann Wolfgang von Goethe ist ein berühmter Dichter. Er kommt aus Frankfurt. Goethe schreibt Gedichte und Romane. Sein Buch „Faust“ ist sehr bekannt. Viele Schüler lesen seine Werke in der Schule. Goethe lebt auch lange in Weimar.",
+      translation:
+        "Johann Wolfgang von Goethe is a famous poet. He comes from Frankfurt. Goethe writes poems and novels. His book 'Faust' is very well known. Many pupils read his works at school. Goethe also lives in Weimar for a long time.",
+      vocabulary: [
+        { german: "der Dichter", english: "poet", note: "" },
+        { german: "das Gedicht", english: "poem", note: "plural: die Gedichte" },
+        { german: "der Roman", english: "novel", note: "" },
+        { german: "bekannt", english: "well known", note: "" },
+        { german: "der Schüler", english: "pupil", note: "plural: die Schüler" },
+        { german: "das Werk", english: "work (of art)", note: "plural: die Werke" },
+      ],
+      grammar: [
+        {
+          point: "Plural objects",
+          explanation: "Goethe schreibt Gedichte und Romane — plural nouns as objects.",
+          examples: [{ german: "Goethe schreibt Gedichte und Romane.", english: "Goethe writes poems and novels." }],
+        },
+        {
+          point: "Possessive: sein",
+          explanation: "sein means 'his': sein Buch, seine Werke.",
+          examples: [{ german: "Sein Buch ist bekannt.", english: "His book is well known." }],
+        },
+        {
+          point: "in der Schule (dative)",
+          explanation: "Location 'at school' uses in + dative: in der Schule.",
+          examples: [{ german: "Schüler lesen in der Schule.", english: "Pupils read at school." }],
+        },
+      ],
+    },
+    {
+      id: "a1-oktoberfest",
+      level: "A1",
+      title: "Das Oktoberfest",
+      topic: "culture and festivals",
+      text: "Das Oktoberfest ist ein großes Fest in München. Es ist das größte Volksfest der Welt. Millionen Menschen kommen jedes Jahr. Sie tragen Lederhosen und Dirndl. Auf dem Fest gibt es Musik, Bier und Brezeln. Alle Leute tanzen und lachen zusammen.",
+      translation:
+        "The Oktoberfest is a big festival in Munich. It is the largest folk festival in the world. Millions of people come every year. They wear Lederhosen and Dirndl. At the festival there is music, beer and pretzels. Everyone dances and laughs together.",
+      vocabulary: [
+        { german: "das Fest", english: "festival / party", note: "" },
+        { german: "das Volksfest", english: "folk festival", note: "" },
+        { german: "tragen", english: "to wear / carry", note: "" },
+        { german: "das Bier", english: "beer", note: "" },
+        { german: "die Brezel", english: "pretzel", note: "plural: die Brezeln" },
+        { german: "tanzen", english: "to dance", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Superlative: das größte",
+          explanation: "The 'most' form before a noun adds -ste: das größte Volksfest.",
+          examples: [{ german: "Es ist das größte Volksfest.", english: "It is the largest folk festival." }],
+        },
+        {
+          point: "es gibt + accusative",
+          explanation: "Listing what's there: Es gibt Musik, Bier und Brezeln.",
+          examples: [{ german: "Auf dem Fest gibt es Bier.", english: "At the festival there is beer." }],
+        },
+        {
+          point: "Location: auf dem Fest",
+          explanation: "auf + dative for location: auf dem Fest.",
+          examples: [{ german: "Auf dem Fest gibt es Musik.", english: "At the festival there is music." }],
+        },
+      ],
+    },
   ],
 
   A2: [

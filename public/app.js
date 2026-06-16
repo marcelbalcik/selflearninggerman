@@ -1,8 +1,9 @@
 const state = {
   level: "A1",
   levels: [],
-  lesson: null,
+  lessons: {},
   dictionary: {},
+  lesson: null,
 };
 
 const els = {
@@ -20,6 +21,14 @@ const els = {
   vocabList: document.getElementById("vocab-list"),
   grammarList: document.getElementById("grammar-list"),
 };
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) => {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+
+/* ---------- levels ---------- */
 
 function setActiveLevel(code) {
   state.level = code;
@@ -40,29 +49,16 @@ function renderLevels() {
     const btn = document.createElement("button");
     btn.className = "level-btn";
     btn.dataset.code = level.code;
-    btn.innerHTML = `<span class="level-code">${level.code}</span><span class="level-name">${level.label
-      .split("·")[1]
-      .trim()}</span>`;
+    const name = level.label.includes("·") ? level.label.split("·")[1].trim() : "";
+    btn.innerHTML = `<span class="level-code">${level.code}</span><span class="level-name">${name}</span>`;
     btn.addEventListener("click", () => setActiveLevel(level.code));
     els.levelRow.appendChild(btn);
   });
   setActiveLevel(state.level);
 }
 
-function showTranslation(show) {
-  els.translationText.hidden = !show;
-  els.toggleTranslation.setAttribute("aria-pressed", String(show));
-  els.toggleTranslation.textContent = show ? "Hide translation" : "Show translation";
-}
+/* ---------- clickable German text ---------- */
 
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, (c) => {
-    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-  });
-}
-
-// Split the German text into clickable word tokens, preserving spacing and
-// punctuation. Letters include German umlauts and ß (covered by À-ÿ).
 function renderGermanText(text) {
   els.germanText.innerHTML = "";
   const wordRe = /[A-Za-zÀ-ÿ]+(?:[-'’][A-Za-zÀ-ÿ]+)*/g;
@@ -97,7 +93,6 @@ function normalizeWord(word) {
   return word.toLowerCase().replace(/^[^a-zà-ÿ]+|[^a-zà-ÿ]+$/gi, "");
 }
 
-// Check the current lesson's own vocabulary first — instant and offline.
 function findInVocab(word) {
   const n = normalizeWord(word);
   for (const v of state.lesson?.vocabulary || []) {
@@ -106,6 +101,8 @@ function findInVocab(word) {
   }
   return null;
 }
+
+/* ---------- popover ---------- */
 
 let popover;
 
@@ -151,47 +148,6 @@ function popoverHtml(de, en, note) {
   );
 }
 
-async function onWordClick(e, raw) {
-  e.stopPropagation();
-  const anchor = e.currentTarget;
-  document.querySelectorAll(".word.active").forEach((el) => el.classList.remove("active"));
-  anchor.classList.add("active");
-
-  // 1) The current lesson's own vocabulary — richest, with notes. (offline)
-  const local = findInVocab(raw);
-  if (local) {
-    showPopover(anchor, popoverHtml(local.german, local.english, local.note));
-    return;
-  }
-
-  // 2) The bundled offline dictionary of common words. (offline)
-  const word = normalizeWord(raw);
-  const entry = state.dictionary[word];
-  if (entry) {
-    showPopover(anchor, popoverHtml(raw, entry, ""));
-    return;
-  }
-
-  // 3) Online dictionary fallback for everything else.
-  showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Looking up…</div>`);
-  try {
-    const res = await fetch(`/api/word?q=${encodeURIComponent(word)}`);
-    const data = await res.json();
-    if (data.translation || (data.entries && data.entries.length)) {
-      showPopover(anchor, popoverRich(raw, data));
-    } else {
-      showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">No translation found.</div>`);
-    }
-  } catch {
-    showPopover(
-      anchor,
-      `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Offline — only common words are available without a connection.</div>`
-    );
-  }
-}
-
-// Build a popover from an online result: a quick gloss plus Wiktionary
-// entries (part of speech, senses, examples).
 function popoverRich(word, data) {
   let html = `<div class="wp-head">${escapeHtml(word)}</div>`;
   if (data.translation) html += `<div class="wp-en">${escapeHtml(data.translation)}</div>`;
@@ -209,6 +165,111 @@ function popoverRich(word, data) {
     html += `</ol></div>`;
   }
   return html;
+}
+
+/* ---------- online dictionary lookup (browser-side) ---------- */
+
+const lookupCache = new Map();
+
+function stripHtml(s) {
+  return String(s)
+    .replace(/<[^>]*>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function fetchMyMemory(q) {
+  const params = new URLSearchParams({ q, langpair: "de|en" });
+  const r = await fetch(`https://api.mymemory.translated.net/get?${params}`);
+  const data = await r.json();
+  const t = (data?.responseData?.translatedText || "").trim();
+  return t && !/^(NO QUERY|PLEASE|INVALID)/i.test(t) ? t : "";
+}
+
+async function fetchWiktionary(q) {
+  const url = `https://en.wiktionary.org/api/rest_v1/page/definition/${encodeURIComponent(q)}?redirect=true`;
+  const r = await fetch(url);
+  if (!r.ok) return [];
+  const data = await r.json();
+  const sections = Array.isArray(data?.de) ? data.de : [];
+  const entries = [];
+  for (const section of sections.slice(0, 3)) {
+    const definitions = (section.definitions || [])
+      .slice(0, 3)
+      .map((d) => ({
+        definition: stripHtml(d.definition || ""),
+        examples: (d.parsedExamples || d.examples || [])
+          .map((ex) => stripHtml(typeof ex === "string" ? ex : ex.example || ""))
+          .filter(Boolean)
+          .slice(0, 1),
+      }))
+      .filter((d) => d.definition);
+    if (definitions.length) entries.push({ partOfSpeech: section.partOfSpeech || "", definitions });
+  }
+  return entries;
+}
+
+async function lookupOnline(word) {
+  if (lookupCache.has(word)) return lookupCache.get(word);
+  const [mm, wk] = await Promise.allSettled([fetchMyMemory(word), fetchWiktionary(word)]);
+  if (mm.status === "rejected" && wk.status === "rejected") throw new Error("offline");
+  const result = {
+    translation: mm.status === "fulfilled" ? mm.value : "",
+    entries: wk.status === "fulfilled" ? wk.value : [],
+  };
+  lookupCache.set(word, result);
+  return result;
+}
+
+async function onWordClick(e, raw) {
+  e.stopPropagation();
+  const anchor = e.currentTarget;
+  document.querySelectorAll(".word.active").forEach((el) => el.classList.remove("active"));
+  anchor.classList.add("active");
+
+  // 1) The lesson's own vocabulary — richest, with notes. (offline)
+  const local = findInVocab(raw);
+  if (local) {
+    showPopover(anchor, popoverHtml(local.german, local.english, local.note));
+    return;
+  }
+
+  // 2) The bundled offline dictionary of common words. (offline)
+  const word = normalizeWord(raw);
+  const entry = state.dictionary[word];
+  if (entry) {
+    showPopover(anchor, popoverHtml(raw, entry, ""));
+    return;
+  }
+
+  // 3) Online dictionaries (MyMemory + Wiktionary), in the browser.
+  showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Looking up…</div>`);
+  try {
+    const data = await lookupOnline(word);
+    if (data.translation || data.entries.length) {
+      showPopover(anchor, popoverRich(raw, data));
+    } else {
+      showPopover(anchor, `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">No translation found.</div>`);
+    }
+  } catch {
+    showPopover(
+      anchor,
+      `<div class="wp-head">${escapeHtml(raw)}</div><div class="wp-note">Offline — only common words are available without a connection.</div>`
+    );
+  }
+}
+
+/* ---------- lessons ---------- */
+
+function showTranslation(show) {
+  els.translationText.hidden = !show;
+  els.toggleTranslation.setAttribute("aria-pressed", String(show));
+  els.toggleTranslation.textContent = show ? "Hide translation" : "Show translation";
 }
 
 function renderLesson(lesson) {
@@ -247,52 +308,36 @@ function renderLesson(lesson) {
   });
 }
 
-function setLoading(loading) {
-  els.newTextBtn.disabled = loading;
-  els.loader.hidden = !loading;
-  if (loading) {
-    els.lesson.hidden = true;
-    els.placeholder.hidden = true;
-  }
+function newLesson() {
+  const lessons = state.lessons[state.level] || [];
+  if (!lessons.length) return;
+  const pool =
+    lessons.length > 1 && state.lesson ? lessons.filter((l) => l.id !== state.lesson.id) : lessons;
+  const lesson = pool[Math.floor(Math.random() * pool.length)];
+  renderLesson(lesson);
+  els.placeholder.hidden = true;
+  els.lesson.hidden = false;
+  els.lesson.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-async function fetchLesson() {
-  setLoading(true);
-  try {
-    const exclude = state.lesson?.id ? `&exclude=${encodeURIComponent(state.lesson.id)}` : "";
-    const res = await fetch(`/api/lesson?level=${encodeURIComponent(state.level)}${exclude}`);
-    if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-    const lesson = await res.json();
-    renderLesson(lesson);
-    els.lesson.hidden = false;
-    els.lesson.scrollIntoView({ behavior: "smooth", block: "start" });
-  } catch (err) {
-    els.placeholder.hidden = false;
-    els.placeholder.innerHTML = `<p>Something went wrong: ${err.message}. Please try again.</p>`;
-  } finally {
-    setLoading(false);
-  }
-}
+/* ---------- init ---------- */
 
 async function init() {
   try {
-    const [levelsRes, dictRes] = await Promise.all([
-      fetch("/api/levels"),
-      fetch("/api/dictionary"),
+    const [levelsData, lessonsData, dictData] = await Promise.all([
+      fetch("data/levels.json").then((r) => r.json()),
+      fetch("data/lessons.json").then((r) => r.json()),
+      fetch("data/dictionary.json").then((r) => r.json()),
     ]);
-    const data = await levelsRes.json();
-    state.levels = data.levels;
-    state.dictionary = await dictRes.json();
-  } catch {
-    // Fall back to a minimal hard-coded set if the endpoints fail.
-    state.levels = ["A1", "A2", "B1", "B2", "C1", "C2"].map((code) => ({
-      code,
-      label: `${code} · `,
-      summary: "",
-    }));
+    state.levels = levelsData.levels;
+    state.lessons = lessonsData;
+    state.dictionary = dictData;
+  } catch (err) {
+    els.placeholder.innerHTML = `<p>Could not load the lesson data: ${err.message}</p>`;
+    return;
   }
   renderLevels();
-  els.newTextBtn.addEventListener("click", fetchLesson);
+  els.newTextBtn.addEventListener("click", newLesson);
   els.toggleTranslation.addEventListener("click", () => {
     showTranslation(els.translationText.hidden);
   });
