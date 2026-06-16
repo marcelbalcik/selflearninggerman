@@ -560,6 +560,350 @@ export const LESSONS = {
         },
       ],
     },
+    {
+      id: "a1-haus-stark",
+      level: "A1",
+      title: "Haus Stark",
+      topic: "a noble family from the world of A Song of Ice and Fire",
+      text: "Haus Stark lebt im Norden von Westeros. Die Familie wohnt in einer großen Burg. Die Burg heißt Winterfell. Der Vater heißt Eddard Stark. Er hat eine Frau und sechs Kinder. Das Motto von Haus Stark ist: „Der Winter kommt.“ Die Starks sind ehrlich und mutig.",
+      translation:
+        "House Stark lives in the north of Westeros. The family lives in a big castle. The castle is called Winterfell. The father is called Eddard Stark. He has a wife and six children. The motto of House Stark is: 'Winter is coming.' The Starks are honest and brave.",
+      vocabulary: [
+        { german: "der Norden", english: "the north", note: "im Norden = in the north" },
+        { german: "die Burg", english: "castle", note: "" },
+        { german: "die Familie", english: "family", note: "" },
+        { german: "das Kind", english: "child", note: "plural: die Kinder" },
+        { german: "mutig", english: "brave", note: "" },
+        { german: "ehrlich", english: "honest", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Present tense (Präsens)",
+          explanation:
+            "Regular verbs add endings to the stem: leben → lebt, wohnen → wohnt. Used here for facts and descriptions.",
+          examples: [
+            { german: "Haus Stark lebt im Norden.", english: "House Stark lives in the north." },
+            { german: "Die Familie wohnt in einer Burg.", english: "The family lives in a castle." },
+          ],
+        },
+        {
+          point: "haben + accusative",
+          explanation: "After haben the object is accusative; masculine ein → einen, but feminine/neuter stay eine/ein.",
+          examples: [{ german: "Er hat eine Frau und sechs Kinder.", english: "He has a wife and six children." }],
+        },
+        {
+          point: "sein for descriptions",
+          explanation: "Use sein (to be) with adjectives to describe people.",
+          examples: [{ german: "Die Starks sind ehrlich und mutig.", english: "The Starks are honest and brave." }],
+        },
+      ],
+    },
+    {
+      id: "a1-winterfell",
+      level: "A1",
+      title: "Die Burg Winterfell",
+      topic: "a famous castle from A Song of Ice and Fire",
+      text: "Winterfell ist eine alte Burg im Norden. Die Burg ist sehr groß und sehr alt. In Winterfell ist es fast immer kalt. Unter der Burg gibt es warme Quellen. Im Hof üben die Kinder mit dem Schwert. Ein Wolf läuft durch den Schnee. Winterfell ist das Zuhause von Familie Stark.",
+      translation:
+        "Winterfell is an old castle in the north. The castle is very big and very old. In Winterfell it is almost always cold. Under the castle there are warm springs. In the courtyard the children practise with the sword. A wolf runs through the snow. Winterfell is the home of the Stark family.",
+      vocabulary: [
+        { german: "alt", english: "old", note: "opposite: neu" },
+        { german: "kalt", english: "cold", note: "" },
+        { german: "die Quelle", english: "spring / source", note: "warme Quellen = hot springs" },
+        { german: "der Hof", english: "courtyard / yard", note: "" },
+        { german: "das Schwert", english: "sword", note: "" },
+        { german: "der Schnee", english: "snow", note: "" },
+      ],
+      grammar: [
+        {
+          point: "es gibt",
+          explanation: "es gibt means 'there is / there are' and is always followed by the accusative.",
+          examples: [{ german: "Unter der Burg gibt es warme Quellen.", english: "Under the castle there are warm springs." }],
+        },
+        {
+          point: "Intensifier sehr",
+          explanation: "sehr (very) stands before an adjective to make it stronger.",
+          examples: [{ german: "Die Burg ist sehr groß.", english: "The castle is very big." }],
+        },
+        {
+          point: "Word order: verb second",
+          explanation: "When a place phrase comes first, the verb still stays in second position.",
+          examples: [{ german: "Im Hof üben die Kinder.", english: "In the courtyard the children practise." }],
+        },
+      ],
+    },
+    {
+      id: "a1-jon-schnee",
+      level: "A1",
+      title: "Jon Schnee",
+      topic: "a character from A Song of Ice and Fire",
+      text: "Jon ist ein junger Mann. Er wohnt in Winterfell im Norden. Sein Familienname ist Schnee. Im Norden heißen Kinder ohne Ehe der Eltern oft „Schnee“. Jon ist ruhig und ernst. Sein Freund ist ein weißer Wolf. Der Wolf heißt Geist. Jon trägt fast immer schwarze Kleidung.",
+      translation:
+        "Jon is a young man. He lives in Winterfell in the north. His surname is Snow. In the north, children whose parents are not married are often called 'Snow'. Jon is quiet and serious. His friend is a white wolf. The wolf is called Ghost. Jon almost always wears black clothes.",
+      vocabulary: [
+        { german: "jung", english: "young", note: "" },
+        { german: "der Mann", english: "man", note: "" },
+        { german: "der Familienname", english: "surname / family name", note: "" },
+        { german: "ruhig", english: "quiet / calm", note: "" },
+        { german: "ernst", english: "serious", note: "" },
+        { german: "die Kleidung", english: "clothes / clothing", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Possessive articles",
+          explanation: "sein/seine (his) agree with the noun: sein Freund (m), seine Kleidung (f).",
+          examples: [{ german: "Sein Familienname ist Schnee.", english: "His surname is Snow." }],
+        },
+        {
+          point: "Adjective before a noun",
+          explanation: "An adjective in front of a noun takes an ending: ein weißer Wolf, schwarze Kleidung.",
+          examples: [{ german: "Sein Freund ist ein weißer Wolf.", english: "His friend is a white wolf." }],
+        },
+        {
+          point: "heißen",
+          explanation: "heißen means 'to be called' for names of people and things.",
+          examples: [{ german: "Der Wolf heißt Geist.", english: "The wolf is called Ghost." }],
+        },
+      ],
+    },
+    {
+      id: "a1-daenerys",
+      level: "A1",
+      title: "Daenerys und die Drachen",
+      topic: "a character from A Song of Ice and Fire",
+      text: "Daenerys ist eine junge Frau. Sie kommt aus der Familie Targaryen. Ihre Familie ist sehr alt und mächtig. Daenerys hat lange, weiße Haare. Sie hat drei Drachen. Die Drachen sind noch klein, aber sie wachsen schnell. Daenerys ist mutig und ruhig.",
+      translation:
+        "Daenerys is a young woman. She comes from the Targaryen family. Her family is very old and powerful. Daenerys has long, white hair. She has three dragons. The dragons are still small, but they grow fast. Daenerys is brave and calm.",
+      vocabulary: [
+        { german: "die Frau", english: "woman", note: "" },
+        { german: "mächtig", english: "powerful", note: "" },
+        { german: "das Haar", english: "hair", note: "often plural: die Haare" },
+        { german: "der Drache", english: "dragon", note: "plural: die Drachen" },
+        { german: "wachsen", english: "to grow", note: "" },
+        { german: "schnell", english: "fast / quickly", note: "" },
+      ],
+      grammar: [
+        {
+          point: "kommen aus",
+          explanation: "kommen aus says where someone is from: aus der Familie, aus Deutschland.",
+          examples: [{ german: "Sie kommt aus der Familie Targaryen.", english: "She comes from the Targaryen family." }],
+        },
+        {
+          point: "Plural nouns",
+          explanation: "Many nouns add -n or change in the plural: der Drache → die Drachen.",
+          examples: [{ german: "Sie hat drei Drachen.", english: "She has three dragons." }],
+        },
+        {
+          point: "Conjunction aber",
+          explanation: "aber (but) joins two main clauses and does not change the word order.",
+          examples: [{ german: "Die Drachen sind klein, aber sie wachsen schnell.", english: "The dragons are small, but they grow fast." }],
+        },
+      ],
+    },
+    {
+      id: "a1-drachen",
+      level: "A1",
+      title: "Die Drachen",
+      topic: "creatures from A Song of Ice and Fire",
+      text: "Drachen sind große Tiere mit Flügeln. Sie können fliegen und Feuer machen. In Westeros gibt es heute keine Drachen mehr. Aber Daenerys hat drei junge Drachen. Einer ist schwarz, einer ist grün und einer ist weiß und gold. Viele Menschen haben Angst vor den Drachen. Drachen sind sehr stark.",
+      translation:
+        "Dragons are big animals with wings. They can fly and make fire. In Westeros there are no more dragons today. But Daenerys has three young dragons. One is black, one is green and one is white and gold. Many people are afraid of the dragons. Dragons are very strong.",
+      vocabulary: [
+        { german: "das Tier", english: "animal", note: "plural: die Tiere" },
+        { german: "der Flügel", english: "wing", note: "" },
+        { german: "fliegen", english: "to fly", note: "" },
+        { german: "das Feuer", english: "fire", note: "" },
+        { german: "die Angst", english: "fear", note: "Angst haben vor = to be afraid of" },
+        { german: "stark", english: "strong", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Modal verb können",
+          explanation: "können (can) is a modal verb. The second verb goes to the end in its basic form (infinitive).",
+          examples: [{ german: "Sie können fliegen und Feuer machen.", english: "They can fly and make fire." }],
+        },
+        {
+          point: "Negation with kein",
+          explanation: "kein negates a noun and replaces ein: keine Drachen = no dragons.",
+          examples: [{ german: "Es gibt keine Drachen mehr.", english: "There are no more dragons." }],
+        },
+        {
+          point: "Indefinite einer",
+          explanation: "einer means 'one (of them)' and stands alone without a noun.",
+          examples: [{ german: "Einer ist schwarz, einer ist grün.", english: "One is black, one is green." }],
+        },
+      ],
+    },
+    {
+      id: "a1-nachtwache",
+      level: "A1",
+      title: "Die Nachtwache",
+      topic: "an order of guards from A Song of Ice and Fire",
+      text: "Im Norden gibt es eine große Mauer aus Eis. Die Mauer ist sehr hoch und sehr lang. Männer in schwarzer Kleidung leben dort. Sie heißen die Nachtwache. Die Männer schützen das Land im Süden. Sie bleiben ihr ganzes Leben an der Mauer. Es ist kalt und das Leben ist hart.",
+      translation:
+        "In the north there is a great wall made of ice. The wall is very high and very long. Men in black clothes live there. They are called the Night's Watch. The men protect the land in the south. They stay at the wall their whole life. It is cold and life is hard.",
+      vocabulary: [
+        { german: "die Mauer", english: "wall", note: "" },
+        { german: "das Eis", english: "ice", note: "aus Eis = made of ice" },
+        { german: "hoch", english: "high / tall", note: "" },
+        { german: "schützen", english: "to protect", note: "" },
+        { german: "das Leben", english: "life", note: "" },
+        { german: "hart", english: "hard / harsh", note: "" },
+      ],
+      grammar: [
+        {
+          point: "aus + material",
+          explanation: "aus says what something is made of: aus Eis, aus Gold.",
+          examples: [{ german: "eine Mauer aus Eis", english: "a wall made of ice" }],
+        },
+        {
+          point: "dort / there",
+          explanation: "dort points to a place already mentioned and usually comes after the verb.",
+          examples: [{ german: "Männer leben dort.", english: "Men live there." }],
+        },
+        {
+          point: "ganz + noun",
+          explanation: "ganz means 'whole / entire' and takes an ending: ihr ganzes Leben.",
+          examples: [{ german: "Sie bleiben ihr ganzes Leben.", english: "They stay their whole life." }],
+        },
+      ],
+    },
+    {
+      id: "a1-tyrion",
+      level: "A1",
+      title: "Tyrion Lannister",
+      topic: "a character from A Song of Ice and Fire",
+      text: "Tyrion kommt aus der Familie Lannister. Er ist klein, aber sehr klug. Tyrion liest gern Bücher. Er trinkt auch gern Wein. Seine Familie ist reich und mächtig. Tyrion hat einen Bruder und eine Schwester. Er spricht viel und macht oft Witze.",
+      translation:
+        "Tyrion comes from the Lannister family. He is small, but very clever. Tyrion likes reading books. He also likes drinking wine. His family is rich and powerful. Tyrion has a brother and a sister. He talks a lot and often makes jokes.",
+      vocabulary: [
+        { german: "klein", english: "small / short", note: "" },
+        { german: "klug", english: "clever / smart", note: "" },
+        { german: "das Buch", english: "book", note: "plural: die Bücher" },
+        { german: "der Wein", english: "wine", note: "" },
+        { german: "reich", english: "rich", note: "" },
+        { german: "der Witz", english: "joke", note: "Witze machen = to make jokes" },
+      ],
+      grammar: [
+        {
+          point: "gern + verb",
+          explanation: "gern after a verb shows you like doing something: er liest gern = he likes reading.",
+          examples: [{ german: "Tyrion liest gern Bücher.", english: "Tyrion likes reading books." }],
+        },
+        {
+          point: "haben + accusative",
+          explanation: "ein becomes einen for masculine objects: einen Bruder; feminine stays eine: eine Schwester.",
+          examples: [{ german: "Er hat einen Bruder und eine Schwester.", english: "He has a brother and a sister." }],
+        },
+        {
+          point: "Conjunction aber",
+          explanation: "aber (but) links two ideas without changing the word order.",
+          examples: [{ german: "Er ist klein, aber sehr klug.", english: "He is small, but very clever." }],
+        },
+      ],
+    },
+    {
+      id: "a1-arya",
+      level: "A1",
+      title: "Arya Stark",
+      topic: "a character from A Song of Ice and Fire",
+      text: "Arya ist ein Mädchen aus Familie Stark. Sie ist jung und sehr schnell. Arya spielt nicht gern mit Puppen. Sie lernt lieber kämpfen. Ihr kleines Schwert heißt Nadel. Arya hat auch einen Wolf. Der Wolf heißt Nymeria. Arya ist mutig und frei.",
+      translation:
+        "Arya is a girl from the Stark family. She is young and very fast. Arya does not like playing with dolls. She prefers learning to fight. Her small sword is called Needle. Arya also has a wolf. The wolf is called Nymeria. Arya is brave and free.",
+      vocabulary: [
+        { german: "das Mädchen", english: "girl", note: "neuter: das Mädchen" },
+        { german: "schnell", english: "fast", note: "" },
+        { german: "die Puppe", english: "doll", note: "" },
+        { german: "kämpfen", english: "to fight", note: "" },
+        { german: "die Nadel", english: "needle", note: "" },
+        { german: "frei", english: "free", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Negation: nicht gern",
+          explanation: "nicht gern means you do not like doing something.",
+          examples: [{ german: "Arya spielt nicht gern mit Puppen.", english: "Arya does not like playing with dolls." }],
+        },
+        {
+          point: "lieber (prefer)",
+          explanation: "lieber is the comparative of gern and means 'prefer to'.",
+          examples: [{ german: "Sie lernt lieber kämpfen.", english: "She prefers learning to fight." }],
+        },
+        {
+          point: "Possessive with neuter noun",
+          explanation: "ihr (her) before a neuter noun: ihr Schwert; the adjective takes -es: ihr kleines Schwert.",
+          examples: [{ german: "Ihr kleines Schwert heißt Nadel.", english: "Her small sword is called Needle." }],
+        },
+      ],
+    },
+    {
+      id: "a1-koenigsmund",
+      level: "A1",
+      title: "Königsmund",
+      topic: "the capital city of Westeros in A Song of Ice and Fire",
+      text: "Königsmund ist die größte Stadt in Westeros. Hier wohnt der König. In der Stadt gibt es viele Menschen, Häuser und Märkte. Es ist oft warm und laut. Im Schloss steht der Eiserne Thron. Die Straßen sind eng und voll. Königsmund liegt am Meer.",
+      translation:
+        "King's Landing is the biggest city in Westeros. The king lives here. In the city there are many people, houses and markets. It is often warm and loud. In the palace stands the Iron Throne. The streets are narrow and full. King's Landing lies by the sea.",
+      vocabulary: [
+        { german: "die Stadt", english: "city", note: "" },
+        { german: "der König", english: "king", note: "" },
+        { german: "das Haus", english: "house", note: "plural: die Häuser" },
+        { german: "der Markt", english: "market", note: "plural: die Märkte" },
+        { german: "das Schloss", english: "palace / castle", note: "" },
+        { german: "das Meer", english: "sea", note: "am Meer = by the sea" },
+      ],
+      grammar: [
+        {
+          point: "Superlative: die größte",
+          explanation: "The 'most' form of an adjective before a noun ends in -ste: die größte Stadt.",
+          examples: [{ german: "Königsmund ist die größte Stadt.", english: "King's Landing is the biggest city." }],
+        },
+        {
+          point: "es gibt + accusative",
+          explanation: "es gibt is followed by the accusative, here a list of plural nouns.",
+          examples: [{ german: "Es gibt viele Menschen, Häuser und Märkte.", english: "There are many people, houses and markets." }],
+        },
+        {
+          point: "liegen for location",
+          explanation: "liegen (to lie / be situated) describes where a place is.",
+          examples: [{ german: "Königsmund liegt am Meer.", english: "King's Landing lies by the sea." }],
+        },
+      ],
+    },
+    {
+      id: "a1-schattenwoelfe",
+      level: "A1",
+      title: "Die Schattenwölfe",
+      topic: "the direwolves from A Song of Ice and Fire",
+      text: "Schattenwölfe sind sehr große Wölfe. Sie leben nur im Norden von Westeros. Die Kinder von Familie Stark finden sechs junge Wölfe. Jedes Kind bekommt einen Wolf. Die Wölfe sind treu und stark. Sie schützen die Kinder. Ein Wolf ist weiß, die anderen sind grau und dunkel.",
+      translation:
+        "Direwolves are very big wolves. They live only in the north of Westeros. The children of the Stark family find six young wolves. Each child gets a wolf. The wolves are loyal and strong. They protect the children. One wolf is white, the others are grey and dark.",
+      vocabulary: [
+        { german: "der Wolf", english: "wolf", note: "plural: die Wölfe" },
+        { german: "finden", english: "to find", note: "" },
+        { german: "bekommen", english: "to get / receive", note: "" },
+        { german: "treu", english: "loyal / faithful", note: "" },
+        { german: "grau", english: "grey", note: "" },
+        { german: "dunkel", english: "dark", note: "" },
+      ],
+      grammar: [
+        {
+          point: "jedes + noun",
+          explanation: "jedes means 'each / every' before a neuter noun: jedes Kind.",
+          examples: [{ german: "Jedes Kind bekommt einen Wolf.", english: "Each child gets a wolf." }],
+        },
+        {
+          point: "nur (only)",
+          explanation: "nur limits a statement and stands directly before the word it refers to.",
+          examples: [{ german: "Sie leben nur im Norden.", english: "They live only in the north." }],
+        },
+        {
+          point: "die anderen",
+          explanation: "die anderen means 'the others' and refers back to a group.",
+          examples: [{ german: "Die anderen sind grau.", english: "The others are grey." }],
+        },
+      ],
+    },
   ],
 
   A2: [
@@ -767,6 +1111,352 @@ export const LESSONS = {
           point: "trotzdem",
           explanation: "trotzdem (nevertheless) starts a main clause and is followed by the verb.",
           examples: [{ german: "Trotzdem vermisse ich meine Familie.", english: "Nevertheless I miss my family." }],
+        },
+      ],
+    },
+    {
+      id: "a2-eiserne-thron",
+      level: "A2",
+      title: "Der Eiserne Thron",
+      topic: "the throne of Westeros in A Song of Ice and Fire",
+      text: "Vor vielen Jahren hat ein König die Schwerter seiner Feinde genommen. Aus diesen Schwertern hat er einen großen Thron gemacht. Man nennt ihn den Eisernen Thron. Wer auf dem Thron sitzt, ist der König von Westeros. Viele Familien wollten diesen Thron haben, deshalb gab es oft Krieg. Der Thron ist hart und unbequem, denn ein König soll nie ruhig sitzen.",
+      translation:
+        "Many years ago a king took the swords of his enemies. From these swords he made a great throne. People call it the Iron Throne. Whoever sits on the throne is the king of Westeros. Many families wanted to have this throne, so there was often war. The throne is hard and uncomfortable, because a king should never sit calmly.",
+      vocabulary: [
+        { german: "der Feind", english: "enemy", note: "plural: die Feinde" },
+        { german: "der Thron", english: "throne", note: "" },
+        { german: "nennen", english: "to call / name", note: "" },
+        { german: "der Krieg", english: "war", note: "" },
+        { german: "unbequem", english: "uncomfortable", note: "opposite: bequem" },
+        { german: "sollen", english: "should / to be supposed to", note: "modal verb" },
+      ],
+      grammar: [
+        {
+          point: "Perfect tense (Perfekt)",
+          explanation: "The spoken past with haben + past participle: hat genommen, hat gemacht.",
+          examples: [
+            { german: "Ein König hat die Schwerter genommen.", english: "A king took the swords." },
+            { german: "Er hat einen Thron gemacht.", english: "He made a throne." },
+          ],
+        },
+        {
+          point: "Connector deshalb",
+          explanation: "deshalb (so / therefore) starts a clause and is followed by the verb, then the subject.",
+          examples: [{ german: "Deshalb gab es oft Krieg.", english: "So there was often war." }],
+        },
+        {
+          point: "Connector denn",
+          explanation: "denn (because) gives a reason and keeps normal word order: subject + verb.",
+          examples: [{ german: "Der Thron ist hart, denn ein König soll nie ruhig sitzen.", english: "The throne is hard, because a king should never sit calmly." }],
+        },
+      ],
+    },
+    {
+      id: "a2-ned-koenigsmund",
+      level: "A2",
+      title: "Eddard reist nach Königsmund",
+      topic: "a journey in A Song of Ice and Fire",
+      text: "Eines Tages ist Eddard Stark nach Königsmund gereist. Der König hat ihn gerufen, weil er ihm helfen sollte. Eddard wollte eigentlich in Winterfell bleiben, aber er konnte nicht Nein sagen. Mit seinen zwei Töchtern ist er in den Süden gefahren. Die Reise war lang und gefährlich. In der Stadt hat er viele Feinde gefunden und nach der Wahrheit gesucht.",
+      translation:
+        "One day Eddard Stark travelled to King's Landing. The king had called him because he was supposed to help him. Eddard actually wanted to stay in Winterfell, but he could not say no. With his two daughters he travelled to the south. The journey was long and dangerous. In the city he found many enemies and searched for the truth.",
+      vocabulary: [
+        { german: "rufen", english: "to call", note: "Perfekt: hat gerufen" },
+        { german: "helfen", english: "to help", note: "+ dative: ihm helfen" },
+        { german: "bleiben", english: "to stay", note: "Perfekt with sein" },
+        { german: "gefährlich", english: "dangerous", note: "" },
+        { german: "die Wahrheit", english: "truth", note: "" },
+        { german: "suchen", english: "to search / look for", note: "nach etwas suchen" },
+      ],
+      grammar: [
+        {
+          point: "Perfekt with sein (movement)",
+          explanation: "Verbs of movement form the Perfekt with sein: ist gereist, ist gefahren.",
+          examples: [{ german: "Eddard ist nach Königsmund gereist.", english: "Eddard travelled to King's Landing." }],
+        },
+        {
+          point: "Subordinate clause with weil",
+          explanation: "weil (because) sends the verb to the end of its clause.",
+          examples: [{ german: "Der König hat ihn gerufen, weil er ihm helfen sollte.", english: "The king called him because he was supposed to help him." }],
+        },
+        {
+          point: "Modal verbs in the past",
+          explanation: "Modals are usually used in the simple past: wollen → wollte, können → konnte.",
+          examples: [{ german: "Er konnte nicht Nein sagen.", english: "He could not say no." }],
+        },
+      ],
+    },
+    {
+      id: "a2-daenerys-reise",
+      level: "A2",
+      title: "Die Reise der Daenerys",
+      topic: "a long journey in A Song of Ice and Fire",
+      text: "Daenerys hat ihr ganzes Leben in fremden Ländern verbracht. Sie musste oft umziehen, weil ihre Familie keine Heimat mehr hatte. Mit einem großen Volk ist sie durch die Wüste gezogen. Viele Menschen sind auf dem Weg gestorben, aber Daenerys hat nie aufgegeben. Ihre Drachen sind mit ihr gewachsen und sie ist stärker geworden. Heute kann sie über ein großes Heer befehlen.",
+      translation:
+        "Daenerys spent her whole life in foreign lands. She often had to move, because her family no longer had a home. With a large people she travelled through the desert. Many people died on the way, but Daenerys never gave up. Her dragons grew with her and she became stronger. Today she can command a large army.",
+      vocabulary: [
+        { german: "fremd", english: "foreign / strange", note: "" },
+        { german: "umziehen", english: "to move (house)", note: "separable; Perfekt with sein" },
+        { german: "die Heimat", english: "homeland / home", note: "" },
+        { german: "die Wüste", english: "desert", note: "" },
+        { german: "aufgeben", english: "to give up", note: "separable" },
+        { german: "das Heer", english: "army", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Perfekt: haben vs sein",
+          explanation: "Most verbs use haben (hat verbracht); movement and change use sein (ist gezogen, ist geworden).",
+          examples: [
+            { german: "Sie hat ihr Leben in fremden Ländern verbracht.", english: "She spent her life in foreign lands." },
+            { german: "Sie ist durch die Wüste gezogen.", english: "She travelled through the desert." },
+          ],
+        },
+        {
+          point: "Modal müssen in the past",
+          explanation: "müssen → musste expresses what someone had to do.",
+          examples: [{ german: "Sie musste oft umziehen.", english: "She often had to move." }],
+        },
+        {
+          point: "werden + comparative",
+          explanation: "werden means 'to become'; with a comparative it shows change: stärker werden.",
+          examples: [{ german: "Sie ist stärker geworden.", english: "She became stronger." }],
+        },
+      ],
+    },
+    {
+      id: "a2-jon-nachtwache",
+      level: "A2",
+      title: "Jon und die Nachtwache",
+      topic: "a character's path in A Song of Ice and Fire",
+      text: "Als junger Mann hat Jon Schnee Winterfell verlassen. Er ist zur großen Mauer im Norden gegangen, weil er der Nachtwache helfen wollte. Das Leben dort war sehr hart, denn es war immer kalt. Jon musste viel lernen und oft kämpfen. Am Anfang mochten ihn die anderen Männer nicht, aber später ist er ihr Anführer geworden. Hinter der Mauer hat er gefährliche Feinde gesehen.",
+      translation:
+        "As a young man Jon Snow left Winterfell. He went to the great wall in the north because he wanted to help the Night's Watch. Life there was very hard, because it was always cold. Jon had to learn a lot and fight often. At first the other men did not like him, but later he became their leader. Behind the wall he saw dangerous enemies.",
+      vocabulary: [
+        { german: "verlassen", english: "to leave (a place)", note: "Perfekt: hat verlassen" },
+        { german: "der Anführer", english: "leader", note: "" },
+        { german: "später", english: "later", note: "" },
+        { german: "mögen", english: "to like", note: "past: mochte" },
+        { german: "der Anfang", english: "beginning / start", note: "am Anfang = at first" },
+        { german: "sehen", english: "to see", note: "Perfekt: hat gesehen" },
+      ],
+      grammar: [
+        {
+          point: "Perfekt with sein and haben together",
+          explanation: "ist gegangen / ist geworden (movement, change) but hat verlassen / hat gesehen (other verbs).",
+          examples: [{ german: "Er ist zur Mauer gegangen und hat Feinde gesehen.", english: "He went to the wall and saw enemies." }],
+        },
+        {
+          point: "weil and denn",
+          explanation: "Both mean 'because'. weil sends the verb to the end; denn keeps normal word order.",
+          examples: [{ german: "Er ist gegangen, weil er helfen wollte.", english: "He went because he wanted to help." }],
+        },
+        {
+          point: "Modals in the past tense",
+          explanation: "wollen → wollte, müssen → musste, mögen → mochten describe past attitudes and duties.",
+          examples: [{ german: "Die Männer mochten ihn nicht.", english: "The men did not like him." }],
+        },
+      ],
+    },
+    {
+      id: "a2-bran",
+      level: "A2",
+      title: "Bran und sein Sturz",
+      topic: "a character from A Song of Ice and Fire",
+      text: "Bran Stark ist als Kind gern geklettert. Eines Tages ist er von einem hohen Turm gefallen. Danach konnte er nicht mehr laufen. Bran war sehr traurig, weil er kein Ritter mehr werden konnte. Aber dann hat er eine besondere Gabe bekommen. In seinen Träumen konnte er durch die Augen von Tieren sehen. Mit einigen Freunden ist er weit in den Norden gereist.",
+      translation:
+        "As a child Bran Stark liked to climb. One day he fell from a high tower. After that he could no longer walk. Bran was very sad, because he could no longer become a knight. But then he received a special gift. In his dreams he could see through the eyes of animals. With a few friends he travelled far into the north.",
+      vocabulary: [
+        { german: "klettern", english: "to climb", note: "" },
+        { german: "der Turm", english: "tower", note: "" },
+        { german: "fallen", english: "to fall", note: "Perfekt with sein: ist gefallen" },
+        { german: "traurig", english: "sad", note: "" },
+        { german: "der Ritter", english: "knight", note: "" },
+        { german: "die Gabe", english: "gift / talent", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Perfekt with sein",
+          explanation: "fallen and reisen take sein: ist gefallen, ist gereist.",
+          examples: [{ german: "Er ist von einem Turm gefallen.", english: "He fell from a tower." }],
+        },
+        {
+          point: "Modal könnte → konnte (past)",
+          explanation: "können in the simple past is konnte: what someone could or could not do.",
+          examples: [{ german: "Danach konnte er nicht mehr laufen.", english: "After that he could no longer walk." }],
+        },
+        {
+          point: "weil with a modal verb",
+          explanation: "In a weil-clause the verb goes last; with a modal, the modal stands at the very end.",
+          examples: [{ german: "Er war traurig, weil er kein Ritter werden konnte.", english: "He was sad because he could not become a knight." }],
+        },
+      ],
+    },
+    {
+      id: "a2-haus-lannister",
+      level: "A2",
+      title: "Haus Lannister",
+      topic: "a powerful family in A Song of Ice and Fire",
+      text: "Haus Lannister ist die reichste Familie in ganz Westeros. Unter ihrer Burg gibt es viel Gold. Die Lannisters haben immer ihre Schulden bezahlt, deshalb respektieren und fürchten die Menschen sie. Tywin Lannister war ein harter und kluger Mann. Er wollte, dass seine Familie immer mächtig bleibt. Seine Kinder mussten ihm gehorchen. Wer gegen die Lannisters gekämpft hat, hat oft verloren.",
+      translation:
+        "House Lannister is the richest family in all of Westeros. Under their castle there is a lot of gold. The Lannisters have always paid their debts, so people respect and fear them. Tywin Lannister was a hard and clever man. He wanted his family to always stay powerful. His children had to obey him. Whoever fought against the Lannisters often lost.",
+      vocabulary: [
+        { german: "das Gold", english: "gold", note: "" },
+        { german: "die Schulden", english: "debts", note: "plural noun" },
+        { german: "fürchten", english: "to fear", note: "" },
+        { german: "respektieren", english: "to respect", note: "" },
+        { german: "gehorchen", english: "to obey", note: "+ dative" },
+        { german: "verlieren", english: "to lose", note: "Perfekt: hat verloren" },
+      ],
+      grammar: [
+        {
+          point: "Superlative before a noun",
+          explanation: "die reichste Familie = the richest family; the ending is -ste + adjective ending.",
+          examples: [{ german: "die reichste Familie in ganz Westeros", english: "the richest family in all of Westeros" }],
+        },
+        {
+          point: "Perfekt with haben",
+          explanation: "bezahlen, kämpfen and verlieren use haben: haben bezahlt, hat gekämpft, hat verloren.",
+          examples: [{ german: "Die Lannisters haben ihre Schulden bezahlt.", english: "The Lannisters paid their debts." }],
+        },
+        {
+          point: "müssen in the past",
+          explanation: "müssen → mussten expresses obligation in the past.",
+          examples: [{ german: "Seine Kinder mussten ihm gehorchen.", english: "His children had to obey him." }],
+        },
+      ],
+    },
+    {
+      id: "a2-haus-targaryen",
+      level: "A2",
+      title: "Haus Targaryen",
+      topic: "the dragon kings of A Song of Ice and Fire",
+      text: "Vor langer Zeit ist die Familie Targaryen aus einem Land namens Valyria gekommen. Sie hatten Drachen und konnten damit ihre Feinde besiegen. Mit den Drachen haben sie fast ganz Westeros erobert. Fast dreihundert Jahre lang haben die Targaryens als Könige regiert. Aber dann sind die Drachen gestorben und die Familie wurde schwächer. Am Ende hat das Volk gegen den letzten König gekämpft und nur wenige Targaryens haben überlebt.",
+      translation:
+        "Long ago the Targaryen family came from a land called Valyria. They had dragons and could defeat their enemies with them. With the dragons they conquered almost all of Westeros. For almost three hundred years the Targaryens ruled as kings. But then the dragons died and the family became weaker. In the end the people fought against the last king and only a few Targaryens survived.",
+      vocabulary: [
+        { german: "besiegen", english: "to defeat", note: "" },
+        { german: "erobern", english: "to conquer", note: "Perfekt: hat erobert" },
+        { german: "regieren", english: "to rule / govern", note: "" },
+        { german: "sterben", english: "to die", note: "Perfekt with sein: ist gestorben" },
+        { german: "schwach", english: "weak", note: "comparative: schwächer" },
+        { german: "überleben", english: "to survive", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Perfekt: haben and sein",
+          explanation: "haben erobert / haben regiert, but ist gekommen / sind gestorben for movement and change.",
+          examples: [{ german: "Sie haben Westeros erobert.", english: "They conquered Westeros." }],
+        },
+        {
+          point: "konnten (modal past)",
+          explanation: "können → konnten describes a past ability.",
+          examples: [{ german: "Sie konnten ihre Feinde besiegen.", english: "They could defeat their enemies." }],
+        },
+        {
+          point: "Time phrase: ... Jahre lang",
+          explanation: "lang after a length of time means 'for': dreihundert Jahre lang = for three hundred years.",
+          examples: [{ german: "Sie haben dreihundert Jahre lang regiert.", english: "They ruled for three hundred years." }],
+        },
+      ],
+    },
+    {
+      id: "a2-der-winter-kommt",
+      level: "A2",
+      title: "Der Winter kommt",
+      topic: "the seasons of Westeros in A Song of Ice and Fire",
+      text: "In Westeros sind die Jahreszeiten nicht normal. Ein Sommer kann viele Jahre dauern, aber danach kommt ein langer Winter. Die Menschen im Norden haben immer Angst vor dem Winter gehabt. Deshalb sagt Familie Stark: „Der Winter kommt.“ Vor dem Winter müssen die Leute viel Essen sammeln. Im Winter ist es sehr kalt und gefährlich. Mit dem Winter kommen auch dunkle Gefahren aus dem hohen Norden.",
+      translation:
+        "In Westeros the seasons are not normal. A summer can last many years, but after that comes a long winter. The people in the north have always been afraid of the winter. That is why the Stark family says: 'Winter is coming.' Before the winter the people must gather a lot of food. In winter it is very cold and dangerous. With the winter also come dark dangers from the far north.",
+      vocabulary: [
+        { german: "die Jahreszeit", english: "season", note: "plural: die Jahreszeiten" },
+        { german: "der Sommer", english: "summer", note: "" },
+        { german: "dauern", english: "to last", note: "" },
+        { german: "sammeln", english: "to gather / collect", note: "" },
+        { german: "das Essen", english: "food", note: "" },
+        { german: "die Gefahr", english: "danger", note: "plural: die Gefahren" },
+      ],
+      grammar: [
+        {
+          point: "Modal können (present)",
+          explanation: "können shows possibility; the second verb is an infinitive at the end.",
+          examples: [{ german: "Ein Sommer kann viele Jahre dauern.", english: "A summer can last many years." }],
+        },
+        {
+          point: "Dative after vor / mit",
+          explanation: "vor and mit always take the dative: vor dem Winter, mit dem Winter.",
+          examples: [{ german: "Vor dem Winter sammeln die Leute Essen.", english: "Before winter the people gather food." }],
+        },
+        {
+          point: "Perfekt of haben",
+          explanation: "The verb haben itself in the Perfekt is hat/haben gehabt.",
+          examples: [{ german: "Sie haben immer Angst gehabt.", english: "They have always been afraid." }],
+        },
+      ],
+    },
+    {
+      id: "a2-sansa",
+      level: "A2",
+      title: "Sansa Stark",
+      topic: "a character from A Song of Ice and Fire",
+      text: "Sansa Stark war als junges Mädchen sehr romantisch. Sie wollte einen schönen Prinzen heiraten und in einem Schloss leben. Deshalb ist sie gern nach Königsmund gereist. Aber in der Stadt hat sie viel Schlimmes erlebt. Der junge König war grausam und sie konnte nicht nach Hause zurück. Mit der Zeit ist Sansa stärker und klüger geworden. Am Ende hat sie gelernt, sich selbst zu schützen.",
+      translation:
+        "As a young girl Sansa Stark was very romantic. She wanted to marry a handsome prince and live in a palace. So she was happy to travel to King's Landing. But in the city she experienced many bad things. The young king was cruel and she could not go back home. Over time Sansa became stronger and cleverer. In the end she learned to protect herself.",
+      vocabulary: [
+        { german: "heiraten", english: "to marry", note: "" },
+        { german: "der Prinz", english: "prince", note: "" },
+        { german: "erleben", english: "to experience", note: "" },
+        { german: "grausam", english: "cruel", note: "" },
+        { german: "zurück", english: "back", note: "nach Hause zurück = back home" },
+        { german: "lernen", english: "to learn", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Modal verbs in the past",
+          explanation: "wollte (wanted) and konnte (could) describe past wishes and abilities.",
+          examples: [{ german: "Sie wollte einen Prinzen heiraten.", english: "She wanted to marry a prince." }],
+        },
+        {
+          point: "Comparative adjectives",
+          explanation: "Add -er for the comparative: stark → stärker, klug → klüger.",
+          examples: [{ german: "Sansa ist stärker und klüger geworden.", english: "Sansa became stronger and cleverer." }],
+        },
+        {
+          point: "Connector deshalb",
+          explanation: "deshalb (so / that's why) is followed by the verb, then the subject.",
+          examples: [{ german: "Deshalb ist sie nach Königsmund gereist.", english: "So she travelled to King's Landing." }],
+        },
+      ],
+    },
+    {
+      id: "a2-freie-staedte",
+      level: "A2",
+      title: "Die Freien Städte",
+      topic: "the cities of Essos in A Song of Ice and Fire",
+      text: "Östlich von Westeros liegt ein großer Kontinent. Er heißt Essos. Dort gibt es viele reiche Städte, die man die Freien Städte nennt. Die bekannteste Stadt heißt Braavos. Kaufleute aus diesen Städten sind über das Meer gefahren und haben mit der ganzen Welt gehandelt. In den Freien Städten haben viele verschiedene Menschen zusammengelebt. Manche Familien aus Westeros sind dorthin geflohen, weil sie zu Hause Feinde hatten.",
+      translation:
+        "East of Westeros lies a large continent. It is called Essos. There are many rich cities there, which people call the Free Cities. The most famous city is called Braavos. Merchants from these cities sailed across the sea and traded with the whole world. In the Free Cities many different people lived together. Some families from Westeros fled there because they had enemies at home.",
+      vocabulary: [
+        { german: "östlich", english: "eastern / to the east", note: "östlich von = east of" },
+        { german: "der Kontinent", english: "continent", note: "" },
+        { german: "der Kaufmann", english: "merchant", note: "plural: die Kaufleute" },
+        { german: "handeln", english: "to trade", note: "mit etwas handeln" },
+        { german: "fliehen", english: "to flee", note: "Perfekt with sein: ist geflohen" },
+        { german: "verschieden", english: "different / various", note: "" },
+      ],
+      grammar: [
+        {
+          point: "Perfekt with sein (movement)",
+          explanation: "fahren and fliehen take sein: sind gefahren, sind geflohen.",
+          examples: [{ german: "Kaufleute sind über das Meer gefahren.", english: "Merchants sailed across the sea." }],
+        },
+        {
+          point: "Relative clause with which",
+          explanation: "die (which) introduces a relative clause and sends the verb to the end.",
+          examples: [{ german: "Städte, die man die Freien Städte nennt", english: "cities which people call the Free Cities" }],
+        },
+        {
+          point: "weil with haben in the past",
+          explanation: "In a weil-clause the verb goes to the end: ... weil sie Feinde hatten.",
+          examples: [{ german: "Sie sind geflohen, weil sie Feinde hatten.", english: "They fled because they had enemies." }],
         },
       ],
     },
