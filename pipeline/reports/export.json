@@ -1,5 +1,5 @@
 {
-  "content_version": "3187168d1071e12b",
+  "content_version": "3b72d058539190ae",
   "lemma_rows": 507,
   "status": {
     "ok": 502,
@@ -10,7 +10,7 @@
   },
   "noun_table_mismatches": 5,
   "sentences": 2492,
-  "audio_files": 37,
+  "audio_files": 502,
   "active_gender_rules": 0,
   "dictionary_entries": {
     "adj": 15339,
