@@ -1,15 +1,12 @@
 {
-  "content_version": "3b72d058539190ae",
+  "content_version": "e1f97354c8df8919",
   "lemma_rows": 507,
   "status": {
-    "ok": 502,
-    "needs_review": 5
+    "ok": 507
   },
-  "review_reasons": {
-    "table_mismatch": 5
-  },
-  "noun_table_mismatches": 5,
-  "sentences": 2492,
+  "review_reasons": {},
+  "noun_table_mismatches": 0,
+  "sentences": 2522,
   "audio_files": 502,
   "active_gender_rules": 0,
   "dictionary_entries": {

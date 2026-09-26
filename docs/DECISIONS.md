@@ -152,3 +152,26 @@ match:
 - **github.com is unreachable** from the build environment, so OdeNet is not
   used yet. Semantic fields come from Wiktionary topic categories only, and about
   two thirds of lemmas have none. An empty field never blocks introduction.
+
+## M1 review (2026-09-26)
+
+Marcel delegated the review of the M1 report to Claude. The decisions live in
+`pipeline/review/decisions.json`, and the pipeline applies them on every run.
+
+- **Noun table mismatches: all five were data problems, not engine bugs.** The
+  engine bugs found during M1 were fixed before this review (see above).
+  - `Mann`, `Thema`, `der Ort`, `Junge`: the stored table keeps only the
+    standard plurals. The dropped ones are an obsolete `Mann`, the variants
+    `Themas`/`Themata`, the specialised `Örter`, and the colloquial
+    `Jungs`/`Jungens`. `das Ort` (mining) keeps `Örter`.
+  - `Herz`: Wiktionary's table is accepted, so both `dem Herzen` and
+    `dem Herz` count as correct.
+- **All 127 verb frames reviewed and approved.** Modal verbs, the copula and
+  intransitive verbs get an empty frame and therefore no frame facet.
+  Prepositional objects are recorded, e.g. `warten auf + Akk`,
+  `denken an + Akk`.
+- **M1 is accepted.**
+- **The word database `apps/server/content/content.sqlite` (about 1.5 MB) is
+  committed** so the server needs no pipeline run. `dictionary.sqlite` (59 MB)
+  and the audio files stay out of git; they are rebuilt with
+  `python -m wortduell_pipeline all`.

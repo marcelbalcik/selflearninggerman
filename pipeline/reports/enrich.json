@@ -5,7 +5,8 @@
     "A1": 507
   },
   "verbs": 127,
-  "frames_for_review": 127,
+  "frames_approved": 127,
+  "frames_for_review": 0,
   "frame_source_disagreements": [
     {
       "verb": "werden",

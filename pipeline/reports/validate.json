@@ -1,10 +1,10 @@
 {
-  "candidates": 2506,
-  "kept": 2492,
+  "candidates": 2536,
+  "kept": 2522,
   "kept_by_type": {
-    "kasus_luecke": 504,
-    "fehlersuche": 504,
-    "bedeutung": 1484
+    "kasus_luecke": 513,
+    "fehlersuche": 513,
+    "bedeutung": 1496
   },
   "rejected": {
     "kasus_luecke:render_mismatch": 4,

@@ -134,9 +134,36 @@ def _cells(table: dict[str, Any] | None) -> dict[str, list[str]]:
     return out
 
 
+REVIEW_FILE = WORK.parent / "review" / "decisions.json"
+
+
+def review_decisions() -> dict[str, Any]:
+    """Human review of report items (pipeline/review/decisions.json), applied on every run."""
+    if not REVIEW_FILE.exists():
+        return {"nouns": {}, "frames": {}}
+    return json.loads(REVIEW_FILE.read_text(encoding="utf-8"))
+
+
 def crosscheck() -> dict[str, Any]:
-    """Compare every Wiktionary table with the TypeScript rule engine (`core:decline`)."""
+    """Compare every Wiktionary table with the TypeScript rule engine (`core:decline`).
+
+    Reviewed decisions are applied first: `restrict_plural_to` keeps only the
+    chosen standard plurals (and their dative) in the stored table;
+    `accept_wiktionary_table` keeps the table as it is despite the mismatch.
+    """
     rows = list(read_jsonl(LEMMAS))
+    review = review_decisions()
+    for r in rows:
+        decision = None
+        if r["pos"] == "noun":
+            decision = review["nouns"].get(f"{r['text']} ({r['sense_key']})") if r["sense_key"] else None
+            decision = decision or review["nouns"].get(r["text"])
+        if decision and decision["action"] == "restrict_plural_to":
+            r["noun"]["plural"] = decision["plural"]
+            r["_restrict_plural"] = True
+        if decision:
+            r["review"] = {"decision": decision["action"], "note": decision["note"],
+                           "reviewer": review["reviewer"], "date": review["date"]}
     nouns = [r for r in rows if r["pos"] == "noun"
              and (r["noun"]["gender"] is not None or r["noun"]["plural_only"])]
     engine = {
@@ -159,6 +186,11 @@ def crosscheck() -> dict[str, Any]:
     for r in rows:
         if r["id"] in engine:
             out = engine[r["id"]]
+            if r.pop("_restrict_plural", False) and r["noun"]["forms"].get("pl"):
+                allowed = out["table"]["pl"] or {}
+                pl = r["noun"]["forms"]["pl"]
+                for case in pl:
+                    pl[case] = [f for f in pl[case] if f in allowed.get(case, [])]
             wikt = _cells(r["noun"]["forms"])
             eng = _cells(out["table"])
             diff = []
@@ -166,7 +198,10 @@ def crosscheck() -> dict[str, Any]:
                 w, e = wikt.get(cell, []), eng.get(cell, [])
                 if w != e:
                     diff.append({"cell": cell, "wiktionary": w, "engine": e})
-            if diff:
+            accepted = r.get("review", {}).get("decision") == "accept_wiktionary_table"
+            if diff and accepted:
+                r["review"]["accepted_mismatch"] = diff
+            elif diff:
                 r["issues"].append("table_mismatch")
                 r["mismatch"] = diff
                 mismatches.append({"id": r["id"], "lemma": r["text"], "cells": diff})
@@ -183,6 +218,7 @@ def crosscheck() -> dict[str, Any]:
         "nouns_checked": len(engine),
         "verbs_checked": len(verb_checks),
         "noun_mismatches": len(mismatches),
+        "reviewed": {r["text"]: r["review"] for r in rows if "review" in r},
         "mismatches": mismatches,
         "needs_review": {r["text"] + (f" ({r['sense_key']})" if r["sense_key"] else ""): r["issues"]
                          for r in rows if r["status"] == "needs_review"},

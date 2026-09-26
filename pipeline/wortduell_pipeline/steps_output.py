@@ -13,7 +13,7 @@ import urllib.request
 from collections import defaultdict
 from typing import Any
 
-from .common import AUDIO_DIR, REPORTS, WORK, USER_AGENT, config, read_jsonl, write_report
+from .common import AUDIO_DIR, REPO, REPORTS, WORK, USER_AGENT, config, read_jsonl, write_report
 from .kaikki import exclusion_reason, glosses, parse_noun, parse_verb
 from .steps_lexicon import LEMMAS
 from .steps_corpus import SENTENCES
@@ -232,6 +232,10 @@ def export() -> dict[str, Any]:
             g["suffix"], g["gender"], g["dataset_accuracy"], g["n"], int(g["active"])))
     db.commit()
     db.close()
+    # The server imports this committed copy on startup (spec §11 "Server import").
+    server_copy = REPO / "apps" / "server" / "content" / "content.sqlite"
+    server_copy.parent.mkdir(parents=True, exist_ok=True)
+    server_copy.write_bytes(path.read_bytes())
 
     dict_counts = _export_dictionary(version, today)
     report = _m1_report(rows, sentences, audio_rows, rules, version, dict_counts)
@@ -341,9 +345,18 @@ def _write_markdown(rows, reports, summary, mismatches) -> None:
             L.append(f"| {text} | {pos} | {', '.join(issues)} |")
     else:
         L.append("None.")
-    L += ["", "### Verb frames (all need review)", "",
-          "Proposed from Wiktionary notes plus object counts in the parsed Tatoeba sentences.", "",
-          "| Verb | Proposed frame | Wiktionary | Corpus (uses: counts) |", "|------|----------------|------------|------------------------|"]
+    reviewed = reports.get("crosscheck", {}).get("reviewed", {})
+    L += ["", "### Reviewed noun decisions", ""]
+    if reviewed:
+        L += ["| Noun | Decision | Note |", "|------|----------|------|"]
+        for word, rv in reviewed.items():
+            L.append(f"| {word} | {rv['decision']} | {rv['note']} |")
+    else:
+        L.append("None.")
+    L += ["", "### Verb frames", "",
+          "Proposed from Wiktionary notes plus object counts in the parsed Tatoeba sentences; "
+          "the final frame is the reviewed one (pipeline/review/decisions.json).", "",
+          "| Verb | Final frame | Status | Wiktionary | Corpus (uses: counts) |", "|------|-------------|--------|------------|------------------------|"]
     for r in rows:
         if r["pos"] != "verb" or "frame" not in r["verb"]:
             continue
@@ -352,7 +365,7 @@ def _write_markdown(rows, reports, summary, mismatches) -> None:
         prop = ", ".join(fr["objects"] + [f"{p['prep']}+{p['case']}" for p in fr.get("preps", [])]) or "—"
         wk = ", ".join(src["wiktionary"]["objects"] + [f"{p['prep']}+{p['case']}" for p in src["wiktionary"]["preps"]]) or "—"
         counts = ", ".join(f"{k} {v}" for k, v in sorted(src["corpus"]["counts"].items(), key=lambda kv: -kv[1])[:4])
-        L.append(f"| {r['text']} | {prop} | {wk} | {src['corpus']['uses']}: {counts or '—'} |")
+        L.append(f"| {r['text']} | {prop} | {r['verb']['frame_status']} | {wk} | {src['corpus']['uses']}: {counts or '—'} |")
     L += ["", "## Selection", "",
           f"Method: {sel.get('method', '')}. Function words are grammar skills, not deck words.", "",
           "First 60: " + ", ".join(f"{x['word']}" for x in sel.get("ranking", [])[:60]), "",

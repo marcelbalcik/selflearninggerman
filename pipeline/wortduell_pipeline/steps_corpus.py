@@ -10,7 +10,7 @@ from typing import Any
 from .common import WORK, config, core_cli, read_jsonl, write_jsonl, write_report
 from .corpus import iter_parsed, parse_all
 from .kaikki import noun_input
-from .steps_lexicon import LEMMAS, cefr_hint
+from .steps_lexicon import LEMMAS, cefr_hint, review_decisions
 
 CANDIDATES = WORK / "sentences.candidates.jsonl"
 SENTENCES = WORK / "sentences.jsonl"
@@ -109,7 +109,16 @@ def enrich() -> dict[str, Any]:
         r["verb"]["frame"] = frame
         r["verb"]["frame_sources"] = {"wiktionary": wikt, "corpus": corpus,
                                       "corpus_proposal": {"objects": c_objects, "preps": c_preps}}
-        r["verb"]["frame_status"] = "needs_review"
+        reviewed = review_decisions()["frames"].get(verb)
+        if reviewed is not None:
+            r["verb"]["frame"] = {"objects": reviewed["objects"]}
+            if reviewed.get("preps"):
+                r["verb"]["frame"]["preps"] = reviewed["preps"]
+            r["verb"]["frame_status"] = "approved"
+            if reviewed.get("note"):
+                r["verb"]["frame_note"] = reviewed["note"]
+        else:
+            r["verb"]["frame_status"] = "needs_review"
         if n >= cfg["FRAME_MIN_CORPUS_EXAMPLES"] and set(wikt["objects"]) != set(c_objects):
             disagreements.append({"verb": verb, "wiktionary": wikt["objects"],
                                   "corpus": c_objects, "corpus_uses": n})
@@ -119,7 +128,8 @@ def enrich() -> dict[str, Any]:
         "without_semantic_field": sum(1 for r in rows if not r["semantic_field"]),
         "cefr_hint": _count(rows, "cefr_hint"),
         "verbs": len(verbs),
-        "frames_for_review": len(verbs),
+        "frames_approved": sum(1 for r in rows if r["pos"] == "verb" and r["verb"]["frame_status"] == "approved"),
+        "frames_for_review": sum(1 for r in rows if r["pos"] == "verb" and r["verb"]["frame_status"] != "approved"),
         "frame_source_disagreements": disagreements,
         "semantic_fields": sorted({r["semantic_field"] for r in rows if r["semantic_field"]}),
     }

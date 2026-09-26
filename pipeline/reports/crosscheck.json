@@ -1,204 +1,38 @@
 {
   "nouns_checked": 192,
   "verbs_checked": 127,
-  "noun_mismatches": 5,
-  "mismatches": [
-    {
-      "id": 3662050225448,
-      "lemma": "Mann",
-      "cells": [
-        {
-          "cell": "pl.akk",
-          "wiktionary": [
-            "Mann",
-            "Männer"
-          ],
-          "engine": [
-            "Männer"
-          ]
-        },
-        {
-          "cell": "pl.dat",
-          "wiktionary": [
-            "Mann",
-            "Männern"
-          ],
-          "engine": [
-            "Männern"
-          ]
-        },
-        {
-          "cell": "pl.gen",
-          "wiktionary": [
-            "Mann",
-            "Männer"
-          ],
-          "engine": [
-            "Männer"
-          ]
-        },
-        {
-          "cell": "pl.nom",
-          "wiktionary": [
-            "Mann",
-            "Männer"
-          ],
-          "engine": [
-            "Männer"
-          ]
-        }
-      ]
+  "noun_mismatches": 0,
+  "reviewed": {
+    "Mann": {
+      "decision": "restrict_plural_to",
+      "note": "table lists obsolete plural 'Mann' unlabelled; headword marks it obsolete",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
     },
-    {
-      "id": 45155968623268,
-      "lemma": "Thema",
-      "cells": [
-        {
-          "cell": "pl.akk",
-          "wiktionary": [
-            "Themas",
-            "Themata",
-            "Themen"
-          ],
-          "engine": [
-            "Themen"
-          ]
-        },
-        {
-          "cell": "pl.dat",
-          "wiktionary": [
-            "Themas",
-            "Themata",
-            "Themen"
-          ],
-          "engine": [
-            "Themen"
-          ]
-        },
-        {
-          "cell": "pl.gen",
-          "wiktionary": [
-            "Themas",
-            "Themata",
-            "Themen"
-          ],
-          "engine": [
-            "Themen"
-          ]
-        },
-        {
-          "cell": "pl.nom",
-          "wiktionary": [
-            "Themas",
-            "Themata",
-            "Themen"
-          ],
-          "engine": [
-            "Themen"
-          ]
-        }
-      ]
+    "Thema": {
+      "decision": "restrict_plural_to",
+      "note": "Themas/Themata are labelled variants on the headword",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
     },
-    {
-      "id": 27719695785296,
-      "lemma": "Ort",
-      "cells": [
-        {
-          "cell": "pl.akk",
-          "wiktionary": [
-            "Orte",
-            "Örter"
-          ],
-          "engine": [
-            "Orte"
-          ]
-        },
-        {
-          "cell": "pl.dat",
-          "wiktionary": [
-            "Orten",
-            "Örtern"
-          ],
-          "engine": [
-            "Orten"
-          ]
-        },
-        {
-          "cell": "pl.gen",
-          "wiktionary": [
-            "Orte",
-            "Örter"
-          ],
-          "engine": [
-            "Orte"
-          ]
-        },
-        {
-          "cell": "pl.nom",
-          "wiktionary": [
-            "Orte",
-            "Örter"
-          ],
-          "engine": [
-            "Orte"
-          ]
-        }
-      ]
+    "Ort": {
+      "decision": "restrict_plural_to",
+      "note": "Örter is a specialised plural (mathematics, mining)",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
     },
-    {
-      "id": 103174466416274,
-      "lemma": "Junge",
-      "cells": [
-        {
-          "cell": "pl.akk",
-          "wiktionary": [
-            "Jungen"
-          ],
-          "engine": [
-            "Jungen",
-            "Jungens",
-            "Jungs"
-          ]
-        },
-        {
-          "cell": "pl.dat",
-          "wiktionary": [
-            "Jungen"
-          ],
-          "engine": [
-            "Jungen",
-            "Jungens",
-            "Jungs"
-          ]
-        },
-        {
-          "cell": "pl.gen",
-          "wiktionary": [
-            "Jungen"
-          ],
-          "engine": [
-            "Jungen",
-            "Jungens",
-            "Jungs"
-          ]
-        },
-        {
-          "cell": "pl.nom",
-          "wiktionary": [
-            "Jungen"
-          ],
-          "engine": [
-            "Jungen",
-            "Jungens",
-            "Jungs"
-          ]
-        }
-      ]
+    "Junge": {
+      "decision": "restrict_plural_to",
+      "note": "Jungs/Jungens are colloquial; the table has only Jungen",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
     },
-    {
-      "id": 149744069198763,
-      "lemma": "Herz",
-      "cells": [
+    "Herz": {
+      "decision": "accept_wiktionary_table",
+      "note": "dem Herzen is standard, dem Herz also current; both accepted",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26",
+      "accepted_mismatch": [
         {
           "cell": "sg.dat",
           "wiktionary": [
@@ -211,22 +45,7 @@
         }
       ]
     }
-  ],
-  "needs_review": {
-    "Mann": [
-      "table_mismatch"
-    ],
-    "Thema": [
-      "table_mismatch"
-    ],
-    "Ort (m)": [
-      "table_mismatch"
-    ],
-    "Junge": [
-      "table_mismatch"
-    ],
-    "Herz": [
-      "table_mismatch"
-    ]
-  }
+  },
+  "mismatches": [],
+  "needs_review": {}
 }
