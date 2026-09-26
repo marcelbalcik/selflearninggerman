@@ -4,8 +4,18 @@
  * results hidden until both finished or the round closed. Round attempts are
  * normal FSRS reviews (context 'duel' / 'exam').
  */
-import { DUEL, EXAM, addDays, dayStart, lemmaFacetKey, recall, seededRng } from '@wortduell/core';
-import type { ExerciseType, LexicalFacet, StoredCard } from '@wortduell/core';
+import {
+  DUEL,
+  EXAM,
+  addDays,
+  dayStart,
+  decideDuel,
+  decideExam,
+  lemmaFacetKey,
+  recall,
+  seededRng,
+} from '@wortduell/core';
+import type { DuelMode, ExerciseType, LexicalFacet, StoredCard } from '@wortduell/core';
 import { json } from '../db';
 import type { Db } from '../db';
 import type { Repo } from '../repo';
@@ -417,6 +427,7 @@ export class Rounds {
       return {
         ...base,
         status: mine.played ? ('playing' as const) : ('ready' as const),
+        outcome: null,
         next: {
           index: next,
           exerciseType: sentence.exerciseType,
@@ -436,14 +447,22 @@ export class Rounds {
       const lemma = this.repo.lemma(item.lemmaId);
       return {
         index: a.item_index,
+        sentenceId: item.sentenceId,
+        lemmaId: item.lemmaId,
         voided: a.voided === 1,
         exerciseType: sentence?.exerciseType ?? null,
         prompt: sentence && lemma ? this.sessions.prompt(sentence, lemma) : null,
         feedback: json<Feedback>(a.feedback),
       };
     });
+    const outcome = reveal
+      ? kind === 'duel'
+        ? decideDuel(mine, other, round.mode as DuelMode)
+        : decideExam(mine, other)
+      : null;
     return {
       ...base,
+      outcome,
       status: closed ? ('closed' as const) : ('finished' as const),
       next: null,
       mine,

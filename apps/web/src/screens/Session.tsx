@@ -132,12 +132,22 @@ function Intro({ item, onNext }: { item: IntroItem; onNext: () => void }): React
   );
 }
 
-function Exercise({
+/** Where an answer goes: the session (feedback at once) or a duel/exam round (feedback at the end). */
+export type RoundSend = (a: {
+  answer: string;
+  tappedIndex?: number;
+  latencyMs: number;
+}) => Promise<unknown>;
+
+export function Exercise({
   item,
   onNext,
+  round,
 }: {
-  item: ExerciseItem;
+  item: Pick<ExerciseItem, 'sentenceId' | 'exerciseType' | 'lemmaId' | 'prompt'>;
   onNext: (correct: boolean) => void;
+  /** Duel or exam: no hint, no feedback between items. */
+  round?: RoundSend;
 }): ReactNode {
   const t = useT();
   const shownAt = useRef(performance.now());
@@ -156,6 +166,20 @@ function Exercise({
       return;
     }
     setBusy(true);
+    if (round) {
+      round({
+        answer: typed,
+        latencyMs: Math.round(performance.now() - shownAt.current),
+        ...(tapped !== null ? { tappedIndex: tapped } : {}),
+      }).then(
+        () => onNext(false),
+        (e: unknown) => {
+          setMessage(e instanceof ApiError ? e.message : t('error'));
+          setBusy(false);
+        },
+      );
+      return;
+    }
     api
       .attempt({
         sentenceId: item.sentenceId,
@@ -362,12 +386,12 @@ function Exercise({
         </p>
       )}
       <div className="btn-row">
-        {p.type === 'bedeutung' && !hint && (
+        {p.type === 'bedeutung' && !hint && !round && (
           <button type="button" className="btn btn-quiet" onClick={() => setHint(true)}>
             {t('hint')}
           </button>
         )}
-        {p.type === 'bedeutung' && (
+        {p.type === 'bedeutung' && !round && (
           <button type="button" className="btn btn-quiet" onClick={() => submit('')}>
             {t('dontKnow')}
           </button>
@@ -387,14 +411,18 @@ function Exercise({
   );
 }
 
-function FeedbackPanel({
+export function FeedbackPanel({
   item,
   feedback,
   onNext,
+  context,
 }: {
-  item: ExerciseItem;
+  item: Pick<ExerciseItem, 'sentenceId' | 'exerciseType' | 'lemmaId' | 'prompt'>;
   feedback: Feedback;
-  onNext: () => void;
+  /** Omitted in the duel/exam summary, where every item's feedback is listed. */
+  onNext?: () => void;
+  /** The task in one line (duel/exam summary, where the prompt is no longer on screen). */
+  context?: string;
 }): ReactNode {
   const t = useT();
   const [followUpDone, setFollowUpDone] = useState(feedback.followUp === null);
@@ -411,6 +439,7 @@ function FeedbackPanel({
 
   return (
     <div className="card feedback" aria-live="polite">
+      {context && <p className="muted de">{context}</p>}
       <h2>
         {feedback.correct ? (
           <>
@@ -548,15 +577,17 @@ function FeedbackPanel({
             {t('report')}
           </button>
         )}
-        <button
-          type="button"
-          className="btn btn-primary"
-          disabled={!followUpDone}
-          onClick={onNext}
-          autoFocus={followUpDone}
-        >
-          {t('next')}
-        </button>
+        {onNext && (
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={!followUpDone}
+            onClick={onNext}
+            autoFocus={followUpDone}
+          >
+            {t('next')}
+          </button>
+        )}
       </div>
       {showWord && (
         <Overlay onClose={() => setShowWord(false)}>

@@ -24,10 +24,12 @@ packages/core   pure TypeScript: config, determiners, declension, normalisation,
                 grading, error classification, ratings (no IO)
 apps/web        Vite + React PWA: login, placement, Heute, session runner with
                 red-pen feedback, Wort screen, report button (M3);
-                all eight exercise types, komposition, disputes, Prüfen (M4)
+                all eight exercise types, komposition, disputes, Prüfen (M4);
+                Duell, Monatsprüfung, Wettbewerb, Wochenziel, Aufgaben (M5)
 apps/server     Fastify + SQLite: auth, content import, FSRS cards, session queue,
                 attempts, reports with voiding, placement (M2); disputes,
-                komposition with optional LanguageTool, frame review (M4)
+                komposition with optional LanguageTool, frame review (M4);
+                settlement jobs, vouchers, rewards, dual-approval settings (M5)
 pipeline/       Python content pipeline: Wiktionary, Tatoeba,
                 spaCy, OdeNet; no paid APIs (M1)
 ```
@@ -59,7 +61,9 @@ target words and the partner corrects the text in Prüfen.
 fresh database and plays placement plus two full sessions, a komposition, a
 dispute and the partner's Prüfen round in Chromium
 (`CHROMIUM=/path/to/chrome` if it is not at `/opt/pw-browsers/chromium`).
-Screenshots land in `apps/web/e2e/screenshots/`; see `docs/screenshots/m3/`.
+A second script (`e2e/competition.e2e.ts`, also run by `pnpm e2e`) plays a
+duel, settles it on the next day, chooses and confirms the chore voucher and
+redeems reward vouchers with the reveal. Screenshots land in `apps/web/e2e/screenshots/`; see `docs/screenshots/m3/`.
 
 ## Development
 

@@ -340,3 +340,112 @@ wortduell_pipeline export` again later; it resumes where it stopped.
   - `pnpm e2e` plays umformen, diktat and wer_tut_was among the older types,
     two kompositions, and one dispute. The partner, on a second emulated
     phone, rejects that dispute and corrects a komposition in Prüfen.
+
+## M5 competition (2026-09-27)
+
+- **Settlement job.** `Competition.tick(now)` runs every minute in the server
+  and before every competition request. For each completed learning day it:
+  - takes the Behalten snapshots;
+  - settles the duel;
+  - on Sundays settles the week and the joint goal;
+  - on the last day of an exam window settles the month.
+
+  It then makes sure today's duel (and, in its window, the exam) exists and
+  runs the voucher timers. Every step is keyed by its period and skips work
+  already stored, so re-running from the epoch changes nothing; the
+  simulations check this by comparing every settlement table before and
+  after.
+
+- **Epoch.** The competition starts on the learning day on which both users
+  have finished (or skipped) placement. Week 1 is the week containing that
+  day, with baseline 0, and only its days from the epoch count.
+- **Duel items.**
+  - Items come from sentences of the four duel-eligible types, one per
+    lemma. Both users must have introduced the lemma, and the item's primary
+    facet must be unlocked for both, so `en_de_chunk` appears only once
+    `meaning_prod` has unlocked.
+  - The shuffle is seeded by the day, so the pick is reproducible. Items
+    with both users' R in [0.6, 0.95] come first; the rest follow by
+    closeness to that band.
+  - A lemma used in the last 7 days' duels is skipped.
+  - If no item qualifies, today's duel row is stored empty and means "no
+    duel today". It is generated on the day's first request or tick.
+- **Duel play.**
+  - Answers go in order, and each is a normal attempt (context `duel`, an
+    FSRS review) without feedback in the response. The feedback is stored
+    and shown for every item at the end, with report and dispute.
+  - The other user's score stays hidden until both have finished or the day
+    has ended.
+  - A player who never started forfeits. A started but unfinished duel
+    counts the answers given.
+  - An ambiguous determiner's gender follow-up can be answered in the
+    end-of-duel feedback. It only moves the FSRS blame, never the score.
+- **`vs_expected` example.** With the 0.25 draw margin, the spec's example
+  (+0.8 against +0.9) is a draw rather than a win for B. The rule is
+  implemented as written, and the tests use +0.8 against +1.1 for the win.
+- **Monatsprüfung.**
+  - The exam is generated when its window opens (days 1–3 of the next
+    month). It has 40 items: facets both users introduced during the month
+    and at least 7 days before the window, topped up with older shared
+    facets.
+  - The draw rule is at most 1 item apart, since both answer the same items.
+  - Not playing is a forfeit.
+- **Re-settlement (spec §8.4).** A report of a duel or exam sentence
+  removes that item from both players' scores (reported items and voided
+  attempts do not count). An approved dispute regrades the attempt. Either
+  one recomputes the affected round. If the winner changes:
+  - the old winner's star is revoked and the new winner gets one;
+  - an S voucher paid for by a revoked star is voided while nobody has
+    worked on it yet. A chore already done stays done.
+  - The monthly L voucher follows the same rule.
+  - Weekly Behalten snapshots are not recomputed.
+- **Stars.** Every `STARS_PER_S_VOUCHER` unspent stars (the setting in
+  effect at settlement) become an S chore voucher for the star owner.
+- **Active day.** A user has one when they finished the duel (waived on a
+  day without a duel) and either cleared the queue or did at least 40
+  session or duel reviews.
+  - "Cleared" is recorded when Heute finds no due exercises.
+  - Kompositions count by their day.
+- **Chore catalog words.** The chore nouns and verbs (Müll, rausbringen, …)
+  are not in the 2,000-word deck. The pipeline copies their Wiktionary
+  entries into a `catalog_word` table (`pipeline/review/catalog_words.json`),
+  so the voucher shows the stored declension strip and the separable split
+  (`raus|bringen`), with no grammar invented.
+- **Voucher timers.** An unpicked voucher gets a seeded random chore of its
+  size 24 h after settlement, with its deadline counted from then.
+  Auto-confirm happens 48 h after `done`.
+- **Rewards.**
+  - The seed catalog (§12) has an empty German mission where the spec gives
+    none, and the users can edit this.
+  - `BABYSITTER_AVAILABLE` is a shared switch without approval, because the
+    spec does not list it among the dual-approval settings.
+  - The draw uses a crypto-random seed stored on the redemption.
+    Reproducibility from the stored seed is tested.
+  - A reroll draws again in the same band and never draws the current
+    reward. It needs both users to tap.
+  - The starter can withdraw a pending redemption alone, since nothing has
+    been drawn yet. Undo after the draw needs both users and is refused once
+    the change voucher has been used.
+- **Dual-approval settings.** `NEW_PER_DAY`, `DUEL_MODE`,
+  `STARS_PER_S_VOUCHER`, `COOP_TIERS` and `REWARD_BANDS` are stored as a
+  history of values with their `effective_from` (the next day boundary
+  after approval). Each job reads the value in effect at its instant.
+- **UI.**
+  - The bottom navigation is Heute · Wettbewerb · Ziel · Aufgaben · Mehr.
+    Mehr holds the settings, the reward and chore catalogs, and the link to
+    Prüfen.
+  - The reward reveal is the only animation: a card flip, switched off
+    under `prefers-reduced-motion`.
+- **Acceptance.**
+  - `test/competition-sim.test.ts` runs two synthetic users 90 days from
+    2027-02-01 (spring DST switch, two exam windows including a forfeit).
+    It also runs them 30 days from 2026-10-12 (autumn switch, one exam).
+  - Both runs cover forfeits, no-result days, draws (raw and
+    `vs_expected`), a report that flips a settled duel and moves its star,
+    and a dual-approved mode change. They also cover chore vouchers through
+    every state (including the server's pick and auto-confirm) and
+    idempotent re-runs.
+  - The 90-day run ends by combining the banked reward vouchers (40 €):
+    30 € falls back to 20 € without a babysitter, with 20 € change. Undo
+    then restores every voucher and removes the change.
+  - `pnpm e2e` plays the same on emulated phones.

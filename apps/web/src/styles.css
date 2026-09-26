@@ -388,14 +388,17 @@ nav.tabs {
   bottom: 0;
   display: flex;
   justify-content: center;
-  gap: 8px;
-  padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+  gap: 2px;
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
   background: var(--paper);
   border-top: 1px solid var(--rule);
 }
 
 nav.tabs a {
-  flex: 0 1 11rem;
+  flex: 1 1 0;
+  max-width: 9rem;
+  font-size: 0.85rem;
+  text-align: center;
   min-height: var(--tap);
   display: flex;
   align-items: center;
@@ -433,3 +436,151 @@ nav.tabs a[aria-current='page'] {
 }
 
 /* No decorative motion: the reward reveal (M5) is the app's single animation (spec §10). */
+
+/* M5 ------------------------------------------------------------------ */
+
+/* A whole card that navigates (Heute). */
+.card-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.card-overdue {
+  border-color: var(--red);
+  box-shadow: inset 4px 0 0 var(--red);
+}
+
+ul.plain {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px;
+}
+ul.plain li {
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+
+.size {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 0 4px;
+  border: 1.5px solid var(--graphite);
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Seven day boxes of the week, ticked in ink when active. */
+.days {
+  display: flex;
+  gap: 4px;
+  margin: 4px 0;
+}
+.day {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--rule);
+  border-radius: 4px;
+  background: #fff;
+}
+.day-on {
+  color: var(--ink);
+  border-color: var(--ink);
+  font-weight: 700;
+}
+
+.voucher-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}
+.chip,
+.chore-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--tap);
+  padding: 4px 12px;
+  border: 1.5px solid var(--rule);
+  border-radius: var(--radius);
+  background: #fff;
+  margin-bottom: 6px;
+}
+.chip input,
+.chore-option input {
+  width: 20px;
+  height: 20px;
+}
+
+.inline-form {
+  display: flex;
+  gap: 8px;
+  margin: 6px 0 12px;
+}
+.inline-form input,
+.inline-form select {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 8px 10px;
+  border: 1.5px solid var(--graphite-soft);
+  border-radius: var(--radius);
+  background: #fff;
+}
+.setting {
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+.reward-row .link {
+  margin-left: 8px;
+}
+
+/* The reward reveal: the app's one deliberate animation (spec §10). */
+.reveal {
+  perspective: 900px;
+  margin: 12px 0;
+}
+.reveal-inner {
+  position: relative;
+  min-height: 150px;
+  transform-style: preserve-3d;
+  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal[data-flipped='true'] .reveal-inner {
+  transform: rotateY(180deg);
+}
+.reveal-back,
+.reveal-front {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 16px;
+  background: #fff;
+}
+.reveal-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: var(--ink);
+  background: var(--ink-soft);
+}
+.reveal-front {
+  position: relative;
+  transform: rotateY(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal-inner {
+    transition: none;
+  }
+}

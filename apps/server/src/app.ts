@@ -148,7 +148,11 @@ export function buildApp(opts: AppOptions): FastifyInstance {
         'SELECT placement_done_at FROM user WHERE id = ?',
       )
       .get(user.id);
-    return { ...req.user, placementDone: typeof row?.placement_done_at === 'string' };
+    return {
+      ...req.user,
+      placementDone: typeof row?.placement_done_at === 'string',
+      partner: competition.other(user.id),
+    };
   });
 
   app.put<{ Body: { uiLang: 'de' | 'en' } }>(

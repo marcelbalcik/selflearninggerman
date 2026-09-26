@@ -3,7 +3,9 @@ import type { ReactNode } from 'react';
 import { ApiError, api } from '../api';
 import { AnswerInput, WordDetail } from '../components/parts';
 import { useT } from '../i18n';
-import type { Me, PlacementItem, Today as TodayData } from '../types';
+import type { Home, Me, PlacementItem, RoundSummary, Today as TodayData } from '../types';
+import { ScoreLine } from './Competition';
+import { ChoreCatalog, RewardCatalog, SharedSettings } from './Mehr';
 
 export function Login({ onLogin }: { onLogin: () => void }): ReactNode {
   const t = useT();
@@ -62,25 +64,106 @@ export function Login({ onLogin }: { onLogin: () => void }): ReactNode {
   );
 }
 
+function RoundCard({
+  kind,
+  round,
+  me,
+  onPlay,
+}: {
+  kind: 'duel' | 'exam';
+  round: RoundSummary;
+  me: Me;
+  onPlay: () => void;
+}): ReactNode {
+  const t = useT();
+  const other = round.other;
+  const otherDone = other !== null && other !== undefined && 'correct' in other;
+  return (
+    <div className="card">
+      <h2>{kind === 'duel' ? t('duelToday') : t('exam')}</h2>
+      {round.status === 'ready' && (
+        <>
+          <p>
+            {kind === 'duel'
+              ? t('duelRules', { n: round.total })
+              : t('examRules', { n: round.total })}
+          </p>
+          <button type="button" className="btn btn-primary btn-block" onClick={onPlay}>
+            {kind === 'duel' ? t('duelStart') : t('examStart')}
+          </button>
+        </>
+      )}
+      {round.status === 'playing' && (
+        <button type="button" className="btn btn-primary btn-block" onClick={onPlay}>
+          {t('duelContinue', { n: round.answered + 1, total: round.total })}
+        </button>
+      )}
+      {(round.status === 'finished' || round.status === 'closed') && (
+        <>
+          {round.mine && (
+            <p>
+              <strong>{t('you')}:</strong> <ScoreLine r={round.mine} />
+            </p>
+          )}
+          {otherDone ? (
+            <p>
+              <strong>{me.partner?.name}:</strong> <ScoreLine r={other} />
+            </p>
+          ) : (
+            <p className="muted">{t('duelWaiting', { name: me.partner?.name ?? '' })}</p>
+          )}
+          <button type="button" className="btn btn-block" onClick={onPlay}>
+            {t('duelResult')}
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function Today({
   me,
   onStart,
+  go,
 }: {
   me: Me;
   onStart: (reviewsOnly: boolean) => void;
+  go: (path: string) => void;
 }): ReactNode {
   const t = useT();
   const [data, setData] = useState<TodayData | null>(null);
+  const [home, setHome] = useState<Home | null>(null);
   const [failed, setFailed] = useState(false);
   useEffect(() => {
-    api.today().then(setData, () => setFailed(true));
+    api.today().then(
+      (d) => {
+        setData(d);
+        // The home data needs the settlement that /api/today just ran.
+        api.home().then(setHome, () => setHome(null));
+      },
+      () => setFailed(true),
+    );
   }, []);
   if (failed) return <p>{t('error')}</p>;
   if (!data) return <p className="muted">{t('loading')}</p>;
   const nothing = data.dueItems === 0 && data.newRemaining === 0;
+  const name = (id: number) => (id === me.id ? t('you') : (me.partner?.name ?? ''));
   return (
     <div>
       <h1>{t('hello', { name: me.name })}</h1>
+      {home?.exam && home.exam.status !== 'none' && (
+        <RoundCard kind="exam" round={home.exam} me={me} onPlay={() => go('/pruefung')} />
+      )}
+      {home?.duel ? (
+        <RoundCard kind="duel" round={home.duel} me={me} onPlay={() => go('/duell')} />
+      ) : (
+        home && (
+          <div className="card">
+            <h2>{t('duelToday')}</h2>
+            <p className="muted">{t('duelNone')}</p>
+          </div>
+        )
+      )}
       <div className="card">
         <div className="stat">
           <strong>{data.dueItems}</strong> <span>{t('dueReviews')}</span>
@@ -107,7 +190,55 @@ export function Today({
           </div>
         )}
       </div>
-      <p className="muted">{t('comingSoon')}</p>
+      {home?.coop && (
+        <button type="button" className="card card-link" onClick={() => go('/wochenziel')}>
+          <h2>{t('weekGoal')}</h2>
+          {home.coop.progress.map((p) => (
+            <p key={p.userId}>
+              <strong>{name(p.userId)}:</strong> {t('activeDays', { n: p.activeDays })} ·{' '}
+              {t('kompositionCount', { n: p.kompositions })}
+            </p>
+          ))}
+          <p>
+            <strong>
+              {home.coop.secured !== null
+                ? t('secured', { eur: home.coop.secured })
+                : t('securedNone')}
+            </strong>{' '}
+            · {t('balance', { eur: home.balanceEur })}
+          </p>
+        </button>
+      )}
+      {home && home.vouchers.open > 0 && (
+        <button type="button" className="card card-link" onClick={() => go('/aufgaben')}>
+          <h2>{t('chores')}</h2>
+          <p>
+            {t('toDo', { n: home.vouchers.toDo })}
+            {home.vouchers.overdue > 0 && (
+              <strong className="correction">
+                {' '}
+                · {t('overdueCount', { n: home.vouchers.overdue })}
+              </strong>
+            )}
+          </p>
+        </button>
+      )}
+      {home?.week && (
+        <button type="button" className="card card-link" onClick={() => go('/wettbewerb')}>
+          <h2>{t('thisWeek')}</h2>
+          <p>
+            {home.week.scores.map((s) => (
+              <span key={s.userId} style={{ marginRight: 16 }}>
+                {name(s.userId)}: {s.w >= 0 ? '+' : ''}
+                {s.w.toFixed(1)}
+              </span>
+            ))}
+          </p>
+          <p className="muted">
+            {t('stars')}: {home.stars.map((s) => `${name(s.userId)} ${s.total} ★`).join(' · ')}
+          </p>
+        </button>
+      )}
     </div>
   );
 }
@@ -213,33 +344,41 @@ export function Settings({
 }): ReactNode {
   const t = useT();
   return (
-    <div className="card">
-      <h1>{t('settings')}</h1>
-      <fieldset style={{ border: 'none', padding: 0, margin: '0 0 16px' }}>
-        <legend style={{ fontWeight: 600, marginBottom: 8 }}>{t('language')}</legend>
-        <div className="btn-row" style={{ marginTop: 0 }}>
-          {(['de', 'en'] as const).map((lang) => (
-            <button
-              key={lang}
-              type="button"
-              className="btn"
-              aria-pressed={me.uiLang === lang}
-              style={
-                me.uiLang === lang
-                  ? { background: 'var(--ink-soft)', borderColor: 'var(--ink)' }
-                  : {}
-              }
-              onClick={() => onLang(lang)}
-            >
-              {lang === 'de' ? 'Deutsch' : 'English'}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-      <button type="button" className="btn btn-quiet btn-block" onClick={onLogout}>
-        {t('logout')}
-      </button>
-    </div>
+    <>
+      <div className="card">
+        <h1>{t('settings')}</h1>
+        <fieldset style={{ border: 'none', padding: 0, margin: '0 0 16px' }}>
+          <legend style={{ fontWeight: 600, marginBottom: 8 }}>{t('language')}</legend>
+          <div className="btn-row" style={{ marginTop: 0 }}>
+            {(['de', 'en'] as const).map((lang) => (
+              <button
+                key={lang}
+                type="button"
+                className="btn"
+                aria-pressed={me.uiLang === lang}
+                style={
+                  me.uiLang === lang
+                    ? { background: 'var(--ink-soft)', borderColor: 'var(--ink)' }
+                    : {}
+                }
+                onClick={() => onLang(lang)}
+              >
+                {lang === 'de' ? 'Deutsch' : 'English'}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+        <p>
+          <a href="#/pruefen">{t('toReview')} →</a>
+        </p>
+        <button type="button" className="btn btn-quiet btn-block" onClick={onLogout}>
+          {t('logout')}
+        </button>
+      </div>
+      <SharedSettings me={me} />
+      <RewardCatalog me={me} />
+      <ChoreCatalog />
+    </>
   );
 }
 

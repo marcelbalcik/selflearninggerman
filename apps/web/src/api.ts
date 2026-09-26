@@ -1,4 +1,12 @@
 import type {
+  Chore,
+  Home,
+  Reward,
+  RoundView,
+  SettingEntry,
+  Voucher,
+  Wettbewerb,
+  Wochenziel,
   Feedback,
   KompositionResult,
   LemmaDetail,
@@ -72,4 +80,46 @@ export const api = {
     id: number,
     marks: { start: number; end: number; type: string; correction: string }[],
   ) => call<{ ratings: unknown[] }>('POST', `/api/komposition/${id}/review`, { marks }),
+  // M5
+  home: () => call<Home>('GET', '/api/home'),
+  round: (kind: 'duel' | 'exam') => call<RoundView>('GET', `/api/${kind}`),
+  roundAnswer: (
+    kind: 'duel' | 'exam',
+    a: { index: number; answer: string; tappedIndex?: number; latencyMs: number },
+  ) => call<{ index: number; finished: boolean }>('POST', `/api/${kind}/answer`, a),
+  wettbewerb: () => call<Wettbewerb>('GET', '/api/wettbewerb'),
+  vouchers: () => call<{ vouchers: Voucher[]; chores: Chore[] }>('GET', '/api/vouchers'),
+  chooseChore: (id: number, choreId: number) =>
+    call<{ ok: true }>('POST', `/api/vouchers/${id}/choose`, { choreId }),
+  voucherAction: (id: number, action: 'done' | 'confirm') =>
+    call<{ ok: true }>('POST', `/api/vouchers/${id}/${action}`, {}),
+  saveChore: (id: number | null, c: Omit<Chore, 'id' | 'nounForms' | 'verbSplit'>) =>
+    id === null
+      ? call<{ id: number }>('POST', '/api/chores', c)
+      : call<{ id: number }>('PUT', `/api/chores/${id}`, c),
+  wochenziel: () => call<Wochenziel>('GET', '/api/wochenziel'),
+  redeem: (voucherIds: number[], band: number | null) =>
+    call<{ id: number }>('POST', '/api/redemptions', { voucherIds, band }),
+  redemption: (id: number, action: 'confirm' | 'reroll' | 'undo') =>
+    call<{ ok?: true; rerolled?: boolean; undone?: boolean }>(
+      'POST',
+      `/api/redemptions/${id}/${action}`,
+      {},
+    ),
+  planRedemption: (id: number, date: string) =>
+    call<{ ok: true }>('POST', `/api/redemptions/${id}/plan`, { date }),
+  finishRedemption: (id: number, note: string) =>
+    call<{ ok: true }>('POST', `/api/redemptions/${id}/done`, { note }),
+  rewards: () => call<{ rewards: Reward[] }>('GET', '/api/rewards'),
+  proposeReward: (r: Omit<Reward, 'id' | 'active' | 'proposedBy' | 'pending' | 'lastDrawnAt'>) =>
+    call<{ id: number }>('POST', '/api/rewards', r),
+  decideReward: (id: number, approve: boolean) =>
+    call<{ ok: true }>('POST', `/api/rewards/${id}/decision`, { approve }),
+  setRewardActive: (id: number, active: boolean) =>
+    call<{ ok: true }>('POST', `/api/rewards/${id}/active`, { active }),
+  settings: () => call<{ settings: SettingEntry[] }>('GET', '/api/settings'),
+  proposeSetting: (key: SettingEntry['key'], value: unknown) =>
+    call<{ ok: true }>('POST', `/api/settings/${key}`, { value }),
+  decideSetting: (key: SettingEntry['key'], approve: boolean) =>
+    call<{ effectiveFrom: string | null }>('POST', `/api/settings/${key}/decision`, { approve }),
 };

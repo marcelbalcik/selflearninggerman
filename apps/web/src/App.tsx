@@ -2,7 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { ApiError, api } from './api';
 import { LangContext, translate } from './i18n';
+import { AufgabenScreen } from './screens/Aufgaben';
+import { RoundScreen, WettbewerbScreen } from './screens/Competition';
 import { Pruefen } from './screens/Pruefen';
+import { WochenzielScreen } from './screens/Wochenziel';
 import { Session } from './screens/Session';
 import { Login, Placement, Settings, Today, Word } from './screens/Screens';
 import type { Me } from './types';
@@ -12,7 +15,12 @@ type Route =
   | { name: 'session'; reviewsOnly: boolean }
   | { name: 'wort'; id: number }
   | { name: 'einstellungen' }
-  | { name: 'pruefen' };
+  | { name: 'pruefen' }
+  | { name: 'duell' }
+  | { name: 'pruefung' }
+  | { name: 'wettbewerb' }
+  | { name: 'wochenziel' }
+  | { name: 'aufgaben' };
 
 /** Tiny hash router: #/heute, #/session, #/wort/123, #/pruefen, #/einstellungen. */
 function parse(hash: string): Route {
@@ -21,6 +29,14 @@ function parse(hash: string): Route {
   if (name === 'wort' && arg) return { name: 'wort', id: Number(arg) };
   if (name === 'einstellungen') return { name: 'einstellungen' };
   if (name === 'pruefen') return { name: 'pruefen' };
+  if (
+    name === 'duell' ||
+    name === 'pruefung' ||
+    name === 'wettbewerb' ||
+    name === 'wochenziel' ||
+    name === 'aufgaben'
+  )
+    return { name };
   return { name: 'heute' };
 }
 
@@ -76,6 +92,21 @@ export function App(): ReactNode {
     screen = <Word lemmaId={route.id} />;
   } else if (route.name === 'pruefen') {
     screen = <Pruefen />;
+  } else if (route.name === 'duell' || route.name === 'pruefung') {
+    screen = (
+      <RoundScreen
+        key={route.name}
+        kind={route.name === 'duell' ? 'duel' : 'exam'}
+        me={me}
+        onDone={() => go('/heute')}
+      />
+    );
+  } else if (route.name === 'wettbewerb') {
+    screen = <WettbewerbScreen me={me} />;
+  } else if (route.name === 'wochenziel') {
+    screen = <WochenzielScreen me={me} />;
+  } else if (route.name === 'aufgaben') {
+    screen = <AufgabenScreen me={me} />;
   } else if (route.name === 'einstellungen') {
     screen = (
       <Settings
@@ -86,29 +117,46 @@ export function App(): ReactNode {
     );
   } else {
     screen = (
-      <Today me={me} onStart={(reviewsOnly) => go(reviewsOnly ? '/session/reviews' : '/session')} />
+      <Today
+        me={me}
+        go={go}
+        onStart={(reviewsOnly) => go(reviewsOnly ? '/session/reviews' : '/session')}
+      />
     );
   }
 
   return (
     <LangContext.Provider value={lang}>
       <main>{screen}</main>
-      {me && me.placementDone && route.name !== 'session' && (
-        <nav className="tabs" aria-label="Navigation">
-          <a href="#/heute" aria-current={route.name === 'heute' ? 'page' : undefined}>
-            {t('today')}
-          </a>
-          <a href="#/pruefen" aria-current={route.name === 'pruefen' ? 'page' : undefined}>
-            {t('review')}
-          </a>
-          <a
-            href="#/einstellungen"
-            aria-current={route.name === 'einstellungen' ? 'page' : undefined}
-          >
-            {t('settings')}
-          </a>
-        </nav>
-      )}
+      {me &&
+        me.placementDone &&
+        route.name !== 'session' &&
+        route.name !== 'duell' &&
+        route.name !== 'pruefung' && (
+          <nav className="tabs" aria-label="Navigation">
+            {(
+              [
+                ['heute', 'today'],
+                ['wettbewerb', 'navCompetition'],
+                ['wochenziel', 'navGoal'],
+                ['aufgaben', 'navChores'],
+                ['einstellungen', 'navMore'],
+              ] as const
+            ).map(([path, label]) => (
+              <a
+                key={path}
+                href={`#/${path}`}
+                aria-current={
+                  route.name === path || (path === 'einstellungen' && route.name === 'pruefen')
+                    ? 'page'
+                    : undefined
+                }
+              >
+                {t(label)}
+              </a>
+            ))}
+          </nav>
+        )}
     </LangContext.Provider>
   );
 }
