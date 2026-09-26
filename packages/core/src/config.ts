@@ -149,11 +149,22 @@ export const PIPELINE = {
   GENDER_RULE_MIN_SYLLABLES: 2,
   /** Frames of the N most frequent verbs always go to the review queue. */
   FRAME_REVIEW_TOP_N: 300,
+  /** Corpus sentences (Tatoeba, Wiktionary examples) outside this token range are skipped. */
+  SENTENCE_MIN_TOKENS: 4,
+  SENTENCE_MAX_TOKENS: 14,
+  /** A frame proposed from corpus counts needs this many parsed example sentences. */
+  FRAME_MIN_CORPUS_EXAMPLES: 5,
+} as const;
+
+export const FEEDBACK = {
+  /** LanguageTool language code for `komposition` checks (self-hosted server, spec change). */
+  LANGUAGETOOL_LANGUAGE: 'de-DE',
+  /** Give up on LanguageTool after this long and show deterministic feedback only. */
+  LANGUAGETOOL_TIMEOUT_MS: 5_000,
 } as const;
 
 export const OPS = {
   BACKUP_RETENTION_DAYS: 30,
   LOGIN_MAX_ATTEMPTS: 5,
   LOGIN_WINDOW_MS: 15 * 60 * 1000,
-  DEFAULT_CLAUDE_MODEL: 'claude-sonnet-5',
 } as const;

@@ -7,10 +7,9 @@ Decisions taken on top of [SPEC.md](SPEC.md), agreed with Marcel on
 
 1. **DE→EN recall gets its own exercise, `bedeutung`.** The German word is shown
    in a sentence, and the user types the English meaning. Answers are matched against
-   the Wiktionary glosses (US/UK spelling, a leading "to"/"the"/"a" ignored). If
-   nothing matches, Claude gives a JSON verdict that is cached per answer and can
-   be disputed. It is not duel-eligible, because its grading is not fully
-   deterministic. `meaning_recv` is exercised by `bedeutung`.
+   the Wiktionary glosses and their English WordNet synonyms (US/UK spelling, a
+   leading "to"/"the"/"a" ignored). A rejected answer can be disputed. It is not
+   duel-eligible. `meaning_recv` is exercised by `bedeutung`.
 2. **A later starting point uses placement.** Core-deck words before a user's
    starting point are introduced in bulk after a short typed placement check, so
    they have FSRS cards and count as introduced. On a day with fewer than 10
@@ -19,8 +18,29 @@ Decisions taken on top of [SPEC.md](SPEC.md), agreed with Marcel on
 3. **On a wrong answer, only blamed facets are rated.** The facets the error class
    names get Again. The other implicated facets are left unrated and stay due.
    This never rewards a lucky guess.
-4. **`komposition` moves from M6 to M4**, next to `satzbau`, since both use the
-   same Claude-verdict machinery. This makes the 10 € tier reachable by M5.
+4. **`komposition` moves from M6 to M4**, next to `satzbau`. This makes the 10 €
+   tier reachable by M5.
+
+## No paid AI services (2026-09-26)
+
+The project uses no Claude API or other LLM API. SPEC.md has been updated to
+match:
+
+- **Sentences** come from Tatoeba and Wiktionary examples, parsed locally with
+  spaCy. Each gap is validated against the form tables, and a sentence is dropped
+  on any disagreement.
+- **Semantic fields** come from OdeNet and Wiktionary categories.
+- **CEFR hints** come from the frequency band.
+- **Verb frames** come from Wiktionary tags plus corpus counts, and all go to review.
+- **`satzbau` and `bedeutung`** accept only known variants, and anything else can be disputed.
+- **`komposition`** gets the deterministic target check, a self-hosted
+  LanguageTool, and **partner review** (Marcel: yes).
+- **Disputes ("Das stimmt doch!")** are approved or rejected by the **other
+  user**, never by the person who disputed (Marcel: other person). An approved
+  dispute adds the answer to the accepted variants and regrades the attempt
+  through the report-voiding path.
+- **Rewards** are added by hand: one user proposes, the other approves. The
+  Claude "Ideen vorschlagen" feature is gone.
 
 ## Implementation decisions
 

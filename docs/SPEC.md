@@ -12,7 +12,7 @@ A private web app (installable PWA) for exactly two users, Marcel and his wife, 
 4. Every tunable number in this spec lives in one config module (`packages/core/src/config.ts`). No magic numbers anywhere else.
 5. All time logic uses an injectable clock and the `Europe/Berlin` timezone. No direct `Date.now()` in business logic.
 6. Keep it small: two users and one server. No microservices, no queues, no Kubernetes.
-7. When the Claude API is involved, use structured JSON output and validate it against a schema. Never trust an LLM answer about German grammar without the deterministic checks described below.
+7. **No paid AI services.** The project uses no LLM API (decided 2026-09-26). Content comes from free, openly licensed data and locally run tools; see docs/DECISIONS.md. No external tool's claim about German grammar is trusted without the deterministic checks described below.
 
 ---
 
@@ -39,10 +39,10 @@ A private web app (installable PWA) for exactly two users, Marcel and his wife, 
   - `packages/core`: pure TypeScript with no IO. Contains article tables, the declension engine, verb helpers, answer normalisation, grading, error classification, the FSRS wrapper and competition scoring. Both server and web import it.
   - `pipeline/`: Python 3.11+ content pipeline that produces `content.sqlite` and `dictionary.sqlite`.
 - **The server is authoritative** for grading, FSRS updates and all competition scoring. The web client may pre-grade for instant feedback, but the server result wins.
-- **Claude API, server-side only.**
-  - The key comes from `ANTHROPIC_API_KEY`. The model id comes from `CLAUDE_MODEL`, default `claude-sonnet-5`. Verify current model ids at https://docs.claude.com before use.
-  - Use the Message Batches API for bulk pipeline generation if convenient.
-- **Deployment.** Docker Compose on a small VPS, with a `server` container and `caddy` for automatic HTTPS.
+- **Free tooling only, no LLM API.**
+  - Pipeline: spaCy (`de_core_news_md` or larger) for parsing corpus sentences; Tatoeba and Wiktionary examples as the sentence source; OdeNet (Open German WordNet) and Wiktionary categories for semantic fields.
+  - Runtime: a self-hosted LanguageTool server (open source) for `komposition` feedback, reached at `LANGUAGETOOL_URL`.
+- **Deployment.** Docker Compose on a small server (a free tier or a home server is fine), with `server`, `languagetool` and `caddy` (automatic HTTPS) containers. LanguageTool needs about 1–2 GB RAM.
   - Nightly SQLite `.backup` to a dated file, keeping 30 days. An optional offsite copy is fine.
 - **Why not PocketBase:** grading, FSRS and scoring must run server-side and share code with the client. One language across the stack is simpler.
 
@@ -158,7 +158,7 @@ The user wants every noun taught with its Akkusativ and Dativ forms. These forms
   - `geben` jdm. etw. (dat + akk)
   - `sich erinnern an` + akk, `warten auf` + akk
 - **Frame data is the weakest data source**, because Wiktionary is inconsistent here.
-  - The pipeline proposes frames via Claude and validates them against Wiktionary tags where present.
+  - The pipeline proposes frames from Wiktionary tags plus object-case counts in the parsed corpus sentences (at least `FRAME_MIN_CORPUS_EXAMPLES`).
   - Every frame for the top 300 verbs goes to the review queue before it is used.
 
 ### 4.4 Gender hints
@@ -242,7 +242,8 @@ Skills are updated by the same attempts that update lexical facets. Skills are *
 | `diktat` | typed from audio | no |
 | `en_de_chunk` | closed | yes |
 | `fehlersuche` | tap + closed correction | yes |
-| `komposition` | open, LLM feedback | no |
+| `komposition` | open, LanguageTool + partner feedback | no |
+| `bedeutung` | open (English) | no |
 
 1. **`kasus_luecke`.** A sentence with a gap covering determiner + noun (or a pronoun).
    - The cue gives the lemma **without its article** plus the determiner type and number, e.g. `Ich helfe ___ (Nachbar, bestimmt, Sg.).` → `dem Nachbarn`.
@@ -254,7 +255,7 @@ Skills are updated by the same attempts that update lexical facets. Skills are *
 3. **`satzbau`.** Chunks plus a frame instruction; the user types the full sentence.
    - For separable verbs, generate all four frames: Hauptsatz (`Ich rufe morgen meine Mutter an.`), Nebensatz (`…, weil ich morgen meine Mutter anrufe.`), Perfekt (`Ich habe meine Mutter angerufen.`) and zu-infinitive (`Ich vergesse, meine Mutter anzurufen.`).
    - Answers are checked against the accepted variants.
-   - If there is no match, the server asks Claude for a JSON grammaticality verdict, caches it per exact answer string, and lets the user dispute it.
+   - If there is no match, the answer is wrong, and the user can dispute it (see **Disputes** below).
 4. **`umformen`.** A transformation task, e.g. singular to dative plural, Präsens to Perfekt, mit ↔ ohne, Hauptsatz to Nebensatz.
 5. **`diktat`.** Audio (lemma audio file, or `speechSynthesis` de-DE for a sentence), then the user types what they heard.
    - The target NP must be exact.
@@ -262,12 +263,20 @@ Skills are updated by the same attempts that update lexical facets. Skills are *
 6. **`en_de_chunk`.** Short phrase translation, e.g. "with the colleague" → `mit dem Kollegen`.
 7. **`fehlersuche`.** A sentence containing exactly one error (wrong article, wrong case ending, or wrong separable-verb position). The user taps the wrong word, then types the correction.
 8. **`komposition`.** Write 2 sentences using 3 given due lemmas (optionally with a required case, e.g. "one of them in the dative").
-   - **Deterministic check:** each target lemma appears in some valid form from its form table.
-   - **Claude feedback** as JSON: `{errors:[{span,type,correction,explanation_de,explanation_en}], uses_targets_correctly:{lemma_id:bool}}`.
+   - **Deterministic check:** each target lemma appears in some valid form from its form table, and a noun's determiner agrees with the form used.
+   - **LanguageTool feedback:** the self-hosted server checks the text; its matches are shown with their suggestions.
+   - **Partner review:** the text appears on the other user's Prüfen screen. They can mark a span as wrong, pick an error type (gender, case, frame, ending, other) and type a correction.
    - **Ratings:**
-     - Target lemmas used correctly → Good.
-     - Misused → Again on the facet mapped from the error type (e.g. gender, case, frame).
+     - At submission: a target lemma in a valid form with no LanguageTool match on it → Good. A target that is missing or not a valid form, or with a LanguageTool match on it → Again on the facet mapped from the match (gender, case, ending), else on `meaning_prod`.
+     - A partner mark on a target word later adds Again on the facet mapped from its error type.
      - Errors outside the target words are shown to the user but do not touch FSRS.
+9. **`bedeutung`** (DE→EN, exercises `meaning_recv`). The German word in a sentence; the user types the English meaning. Matched against the Wiktionary glosses and their English WordNet synonyms (US/UK spelling, a leading "to"/"the"/"a" ignored). Disputable. Not duel-eligible.
+
+**Disputes ("Das stimmt doch!")** apply to every exercise with typed answers:
+
+- The user flags a graded-wrong answer. It goes to the **other user's** Prüfen screen; a user can never approve their own dispute.
+- Approved: the answer is added to the item's accepted variants, and the attempt is regraded through the same path as report voiding (§8.4): FSRS is rolled back and re-rated, and affected duel/exam scores and settlements are recomputed.
+- Rejected: nothing changes.
 
 **New-word introduction** (not an exercise):
 
@@ -539,10 +548,9 @@ reward(id, budget_eur[3|5|10|15|20|30], kind['together'|'buy'], title_de, title_
        est_cost_note, active, last_drawn_at)
 ```
 
-**"Ideen vorschlagen"**
+**Adding rewards**
 
-- Claude proposes 5 new rewards for a chosen band as JSON, including an estimated cost.
-- They enter the pool only after both users approve.
+- Either user can propose a reward in Einstellungen. It enters the pool only after the other user approves it.
 - The UI labels all prices as estimates.
 
 ---
@@ -590,7 +598,7 @@ reward(id, budget_eur[3|5|10|15|20|30], kind['together'|'buy'], title_de, title_
 
 Each step below is a CLI command and writes a report.
 
-1. **`download`.** The kaikki.org German dictionary JSONL, extracted from English Wiktionary with wiktextract. Find the current raw-data link on kaikki.org. Stream-parse the file; never load it whole.
+1. **`download`.** The kaikki.org German dictionary JSONL, extracted from English Wiktionary with wiktextract (find the current raw-data link on kaikki.org), the Tatoeba German sentences with their English translations, and OdeNet. Stream-parse large files; never load them whole.
 2. **`select`.**
    - Rank lemmas by frequency using the Python `wordfreq` package (`de`).
    - Take lemmas only, not inflected forms.
@@ -603,13 +611,17 @@ Each step below is a CLI command and writes a report.
    - Split a lemma into separate rows when gender or separability differs by sense.
 4. **`crosscheck`.** Compare the extracted tables against the TypeScript rule engine through a small CLI (`pnpm core:decline --json`). Mismatches become `needs_review` with a reason.
 5. **`gender_rules`.** Compute each suffix rule's accuracy on the selected set and write the `gender_rule` table.
-6. **`enrich`** (Claude, temperature 0, JSON schema). Per lemma: `semantic_field`, `theme`, a verb frame proposal and a CEFR hint.
-7. **`sentences`** (Claude). Per (lemma, target facet or skill): 3 sentences using A2–B1 vocabulary, each with a gap spec, accepted variants, an English translation and the allowed exercise types.
+6. **`enrich`** (no LLM). Per lemma:
+   - `semantic_field` from OdeNet hypernyms, else Wiktionary topic categories, else empty (an empty field never blocks introduction).
+   - `theme` from Wiktionary categories; editable in Prüfen.
+   - A verb frame proposal from Wiktionary tags and corpus object-case counts.
+   - `cefr_hint` from the frequency band.
+7. **`sentences`** (no LLM). Parse Tatoeba sentences and Wiktionary examples with spaCy (`SENTENCE_MIN_TOKENS`–`SENTENCE_MAX_TOKENS` tokens, preferring sentences made of already-selected lemmas). For each (lemma, target facet or skill), pick up to `SENTENCES_PER_TARGET` sentences where the target occurs, and derive the gap spec, governing verb or preposition, English translation and allowed exercise types. `fehlersuche` items are made by changing exactly one token of a valid sentence (article, case ending or separable-verb position); `satzbau` and `umformen` targets come from templates over the verb and noun tables.
 8. **`validate`.**
-   - The expected answer, recomputed from the form tables, must equal the LLM's answer.
+   - The gap's determiner + noun must be a form from the form tables, and spaCy's case/number must agree with the cells that form can realise. Otherwise the sentence is dropped.
    - `wer_tut_was`: an unambiguous masculine singular NP must exist.
    - `fehlersuche`: exactly one token differs from a valid sentence.
-   - On rejection, regenerate up to 2 times; after that, drop the sentence.
+   - Lemmas left with no usable sentence are listed in the report and get only the exercise types that need none.
 9. **`audio`.** Download lemma audio (mp3) into `apps/web/public/audio/` and write `ATTRIBUTION.md` covering the Wikimedia Commons licences.
 10. **`export`.** Produce:
     - `content.sqlite` (core track);
@@ -618,13 +630,13 @@ Each step below is a CLI command and writes a report.
 
 **Server import.** The server imports content on startup when the content version has changed. User data is never touched.
 
-**API budget.** Before any generation run, print an estimated token count and require `--yes`.
+**Licences.** Tatoeba (CC BY 2.0 FR), Wiktionary (CC BY-SA), OdeNet (CC BY-SA) and Commons audio are credited in `ATTRIBUTION.md`, generated by the pipeline.
 
 ### Personal tracks and EPUB import
 
 - Import accepts CSV/JSON rows of `word, sentence, source`. This covers words looked up in Marcel's Android EPUB reader.
 - For each row, the server looks the word up in `dictionary.sqlite` and creates a personal lemma with the user's sentence as its first context sentence.
-- Further sentences are generated on demand, using the same validation as the pipeline.
+- Further sentences come from the corpus (Tatoeba, Wiktionary examples) with the same parsing and validation as the pipeline; there is no on-demand generation.
 - Personal-track lemmas **never** appear in the duel or the monthly exam. They do count toward the Behalten-Score and the `NEW_PER_DAY` cap.
 
 ---
@@ -751,13 +763,13 @@ push_subscription(user_id, endpoint, keys JSON)
   - Build: login, Heute, and the session runner with `kasus_luecke`, `wer_tut_was`, `umformen`, `en_de_chunk` and `fehlersuche`; the feedback panel, the Wort screen and the report button.
   - Acceptance: a full session completes on a phone.
 - **M4: Content at scale.**
-  - Build: sentence generation for all 2,000 lemmas, the `satzbau` and `diktat` exercises, and the Prüfen screen.
+  - Build: sentences for all 2,000 lemmas, the `satzbau`, `diktat`, `bedeutung` and `komposition` exercises (LanguageTool + partner review), disputes, and the Prüfen screen.
 - **M5: Competition.**
   - Build: duel, snapshots, weekly and monthly settlement, stars, vouchers, joint-goal tiers, reward vouchers (issue, combine, change, redeem, reveal, reroll, undo), dual-approval settings and the ledger.
   - Acceptance: a simulation of two synthetic users over 90 days passes. It must include both DST switches (last Sunday of March and of October), forfeits, draws, report voiding with re-settlement, idempotent re-runs of every settlement job, and voucher combination with change (including the band-fallback case and undo).
 - **M6: Remaining features.**
-  - Build: `komposition` with Claude feedback, personal tracks and EPUB import, and Web Push (duel reminder at 19:00 if not yet played; voucher deadlines).
-  - Deployment: Docker Compose + Caddy, backups, and a README with operations notes.
+  - Build: personal tracks and EPUB import, and Web Push (duel reminder at 19:00 if not yet played; voucher deadlines).
+  - Deployment: Docker Compose + Caddy + LanguageTool, backups, and a README with operations notes.
 
 ---
 

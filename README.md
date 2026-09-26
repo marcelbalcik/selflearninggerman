@@ -19,8 +19,9 @@ decisions taken on top of it are in [docs/DECISIONS.md](docs/DECISIONS.md).
 packages/core   pure TypeScript: config, determiners, declension, normalisation,
                 grading, error classification, ratings (no IO)
 apps/web        Vite + React PWA            (M3)
-apps/server     Fastify + SQLite            (M2)
-pipeline/       Python content pipeline     (M1)
+apps/server     Fastify + SQLite (+ self-hosted LanguageTool)  (M2)
+pipeline/       Python content pipeline: Wiktionary, Tatoeba,
+                spaCy, OdeNet; no paid APIs (M1)
 ```
 
 ## Development
