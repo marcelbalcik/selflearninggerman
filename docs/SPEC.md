@@ -784,6 +784,8 @@ push_subscription(user_id, endpoint, keys JSON)
 
 ## 16. Open questions (ask Marcel; do not assume)
 
+> Answered on 2026-09-26, except question 1. See docs/DECISIONS.md. Summary: both users start at A2.1 via placement; English glosses; 3 wins per S chore; duel starts `raw`.
+
 1. Hosting target (VPS provider or home server) and domain name.
 2. The second user's current German level, which sets her starting point in the core deck and whether her UI starts in English.
 3. Whether English glosses work for both users, or the second user needs another gloss language.

@@ -21,6 +21,21 @@ Decisions taken on top of [SPEC.md](SPEC.md), agreed with Marcel on
 4. **`komposition` moves from M6 to M4**, next to `satzbau`. This makes the 10 €
    tier reachable by M5.
 
+## Open questions from SPEC §16 (answered 2026-09-26)
+
+- **Starting level: both A2.1.** Both users run the same placement check over the
+  A1 part of the core deck (frequency rank below `PLACEMENT.START_RANK`). Words
+  they pass get FSRS cards and count as introduced. Words they fail go back into
+  the normal new-word queue. Both decks therefore stay nearly identical, so duels
+  have shared items from day one.
+- **Glosses: English for both users.** The UI still defaults to German with a
+  per-user English toggle.
+- **Stars: 3 duel wins per S chore** (`DUEL.STARS_PER_S_VOUCHER = 3`, the default).
+- **Duel mode: starts as `raw`** (plain correct count). After 14 days of review
+  data, the app suggests `vs_expected`. The switch still needs both users'
+  approval, as for any dual-approval setting.
+- **Hosting and domain:** still open, needed only for M6.
+
 ## No paid AI services (2026-09-26)
 
 The project uses no Claude API or other LLM API. SPEC.md has been updated to

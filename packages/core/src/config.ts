@@ -58,6 +58,15 @@ export const GRADING = {
   ATTEMPTED_FORM_MAX_EXTRA_CHARS: 3,
 } as const;
 
+export const PLACEMENT = {
+  /** Both users start at A2.1: core-deck words ranked below this count as A1 and are
+   *  introduced through a placement check instead of one by one (docs/DECISIONS.md). */
+  START_RANK: 500,
+  /** Placement asks typed DE→EN recall for every Nth A1 word; a failed sample puts its
+   *  neighbours back into the normal new-word queue. */
+  SAMPLE_EVERY: 5,
+} as const;
+
 export const SESSION = {
   /** New lemmas per user per day, core + personal (spec §8.2). Dual approval. */
   NEW_PER_DAY: 5,
