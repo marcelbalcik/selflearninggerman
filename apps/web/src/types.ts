@@ -71,7 +71,7 @@ export type Prompt =
     }
   | { type: 'en_de_chunk'; prompt: string; pos: Pos }
   | { type: 'umformen'; instruction: 'dat_pl' | 'perfekt' | 'du_form'; source: string }
-  | { type: 'satzbau'; chunks: string[]; frame: string }
+  | { type: 'satzbau'; chunks: string[]; frame: 'hauptsatz' | 'nebensatz' | 'perfekt' | 'zu' }
   | { type: 'wer_tut_was'; de: string; options: string[] }
   | { type: 'diktat'; speak: string; words: number };
 

@@ -214,7 +214,7 @@ export class Attempts {
           pending ? 1 : 0,
         );
       const id = Number(info.lastInsertRowid);
-      if (!pending) this.apply(userId, ratings, now, id, context);
+      if (!pending) ratings = this.apply(userId, ratings, now, id, context);
       return id;
     })();
 
@@ -256,20 +256,19 @@ export class Attempts {
     const target = npTarget(sentence, lemma);
     const grade = resolveAmbiguous(json<NpGrade>(row.classification) as NpGrade, target, gender);
     const implicated = this.implicated(userId, sentence, lemma, now);
-    const ratings = rateNpAttempt(grade, this.ratingContext(sentence, lemma, implicated), {
+    const proposed = rateNpAttempt(grade, this.ratingContext(sentence, lemma, implicated), {
       latencyMs: row.latency_ms,
       medianLatencyMs: row.latency_ms,
       hintUsed: false,
     });
-    this.db.transaction(() => {
+    return this.db.transaction(() => {
       this.db
         .prepare(
           'UPDATE attempt SET pending_followup = 0, error_class = ?, classification = ? WHERE id = ?',
         )
         .run(grade.errorClass, JSON.stringify(grade), attemptId);
-      this.apply(userId, ratings, now, attemptId, 'session');
+      return this.apply(userId, proposed, now, attemptId, 'session');
     })();
-    return ratings;
   }
 
   private apply(
@@ -278,8 +277,11 @@ export class Attempts {
     now: Date,
     attemptId: number,
     context: ReviewContext,
-  ): void {
-    for (const r of ratings) this.cards.rate(userId, r.facet, r.rating, now, attemptId, context);
+  ): FacetRating[] {
+    // Only ratings that reached an unlocked card count (and are reported back).
+    return ratings.filter(
+      (r) => this.cards.rate(userId, r.facet, r.rating, now, attemptId, context) !== null,
+    );
   }
 
   /** Implicated facets the user has unlocked cards for; skill cards are created on first use. */

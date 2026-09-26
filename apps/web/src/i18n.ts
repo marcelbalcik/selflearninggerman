@@ -176,6 +176,7 @@ const de = {
   disputeStatus_open: 'offen',
   disputeStatus_approved: 'angenommen',
   disputeStatus_rejected: 'abgelehnt',
+  showAll: 'Alle zeigen ({n})',
 } as const;
 
 export type MessageKey = keyof typeof de;
@@ -347,6 +348,7 @@ const en: Record<MessageKey, string> = {
   disputeStatus_open: 'open',
   disputeStatus_approved: 'accepted',
   disputeStatus_rejected: 'rejected',
+  showAll: 'Show all ({n})',
 };
 
 export const MESSAGES = { de, en } as const;

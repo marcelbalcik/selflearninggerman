@@ -177,6 +177,7 @@ export function Pruefen(): ReactNode {
   const t = useT();
   const [data, setData] = useState<ReviewData | null>(null);
   const [failed, setFailed] = useState(false);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const load = useCallback(() => {
     setFailed(false);
     api.review().then(setData, () => setFailed(true));
@@ -194,6 +195,19 @@ export function Pruefen(): ReactNode {
     );
   if (!data) return <p className="muted">{t('loading')}</p>;
 
+  // Long lists (190 verb frames at first) show a few items until expanded.
+  const LIMIT = 5;
+  const few = <T,>(key: string, list: T[]): T[] => (expanded[key] ? list : list.slice(0, LIMIT));
+  const more = (key: string, n: number) =>
+    !expanded[key] && n > LIMIT ? (
+      <button
+        type="button"
+        className="btn btn-quiet btn-block"
+        onClick={() => setExpanded({ ...expanded, [key]: true })}
+      >
+        {t('showAll', { n })}
+      </button>
+    ) : null;
   const act = (p: Promise<unknown>) => void p.then(load, () => setFailed(true));
   const empty =
     data.disputes.length +
@@ -246,7 +260,7 @@ export function Pruefen(): ReactNode {
       ))}
 
       {data.reports.length > 0 && <h2>{t('reviewReports')}</h2>}
-      {data.reports.map((r) => (
+      {few('reports', data.reports).map((r) => (
         <div className="card" key={r.id}>
           <p className="de">{r.de}</p>
           <p className="muted">
@@ -271,9 +285,14 @@ export function Pruefen(): ReactNode {
           </div>
         </div>
       ))}
+      {more('reports', data.reports.length)}
 
-      {data.frames.length > 0 && <h2>{t('reviewFrames')}</h2>}
-      {data.frames.map((f) => (
+      {data.frames.length > 0 && (
+        <h2>
+          {t('reviewFrames')} ({data.frames.length})
+        </h2>
+      )}
+      {few('frames', data.frames).map((f) => (
         <div className="card" key={f.lemmaId}>
           <p>
             <strong className="de">{f.text}</strong> <span className="muted">{f.gloss}</span>
@@ -304,12 +323,15 @@ export function Pruefen(): ReactNode {
           </div>
         </div>
       ))}
+      {more('frames', data.frames.length)}
 
       {data.lemmas.length > 0 && (
         <div className="card">
-          <h2>{t('reviewLemmas')}</h2>
+          <h2>
+            {t('reviewLemmas')} ({data.lemmas.length})
+          </h2>
           <ul>
-            {data.lemmas.map((l) => (
+            {few('lemmas', data.lemmas).map((l) => (
               <li key={l.id}>
                 <a href={`#/wort/${l.id}`} className="de">
                   {l.text}
@@ -318,6 +340,7 @@ export function Pruefen(): ReactNode {
               </li>
             ))}
           </ul>
+          {more('lemmas', data.lemmas.length)}
         </div>
       )}
 

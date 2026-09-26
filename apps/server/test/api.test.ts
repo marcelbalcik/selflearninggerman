@@ -77,7 +77,7 @@ describe('content import', () => {
     const env = await testEnv(START);
     expect(importContent(env.db, CONTENT).imported).toBe(false);
     const lemmas = env.db.prepare('SELECT COUNT(*) AS n FROM lemma').get() as { n: number };
-    expect(lemmas.n).toBe(507);
+    expect(lemmas.n).toBe(2032);
   });
 });
 

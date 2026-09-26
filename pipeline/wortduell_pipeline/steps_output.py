@@ -147,7 +147,7 @@ CREATE TABLE noun(
 CREATE TABLE verb(
   lemma_id INTEGER PRIMARY KEY REFERENCES lemma(id), prefix TEXT, separable INTEGER NOT NULL,
   dual_prefix INTEGER NOT NULL, aux TEXT, partizip2 TEXT, praeteritum_3sg TEXT,
-  praesens_2sg TEXT, praesens_3sg TEXT, stem_change INTEGER, reflexive TEXT NOT NULL,
+  praesens_1sg TEXT, praesens_2sg TEXT, praesens_3sg TEXT, stem_change INTEGER, reflexive TEXT NOT NULL,
   frame TEXT, frame_status TEXT NOT NULL, frame_sources TEXT, zu_infinitive TEXT);
 CREATE TABLE sentence(
   id INTEGER PRIMARY KEY, lemma_id INTEGER NOT NULL REFERENCES lemma(id), target_facet TEXT NOT NULL,

@@ -105,10 +105,14 @@ export class Review {
       governor: sentence.gap.governed_by ?? null,
       nounIsWeak: lemma.noun ? lemma.noun.weak || lemma.noun.mixed : false,
     });
-    const keys = [
-      ...f.lexical.map((x) => lemmaFacetKey(x.lemmaId, x.facet)),
-      ...f.skills.map((x) => skillFacetKey(x)),
-    ].filter((k) => this.cards.get(userId, k)?.unlocked === 1);
+    // Every facet the attempt rated, plus the ones a right answer would have rated.
+    const keys = new Set([
+      ...affected,
+      ...[
+        ...f.lexical.map((x) => lemmaFacetKey(x.lemmaId, x.facet)),
+        ...f.skills.map((x) => skillFacetKey(x)),
+      ].filter((k) => this.cards.get(userId, k)?.unlocked === 1),
+    ]);
     for (const key of keys) {
       this.db
         .prepare(

@@ -7,11 +7,15 @@ decisions taken on top of it are in [docs/DECISIONS.md](docs/DECISIONS.md).
 
 ## Status
 
-| Milestone                 | State       |
-| ------------------------- | ----------- |
-| M0 Scaffold and core      | done        |
-| M1 Pipeline on 200 lemmas | next        |
-| M2–M6                     | not started |
+| Milestone             | State                                  |
+| --------------------- | -------------------------------------- |
+| M0 Scaffold and core  | done                                   |
+| M1 Pipeline           | done (reviewed)                        |
+| M2 Server core        | done (30-day simulation passes)        |
+| M3 Web                | done (real-phone check by Marcel open) |
+| M4 Content at scale   | done, awaiting review                  |
+| M5 Competition        | next                                   |
+| M6 Remaining features | not started                            |
 
 ## Layout
 
@@ -19,9 +23,11 @@ decisions taken on top of it are in [docs/DECISIONS.md](docs/DECISIONS.md).
 packages/core   pure TypeScript: config, determiners, declension, normalisation,
                 grading, error classification, ratings (no IO)
 apps/web        Vite + React PWA: login, placement, Heute, session runner with
-                red-pen feedback, Wort screen, report button (M3)
+                red-pen feedback, Wort screen, report button (M3);
+                all eight exercise types, komposition, disputes, Prüfen (M4)
 apps/server     Fastify + SQLite: auth, content import, FSRS cards, session queue,
-                attempts, reports with voiding, placement (M2)
+                attempts, reports with voiding, placement (M2); disputes,
+                komposition with optional LanguageTool, frame review (M4)
 pipeline/       Python content pipeline: Wiktionary, Tatoeba,
                 spaCy, OdeNet; no paid APIs (M1)
 ```
@@ -44,8 +50,14 @@ not in git: run the pipeline (`pipeline/README.md`) or play without sound.
 `http://<your computer's IP>:3000` on the phone. (Installing as an app needs
 HTTPS, which comes with the Caddy deployment in M6.)
 
+**Grammar feedback for komposition (optional):** set `LANGUAGETOOL_URL` (e.g.
+`http://localhost:8010` for a local LanguageTool server, `docker run -p
+8010:8010 erikvl87/languagetool`). Without it, komposition still checks the
+target words and the partner corrects the text in Prüfen.
+
 **End-to-end test on an emulated phone:** `pnpm e2e` starts the server with a
-fresh database and plays placement plus two full sessions in Chromium
+fresh database and plays placement plus two full sessions, a komposition, a
+dispute and the partner's Prüfen round in Chromium
 (`CHROMIUM=/path/to/chrome` if it is not at `/opt/pw-browsers/chromium`).
 Screenshots land in `apps/web/e2e/screenshots/`; see `docs/screenshots/m3/`.
 

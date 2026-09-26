@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { api } from '../api';
-import { WordTitle } from '../components/parts';
 import { useT } from '../i18n';
 import type { KompositionResult, KompositionTask, LtMatch } from '../types';
 
@@ -75,13 +74,15 @@ export function KompositionTaskView({
     <div className="card">
       <h1>{t('kompositionTitle')}</h1>
       <p>{t('kompositionTask')}</p>
-      <ul>
-        {task.lemmas.map((l) => (
-          <li key={l.id}>
-            <WordTitle article={l.article} text={l.text} />
-          </li>
+      <p className="de" style={{ fontSize: '1.25rem' }}>
+        {task.lemmas.map((l, i) => (
+          <span key={l.id}>
+            {i > 0 && ' · '}
+            {l.article && <span className="article">{l.article} </span>}
+            <strong>{l.text}</strong>
+          </span>
         ))}
-      </ul>
+      </p>
       {task.requiredCase === 'dat' && <p className="note">{t('kompositionDative')}</p>}
       {!result ? (
         <>

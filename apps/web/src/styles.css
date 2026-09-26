@@ -129,6 +129,7 @@ p {
 /* Buttons and inputs */
 button,
 input,
+select,
 textarea {
   font: inherit;
   color: inherit;
@@ -225,7 +226,8 @@ label {
   margin-bottom: 16px;
 }
 
-.field input {
+.field input,
+.field select {
   width: 100%;
   min-height: var(--tap);
   padding: 10px 12px;

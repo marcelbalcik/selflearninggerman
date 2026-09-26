@@ -10,6 +10,7 @@ import { importContent } from '../src/content';
 import { migrate } from '../src/db';
 import type { Db } from '../src/db';
 import type { Gap } from '../src/repo';
+import type { LanguageTool } from '../src/services/komposition';
 
 export const CONTENT = join(
   dirname(fileURLToPath(import.meta.url)),
@@ -27,7 +28,10 @@ export interface TestEnv {
 
 let cachedHash: string | null = null;
 
-export async function testEnv(start: string): Promise<TestEnv> {
+export async function testEnv(
+  start: string,
+  opts: { languageTool?: LanguageTool } = {},
+): Promise<TestEnv> {
   const db = new Database(':memory:');
   db.pragma('foreign_keys = ON');
   migrate(db);
@@ -38,7 +42,7 @@ export async function testEnv(start: string): Promise<TestEnv> {
     { name: 'partnerin', passwordHash: cachedHash },
   ]);
   const clock = new FakeClock(start);
-  const app = buildApp({ db, clock, secureCookies: false });
+  const app = buildApp({ db, clock, secureCookies: false, languageTool: opts.languageTool });
   await app.ready();
   const cookies = new Map<string, string>();
   const cookie = async (name: string): Promise<string> => {
@@ -65,6 +69,7 @@ export interface SentenceOracle {
   exercise_types: string;
   gap: string;
   accepted: string;
+  de: string;
 }
 
 /** The right answer for a sentence, read straight from the content tables. */
@@ -78,6 +83,7 @@ export function rightAnswer(db: Db, sentenceId: number): { answer: string; tappe
   const accepted = JSON.parse(s.accepted) as string[];
   if (type === 'fehlersuche')
     return { answer: String(gap.correct ?? ''), tappedIndex: gap.error_index ?? 0 };
+  if (type === 'diktat') return { answer: s.de };
   return { answer: accepted[0] ?? '' };
 }
 

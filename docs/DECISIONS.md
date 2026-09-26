@@ -253,3 +253,90 @@ Marcel delegated the review of the M1 report to Claude. The decisions live in
   an emulated Pixel 7 (touch, 412 px wide) against the real server. It covers
   all three exercise types, one deliberate mistake with red marks, and the Wort
   overlay. Marcel's check on a real phone is still open.
+
+## M4 content at scale (2026-09-26)
+
+- **2,000 lemmas.** `WORTDUELL_LEMMAS` defaults to `CORE_LEMMA_TARGET`. The run
+  gives 2,032 rows (977 nouns, 490 verbs, 363 adjectives, 202 adverbs; a few
+  words are both adjective and adverb) and 18,282 exercise sentences. The
+  active gender rules are only -ung and -ion, because the others miss the
+  dataset-accuracy threshold.
+- **Review (delegated to Claude).** Noun disagreements between Wiktionary and
+  the engine are decided in `pipeline/review/decisions.json`, keyed by
+  `"Word (gender)"` so homographs such as der/das Ort stay apart. Frames of the
+  300 most frequent verbs were reviewed and approved. The remaining 190 frames
+  stay `needs_review` and appear in Prüfen with corpus counts, and only an
+  approved frame gets a `frame` card.
+- **Templates, not free generation.** The new types come from Tatoeba
+  sentences plus deterministic templates over the stored forms, with no
+  invented grammar (spec §0):
+  - `en_de_chunk` (3,952): an English gloss of a Tatoeba noun phrase. The
+    answer is graded like `kasus_luecke` and trains `meaning_prod`, so it
+    only comes up after that facet unlocks.
+  - `umformen` (1,496): dative plural, Perfekt and du-form, all from stored
+    forms.
+  - `satzbau` (165): verbs with an approved frame, in four frames
+    (Hauptsatz, weil-Nebensatz, Perfekt, zu-Infinitiv). Verbs that make
+    unnatural sentences are excluded in `review/templates.json`.
+  - `wer_tut_was` (94): object-first sentences from a curated list of 47
+    animate nouns and 25 verbs, each with an English 3sg form.
+  - `diktat` (1,597): short Tatoeba sentences, spoken by the browser's
+    speech synthesis (normal and slow). Grading tolerates slips up to
+    `DIKTAT_MAX_NORMALISED_DISTANCE`, but the target word must be right.
+- **Graders (core `grading-other.ts`).** `gradeClosed` (en_de_chunk, umformen)
+  compares normalised whole answers. `gradeSentence` (satzbau) also ignores
+  commas and a leading or trailing full stop. `gradeDiktat` is described
+  above.
+- **Ratings reported back** are only those that reached an unlocked card
+  (locked `meaning_prod`, for example, is left out). The API response and
+  review_log now always agree.
+- **Disputes ("Das stimmt doch!").** Any wrong answer except `wer_tut_was` can
+  be disputed, with an optional note, and only the other person decides.
+  Approving:
+  - adds the answer to `accepted_extra`, which survives content re-imports
+    and applies to both users;
+  - marks the attempt correct;
+  - voids its reviews and logs Good, at the original time, on every facet the
+    attempt rated and every unlocked facet a right answer would have rated;
+  - then replays the affected cards.
+
+  Rejecting changes nothing.
+
+- **Komposition (spec §6.8).** At most one a day, at the end of a normal
+  session. It uses three due or recently introduced lemmas (noun, verb,
+  adjective), and "one noun in the dative" is added whenever a noun is among
+  them.
+  - The check is deterministic. Each target must appear in one of its stored
+    forms (`lemma_form` table), and a dative is recognised from the
+    determiner or contraction in front of the noun.
+  - LanguageTool runs only when `LANGUAGETOOL_URL` is set. Its findings on a
+    target word blame gender (agreement rules) or meaning.
+  - Ratings: a missing target is Again on meaning; a missing dative is Again
+    on `case.dat.<gender>`; otherwise Good.
+  - The other person then marks mistakes in Prüfen (the wrong part, its type
+    and the correction). A mark on a target word adds Again on the facet its
+    type maps to: gender, case, frame, ending (weak nouns) or otherwise
+    meaning. The reviews carry `review_log.komposition_id`.
+- **Prüfen** lists:
+  - the other person's open disputes and unreviewed kompositions;
+  - open reports (reject brings the sentence back, fixed keeps it out);
+  - verb frames awaiting review (approving adds the frame card for everyone
+    who knows the verb);
+  - lemmas marked `needs_review`;
+  - your own disputes with their status.
+
+  Long lists show 5 items and a "show all" button.
+
+- **Audio.** Wikimedia now throttles downloads to about one file a minute, so
+  the 2,000-lemma export keeps the 502 recordings from M1. The other words
+  play without sound. Run `python -m wortduell_pipeline audio && python -m
+wortduell_pipeline export` again later; it resumes where it stopped.
+- **Acceptance.**
+  - Server tests cover every new exercise type, disputes (other person only,
+    regrade, answer accepted for the partner, reject), komposition (checks,
+    LanguageTool stub, once a day, partner review ratings), frame approval
+    and report rejection.
+  - The 30-day simulation passes on the 2,000-lemma content.
+  - `pnpm e2e` plays umformen, diktat and wer_tut_was among the older types,
+    two kompositions, and one dispute. The partner, on a second emulated
+    phone, rejects that dispute and corrects a komposition in Prüfen.
