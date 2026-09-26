@@ -175,3 +175,52 @@ Marcel delegated the review of the M1 report to Claude. The decisions live in
   committed** so the server needs no pipeline run. `dictionary.sqlite` (59 MB)
   and the audio files stay out of git; they are rebuilt with
   `python -m wortduell_pipeline all`.
+
+## M2 server core (2026-09-26)
+
+- **Stack.**
+  - Fastify 5 with `better-sqlite3` and plain SQL migrations (`apps/server/migrations`).
+  - Passwords are hashed with argon2 (`@node-rs/argon2`).
+  - Login sessions are random tokens, stored hashed, in an httpOnly,
+    SameSite=Lax cookie that is Secure by default and lasts 30 days
+    (`OPS.SESSION_TTL_MS`).
+  - Login is rate-limited to 5 failures per 15 minutes, per name and per address.
+- **Time.** The learning day, week and month come from `packages/core/src/time.ts`
+  (03:00 Europe/Berlin, DST-safe). Business code only gets time from an injected
+  `Clock`.
+- **Content import** upserts by stable id on startup when `content_version`
+  changes. Rows missing from a new version are retired, not deleted. A reported
+  sentence keeps its status.
+- **Cards.**
+  - One card per facet is created on introduction, and skill cards are created on
+    first use.
+  - `meaning_prod` unlocks when `meaning_recv` stability reaches 3 days.
+  - Every review stores the card before and after.
+  - Voiding replays a card's remaining reviews.
+- **Queue.**
+  - For each lemma, the sentence covering the most due facets and skills is
+    chosen, preferring sentences the user has not seen recently.
+  - No exercise type may exceed 40% of the session, with a minimum of 2 per type
+    so short sessions still work. A lemma whose only fitting type is full waits
+    for the next session.
+  - Parts of speech are interleaved, and the same lemma never appears twice in a
+    row.
+  - Due facets that no available exercise type can train yet (e.g. `pp_aux`
+    before `satzbau` exists, `meaning_prod` before `en_de_chunk` exists) still get
+    cards but stay out of the queue. They are reported as `untrainable`.
+- **New words.**
+  - New words come in frequency order, skipping a semantic field already
+    introduced that day. Thematic batching arrives with themes from M4.
+  - Only words with a `bedeutung` sentence are introduced.
+  - The first retrieval follows 3–5 items later. When the session is too short
+    for that gap, the intro moves earlier.
+- **`fehlersuche`, wrong answer:** Again on the sentence's target facet only.
+- **Placement.**
+  - `GET/POST /api/placement` samples every 5th core word below rank 500.
+  - A passed sample introduces its block of 5 words, each card seeded with one
+    Good review. A failed sample leaves the block in the normal queue.
+  - Placement runs once per user and does not count toward `NEW_PER_DAY`.
+- **Not yet built:**
+  - pronoun gaps in `kasus_luecke` (the pipeline generates none yet)
+  - duel and exam contexts (M5)
+  - disputes (M4)

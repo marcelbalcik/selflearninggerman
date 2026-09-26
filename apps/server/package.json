@@ -1,0 +1,26 @@
+{
+  "name": "@wortduell/server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts",
+    "hash-password": "tsx src/hash-password.ts"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.1.2",
+    "@node-rs/argon2": "^2.2.1",
+    "@wortduell/core": "workspace:*",
+    "better-sqlite3": "^13.0.3",
+    "fastify": "^5.12.5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^22",
+    "tsx": "^4.23.15",
+    "vitest": "^5"
+  }
+}

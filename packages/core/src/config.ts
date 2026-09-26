@@ -188,4 +188,5 @@ export const OPS = {
   BACKUP_RETENTION_DAYS: 30,
   LOGIN_MAX_ATTEMPTS: 5,
   LOGIN_WINDOW_MS: 15 * 60 * 1000,
+  SESSION_TTL_MS: 30 * DAY_MS,
 } as const;

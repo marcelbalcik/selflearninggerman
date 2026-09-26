@@ -16,5 +16,8 @@
     "@types/node": "^22.20.4",
     "tsx": "^4.23.15",
     "vitest": "^5.0.2"
+  },
+  "dependencies": {
+    "ts-fsrs": "^5.4.2"
   }
 }

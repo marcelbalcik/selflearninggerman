@@ -19,10 +19,22 @@ decisions taken on top of it are in [docs/DECISIONS.md](docs/DECISIONS.md).
 packages/core   pure TypeScript: config, determiners, declension, normalisation,
                 grading, error classification, ratings (no IO)
 apps/web        Vite + React PWA            (M3)
-apps/server     Fastify + SQLite (+ self-hosted LanguageTool)  (M2)
+apps/server     Fastify + SQLite: auth, content import, FSRS cards, session queue,
+                attempts, reports with voiding, placement (M2)
 pipeline/       Python content pipeline: Wiktionary, Tatoeba,
                 spaCy, OdeNet; no paid APIs (M1)
 ```
+
+## Running the server
+
+```bash
+pnpm --filter @wortduell/server hash-password      # prints an argon2 hash
+cp apps/server/.env.example apps/server/.env       # fill in names and hashes
+cd apps/server && node --env-file=.env --import tsx src/main.ts
+```
+
+The server imports `apps/server/content/content.sqlite` on startup when its
+content version changed; user data is never touched.
 
 ## Development
 
