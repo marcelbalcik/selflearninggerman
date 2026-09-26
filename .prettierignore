@@ -1,2 +1,4 @@
 pnpm-lock.yaml
 docs/SPEC.md
+pipeline/reports/
+apps/web/public/audio/

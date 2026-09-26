@@ -105,3 +105,50 @@ match:
 - **Tooling.**
   - TypeScript 6.0: typescript-eslint does not support 7.x yet.
   - Node 22.12+: Vitest 5 requires it, and Node 20 is end-of-life.
+
+## M1 pipeline (2026-09-26)
+
+- **Trial size: 500 lemmas** (Marcel), picked by frequency.
+- **Frequency method.** wordfreq gives each word form's frequency, but it
+  ignores case and part of speech. So each form's frequency is split over its
+  readings as spaCy finds them in context across the whole Tatoeba corpus.
+  Without this, `einen` counted for the verb "to unite" and `mal` for `malen`.
+  - Readings count only when the form is one of the lemma's Wiktionary forms,
+    which catches lemmatiser errors.
+  - Swiss spellings credit their standard form (`gross` → `groß`).
+  - An adjective and its adverb use are one lemma (`gut`).
+- **Deck parts of speech: nouns, verbs, adjectives, adverbs.** Articles,
+  pronouns, prepositions and conjunctions are grammar skills, not deck words.
+- **Dative plural rule, refined from the spec.** `-n` attaches only to plurals
+  ending in `-e`, `-el` or `-er`. Every other plural stays unchanged. The spec's
+  rule ("unless -n/-s, except -a") turned the zero plurals used after numerals
+  into `Euron`, `Stückn` and `Jahrn`. Wiktionary lists `mit zehn Euro` and
+  `zwei Stück` as standard.
+- **Genitive plausibility is lenient.** `-s`, `-es`, unchanged, or `-ses` after
+  a final s are all accepted, because the choice depends on stress. The stricter
+  guess rejected `Beispieles`, `Königes` and `des September`. The genitive is
+  display-only and always comes from Wiktionary.
+- **Archaic dative `-e`** is dropped from Wiktionary tables even when unmarked:
+  both `lemma+e` and the `-es` genitive without its final s (`dem Ergebnisse`).
+- **Nonstandard forms are dropped from the stored tables.** These are forms
+  tagged archaic, obsolete, rare, poetic, colloquial, regional or alternative,
+  and alternatives labelled on the headword line.
+- **Wiktionary's own "mixed" label** (`der See`) differs from the spec's mixed
+  declension (`der Name`, `das Herz`), so it is ignored. The spec's mixed means
+  weak endings plus a genitive in `-ns`.
+- **Senses split** into separate rows when gender or separability differs
+  (`der/das Teil`, `der/das Moment`).
+- **Exercise types generated in M1:**
+  - `kasus_luecke` (determiner + noun gaps checked against the form tables)
+  - `fehlersuche` (one determiner swapped for one that fits no cell of the noun)
+  - `bedeutung`
+
+  The others need templates and come in M4. Only `ok` lemmas get sentences.
+
+- **Gender hints:** none are active at 500 lemmas, because no suffix reaches
+  n ≥ 20. They will become active as the deck grows toward 2,000.
+- **Wikimedia requests** send a descriptive User-Agent, run at most one per
+  second, and back off on 429. A recording without licence data is not used.
+- **github.com is unreachable** from the build environment, so OdeNet is not
+  used yet. Semantic fields come from Wiktionary topic categories only, and about
+  two thirds of lemmas have none. An empty field never blocks introduction.

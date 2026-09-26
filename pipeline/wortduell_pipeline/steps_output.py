@@ -24,10 +24,21 @@ OUT = WORK / "out"
 COMMONS_API = "https://commons.wikimedia.org/w/api.php"
 
 
-def _get(url: str) -> bytes:
+def _get(url: str, retries: int = 6) -> bytes:
+    """GET with a descriptive User-Agent; backs off on 429/503 (Wikimedia rate limits)."""
+    import urllib.error
+
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return resp.read()
+    for attempt in range(retries):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                return resp.read()
+        except urllib.error.HTTPError as err:
+            if err.code not in (429, 503) or attempt == retries - 1:
+                raise
+            wait = int(err.headers.get("Retry-After") or 0) or 2 ** (attempt + 1)
+            time.sleep(min(wait, 120))
+    raise RuntimeError("unreachable")
 
 
 def _licences(files: list[str]) -> dict[str, dict[str, str]]:
@@ -40,13 +51,9 @@ def _licences(files: list[str]) -> dict[str, dict[str, str]]:
             "action": "query", "titles": titles, "prop": "imageinfo",
             "iiprop": "extmetadata", "format": "json", "formatversion": "2",
         })
-        for attempt in range(4):
-            try:
-                data = json.loads(_get(f"{COMMONS_API}?{query}"))
-                break
-            except Exception:  # rate limit or network: back off and retry
-                time.sleep(interval * 2 ** (attempt + 2))
-        else:
+        try:
+            data = json.loads(_get(f"{COMMONS_API}?{query}"))
+        except Exception:
             continue
         for page in data.get("query", {}).get("pages", []):
             info = (page.get("imageinfo") or [{}])[0].get("extmetadata", {})
@@ -64,6 +71,7 @@ def _licences(files: list[str]) -> dict[str, dict[str, str]]:
 def audio() -> dict[str, Any]:
     """Download one lemma recording per lemma and record its Commons licence."""
     rows = list(read_jsonl(LEMMAS))
+    interval = config()["PIPELINE"]["COMMONS_REQUEST_INTERVAL_MS"] / 1000
     AUDIO_DIR.mkdir(parents=True, exist_ok=True)
     wanted = [(r, r["sounds"][0]) for r in rows if r["sounds"]]
     lic = _licences([s["file"].replace(" ", "_") for _, s in wanted])
@@ -80,6 +88,7 @@ def audio() -> dict[str, Any]:
             except Exception:
                 failed.append(r["text"])
                 continue
+            time.sleep(interval)
         audio_rows.append({
             "lemma_id": r["id"], "url": f"/audio/{r['id']}.mp3", "local_path": str(path.name),
             "license": meta["license"], "attribution": meta["artist"] or meta["credit"],

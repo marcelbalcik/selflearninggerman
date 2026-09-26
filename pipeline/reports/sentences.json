@@ -1,0 +1,19 @@
+{
+  "sentences_considered": 450211,
+  "gap_found": 62694,
+  "gap_skipped_ambiguous_lemma": 2214,
+  "gap_rejected_spacy_vs_tables": 1097,
+  "gap_rejected_no_morphology": 20,
+  "lemmas_ok": 502,
+  "lemmas_needs_review_skipped": 5,
+  "nouns_with_gap_sentences": 170,
+  "lemmas_with_meaning_sentences": 497,
+  "candidates": 2506,
+  "ok_lemmas_without_any_sentence": [
+    "Euro",
+    "Fall",
+    "Foto",
+    "Moment",
+    "Teil"
+  ]
+}

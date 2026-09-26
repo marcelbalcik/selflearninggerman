@@ -236,6 +236,9 @@ def glosses(entry: dict[str, Any]) -> tuple[str, list[str]]:
                     continue
                 if part.lower() not in accepted:
                     accepted.append(part.lower())
+    if not shown and senses:
+        # Only minor uses (e.g. modal verbs tagged auxiliary): show those.
+        shown = [_clean_gloss(senses[0]["glosses"][0])]
     return "; ".join(shown), accepted
 
 
@@ -326,12 +329,14 @@ def parse_noun(entry: dict[str, Any]) -> dict[str, Any]:
     else:
         sg = decl["sg"]
         pl = decl["pl"]
-        # Archaic dative -e (dem Kinde) is not accepted even when unmarked.
-        if gender in ("m", "n") and not word.endswith("e"):
-            archaic = f"{word}e"
-            if archaic in sg["dat"] and not weak and not mixed:
-                sg["dat"].remove(archaic)
-                notes.append(f"archaic_dative_dropped:{archaic}")
+        # Archaic dative -e (dem Kinde, dem Ergebnisse) is not accepted even when
+        # unmarked: it is the -es genitive without its final s.
+        if gender in ("m", "n") and not weak and not mixed:
+            archaic = {f"{word}e"} | {g[:-1] for g in gen_sg if g.endswith("es")}
+            for form in sorted(archaic - {word}):
+                if form in sg["dat"]:
+                    sg["dat"].remove(form)
+                    notes.append(f"archaic_dative_dropped:{form}")
         forms = {"kind": "regular",
                  "sg": None if plural_only or not _has_forms(sg) else sg,
                  "pl": None if no_plural or not _has_forms(pl) else pl}

@@ -1,0 +1,26 @@
+{
+  "candidates": 2506,
+  "kept": 2492,
+  "kept_by_type": {
+    "kasus_luecke": 504,
+    "fehlersuche": 504,
+    "bedeutung": 1484
+  },
+  "rejected": {
+    "kasus_luecke:render_mismatch": 4,
+    "fehlersuche:render_mismatch": 4,
+    "bedeutung:no_accepted_glosses": 6
+  },
+  "rejection_rate_by_type": {
+    "kasus_luecke": 0.008,
+    "fehlersuche": 0.008,
+    "bedeutung": 0.004
+  },
+  "not_generated_yet": [
+    "wer_tut_was",
+    "en_de_chunk",
+    "satzbau",
+    "umformen",
+    "diktat"
+  ]
+}

@@ -50,12 +50,15 @@ function uniform(forms: string[]): CaseForms {
 }
 
 /**
- * Dative plural: `-n` unless the plural already ends in `-n` or `-s`.
- * Latin/Greek plurals in `-a` stay unchanged (`den Praktika`, `den Visa`), as
- * do Italian plurals in `-i` (`den Celli`).
+ * Dative plural. The spec's rule is "-n unless the plural ends in -n or -s,
+ * Latin/Greek -a plurals unchanged". Checked against Wiktionary (M1), the
+ * precise rule is narrower: -n attaches only to plurals ending in -e, -el or
+ * -er (`Tischen`, `Äpfeln`, `Kindern`). Every other ending stays unchanged:
+ * -n/-s (`Frauen`, `Autos`), vowels (`Praktika`, `Celli`) and the zero
+ * plurals of measure nouns after numerals (`zwei Stück`, `mit zehn Euro`).
  */
 export function dativePlural(plural: string): string {
-  return /[nsai]$/u.test(plural) ? plural : `${plural}n`;
+  return /(?:e|el|er)$/u.test(plural) ? `${plural}n` : plural;
 }
 
 /** Singular akk/dat/gen stem of a weak noun, and the base of mixed ones: `-(e)n`. */
@@ -71,23 +74,16 @@ function weakOblique(noun: NounInput): string {
 
 /**
  * Genitive singular forms the rules allow for a strong masculine or neuter
- * noun. Whether `-s` or `-es` is used often depends on stress, so this is a
- * plausibility set for checking stored data, never a source of display forms.
+ * noun: `-s`, `-es` or unchanged (`des September`), plus `-ses` after a final
+ * -s (`des Busses`, `des Ergebnisses`). Which of these a noun takes depends on
+ * stress and usage, which the rules cannot see, so this is only a
+ * plausibility set for stored data (M1 showed that stricter guesses reject
+ * valid forms such as `Beispieles`, `Königes`).
  */
 export function strongGenitiveCandidates(lemma: string): string[] {
-  const lower = lemma.toLowerCase();
-  if (lower.endsWith('nis')) return [`${lemma}ses`];
-  if (/[sßxz]$/u.test(lower)) {
-    const out = [`${lemma}es`];
-    // Polysyllabic -s nouns: des Busses, des Globus, des Atlasses.
-    if (lower.endsWith('s') && syllableCount(lemma) > 1) out.push(`${lemma}ses`, lemma);
-    return out;
-  }
-  if (lower.endsWith('sch')) return [`${lemma}es`, `${lemma}s`];
-  if (VOWEL.includes(lower.slice(-1))) return [`${lemma}s`];
-  if (syllableCount(lemma) <= 1) return [`${lemma}es`, `${lemma}s`];
-  if (/(el|er|en|em|chen|lein|um|ling|ing|ig|ich)$/u.test(lower)) return [`${lemma}s`];
-  return [`${lemma}s`, `${lemma}es`];
+  const out = [`${lemma}s`, `${lemma}es`, lemma];
+  if (/s$/u.test(lemma)) out.push(`${lemma}ses`);
+  return out;
 }
 
 function regularSingular(noun: NounInput): CaseForms {

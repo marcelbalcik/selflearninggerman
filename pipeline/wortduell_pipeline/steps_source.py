@@ -74,6 +74,26 @@ def _reading_counts() -> tuple[dict[str, dict[tuple[str, str], int]], dict[str, 
     return readings, totals
 
 
+def _forms(entry: dict[str, Any]) -> set[str]:
+    out = {entry["word"].lower()}
+    for f in entry.get("forms") or []:
+        for part in f.get("form", "").split():
+            if part.isalpha():
+                out.add(part.lower())
+    return out
+
+
+def _grammar_words() -> set[str]:
+    """Determiners, prepositions and contractions from the core: grammar, not deck words."""
+    from .common import core_cli
+
+    g = core_cli("grammar")[0]
+    words = {d["word"] for d in g["determiners"]} | set(g["contractions"])
+    for group in g["prepositions"].values():
+        words |= set(group)
+    return words
+
+
 def select() -> dict[str, Any]:
     """Rank deck lemmas by frequency and keep the top TRIAL_LEMMA_COUNT.
 
@@ -91,12 +111,28 @@ def select() -> dict[str, Any]:
     deck_pos = set(cfg["DECK_POS"])
     limit = cfg["TRIAL_LEMMA_COUNT"]
 
+    grammar_words = _grammar_words()
+    top = top_n_list("de", 60_000)
+    top_set = set(top)
+    forms_of: dict[tuple[str, str], set[str]] = defaultdict(set)
     exclusions: dict[str, int] = defaultdict(int)
     deck: set[tuple[str, str]] = set()
+    alias: dict[tuple[str, str], tuple[str, str]] = {}
     verbs: set[str] = set()
     for entry in _iter_kaikki():
         pos = entry.get("pos")
         if pos not in deck_pos or entry.get("lang_code") != "de":
+            continue
+        senses = entry.get("senses") or []
+        if senses and all("alt-of" in (x.get("tags") or []) for x in senses):
+            # Spelling variants (Swiss `gross` for `groß`) credit their main form.
+            target = ((senses[0].get("alt_of") or [{}])[0]).get("word")
+            if target:
+                alias[(entry["word"], pos)] = (target, pos)
+            exclusions["spelling_variant"] += 1
+            continue
+        if pos in ("adv", "adj") and entry["word"].lower() in grammar_words:
+            exclusions["function_word"] += 1
             continue
         reason = exclusion_reason(entry)
         if reason:
@@ -106,27 +142,39 @@ def select() -> dict[str, Any]:
             exclusions["single_letter"] += 1
             continue
         deck.add((entry["word"], pos))
+        forms_of[(entry["word"], pos)] |= {f for f in _forms(entry) if f in top_set}
         if pos == "verb":
             verbs.add(entry["word"])
 
     readings, totals = _reading_counts()
     score: dict[tuple[str, str], float] = defaultdict(float)
     unmatched: dict[tuple[str, str], float] = defaultdict(float)
-    for form in top_n_list("de", 60_000):
+    lemmatiser_errors = 0
+    for form in top:
         total = totals.get(form, 0)
         if total == 0:
             continue
         freq = word_frequency(form, "de")
         for (lemma, pos), n in readings.get(form, {}).items():
-            key = (lemma, pos)
+            key = alias.get((lemma, pos), (lemma, pos))
             if key not in deck:
                 # spaCy's adjective/adverb split differs from Wiktionary's.
                 alt = {"adj": "adv", "adv": "adj"}.get(pos)
                 key = (lemma, alt) if alt and (lemma, alt) in deck else key
+            if key in deck and form not in forms_of[key]:
+                # spaCy lemmatiser error (`Rahmen` → `Rahm`): the form is not
+                # one of this lemma's Wiktionary forms.
+                lemmatiser_errors += 1
+                continue
             if key in deck:
                 score[key] += freq * n / total
             else:
                 unmatched[key] += freq * n / total
+    # Adjectives used adverbially (`gut`) are one lemma: the adverb entry's
+    # score goes to the adjective.
+    for (word, pos) in list(score):
+        if pos == "adv" and (word, "adj") in score:
+            score[(word, "adj")] += score.pop((word, "adv"))
     ranked = sorted(score.items(), key=lambda kv: (-kv[1], kv[0]))
     selected = {key: rank + 1 for rank, (key, _) in enumerate(ranked[:limit])}
 
@@ -151,6 +199,7 @@ def select() -> dict[str, Any]:
         "by_pos": dict(by_pos),
         "entries_kept": len(kept),
         "excluded_entries": dict(exclusions),
+        "readings_dropped_as_lemmatiser_errors": lemmatiser_errors,
         "frequent_readings_without_wiktionary_entry": [
             f"{w} ({p})" for (w, p), _ in top_unmatched
         ],

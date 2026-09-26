@@ -1,0 +1,232 @@
+{
+  "nouns_checked": 192,
+  "verbs_checked": 127,
+  "noun_mismatches": 5,
+  "mismatches": [
+    {
+      "id": 3662050225448,
+      "lemma": "Mann",
+      "cells": [
+        {
+          "cell": "pl.akk",
+          "wiktionary": [
+            "Mann",
+            "Männer"
+          ],
+          "engine": [
+            "Männer"
+          ]
+        },
+        {
+          "cell": "pl.dat",
+          "wiktionary": [
+            "Mann",
+            "Männern"
+          ],
+          "engine": [
+            "Männern"
+          ]
+        },
+        {
+          "cell": "pl.gen",
+          "wiktionary": [
+            "Mann",
+            "Männer"
+          ],
+          "engine": [
+            "Männer"
+          ]
+        },
+        {
+          "cell": "pl.nom",
+          "wiktionary": [
+            "Mann",
+            "Männer"
+          ],
+          "engine": [
+            "Männer"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 45155968623268,
+      "lemma": "Thema",
+      "cells": [
+        {
+          "cell": "pl.akk",
+          "wiktionary": [
+            "Themas",
+            "Themata",
+            "Themen"
+          ],
+          "engine": [
+            "Themen"
+          ]
+        },
+        {
+          "cell": "pl.dat",
+          "wiktionary": [
+            "Themas",
+            "Themata",
+            "Themen"
+          ],
+          "engine": [
+            "Themen"
+          ]
+        },
+        {
+          "cell": "pl.gen",
+          "wiktionary": [
+            "Themas",
+            "Themata",
+            "Themen"
+          ],
+          "engine": [
+            "Themen"
+          ]
+        },
+        {
+          "cell": "pl.nom",
+          "wiktionary": [
+            "Themas",
+            "Themata",
+            "Themen"
+          ],
+          "engine": [
+            "Themen"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 27719695785296,
+      "lemma": "Ort",
+      "cells": [
+        {
+          "cell": "pl.akk",
+          "wiktionary": [
+            "Orte",
+            "Örter"
+          ],
+          "engine": [
+            "Orte"
+          ]
+        },
+        {
+          "cell": "pl.dat",
+          "wiktionary": [
+            "Orten",
+            "Örtern"
+          ],
+          "engine": [
+            "Orten"
+          ]
+        },
+        {
+          "cell": "pl.gen",
+          "wiktionary": [
+            "Orte",
+            "Örter"
+          ],
+          "engine": [
+            "Orte"
+          ]
+        },
+        {
+          "cell": "pl.nom",
+          "wiktionary": [
+            "Orte",
+            "Örter"
+          ],
+          "engine": [
+            "Orte"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 103174466416274,
+      "lemma": "Junge",
+      "cells": [
+        {
+          "cell": "pl.akk",
+          "wiktionary": [
+            "Jungen"
+          ],
+          "engine": [
+            "Jungen",
+            "Jungens",
+            "Jungs"
+          ]
+        },
+        {
+          "cell": "pl.dat",
+          "wiktionary": [
+            "Jungen"
+          ],
+          "engine": [
+            "Jungen",
+            "Jungens",
+            "Jungs"
+          ]
+        },
+        {
+          "cell": "pl.gen",
+          "wiktionary": [
+            "Jungen"
+          ],
+          "engine": [
+            "Jungen",
+            "Jungens",
+            "Jungs"
+          ]
+        },
+        {
+          "cell": "pl.nom",
+          "wiktionary": [
+            "Jungen"
+          ],
+          "engine": [
+            "Jungen",
+            "Jungens",
+            "Jungs"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 149744069198763,
+      "lemma": "Herz",
+      "cells": [
+        {
+          "cell": "sg.dat",
+          "wiktionary": [
+            "Herz",
+            "Herzen"
+          ],
+          "engine": [
+            "Herzen"
+          ]
+        }
+      ]
+    }
+  ],
+  "needs_review": {
+    "Mann": [
+      "table_mismatch"
+    ],
+    "Thema": [
+      "table_mismatch"
+    ],
+    "Ort (m)": [
+      "table_mismatch"
+    ],
+    "Junge": [
+      "table_mismatch"
+    ],
+    "Herz": [
+      "table_mismatch"
+    ]
+  }
+}

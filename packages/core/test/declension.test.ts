@@ -52,6 +52,11 @@ describe('golden nouns (spec §4.2)', () => {
     expect(np(VISUM, { num: 'pl', case: 'dat', det: 'def' })).toEqual(['den Visa']);
     expect(np(noun('Leute'), { num: 'pl', case: 'dat', det: 'def' })).toEqual(['den Leuten']);
     expect(dativePlural('Äpfel')).toBe('Äpfeln');
+    // Zero plurals of measure nouns after numerals stay unchanged (M1 crosscheck).
+    expect(dativePlural('Euro')).toBe('Euro');
+    expect(dativePlural('Stück')).toBe('Stück');
+    expect(dativePlural('Jahr')).toBe('Jahr');
+    expect(dativePlural('Mal')).toBe('Mal');
   });
 
   it('never produces the archaic dative -e', () => {
@@ -182,10 +187,14 @@ describe('noun data checks', () => {
     ]);
   });
 
-  it('genitive candidates', () => {
-    expect(strongGenitiveCandidates('Haus')).toEqual(['Hauses']);
-    expect(strongGenitiveCandidates('Ergebnis')).toEqual(['Ergebnisses']);
-    expect(strongGenitiveCandidates('Lehrer')).toEqual(['Lehrers']);
+  it('genitive candidates allow -s, -es, unchanged and -ses', () => {
+    expect(strongGenitiveCandidates('Haus')).toContain('Hauses');
+    expect(strongGenitiveCandidates('Ergebnis')).toContain('Ergebnisses');
+    expect(strongGenitiveCandidates('Beispiel')).toEqual(
+      expect.arrayContaining(['Beispiels', 'Beispieles']),
+    );
+    expect(strongGenitiveCandidates('September')).toContain('September');
+    expect(strongGenitiveCandidates('Tisch')).not.toContain('Tischen');
   });
 
   it('syllable estimate', () => {

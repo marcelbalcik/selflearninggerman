@@ -1,0 +1,19 @@
+{
+  "lemma_rows": 507,
+  "by_pos": {
+    "verb": 127,
+    "adv": 96,
+    "adj": 92,
+    "noun": 192
+  },
+  "split_by_sense": [
+    "Alter (noun): n, m",
+    "Euro (noun): m, f",
+    "Fall (noun): m, n",
+    "Moment (noun): m, n",
+    "Teil (noun): m, n",
+    "Ort (noun): m, n",
+    "Foto (noun): n, m"
+  ],
+  "extraction_issues": {}
+}
