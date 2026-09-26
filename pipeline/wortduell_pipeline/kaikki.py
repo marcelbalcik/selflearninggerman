@@ -417,11 +417,13 @@ def parse_verb(entry: dict[str, Any]) -> dict[str, Any]:
         issues.append("partizip2_missing")
     praet = (head_forms(entry, {"past"}) or [None])[0]
     pres2 = _conj(entry, {"indicative", "present", "second-person", "singular"})
+    # Only the form tagged `infinitive-zu` (a zu- prefix like zugeben is not it).
     zu_inf = next(
         (f["form"] for f in first_table(entry, "conjugation")
-         if "infinitive" in (f.get("tags") or []) and "zu" in f.get("form", "")),
+         if "infinitive-zu" in (f.get("tags") or [])),
         None,
     )
+    pres1 = _conj(entry, {"first-person", "indicative", "present", "singular"})
     stem_change = None
     if pres3:
         stem = re.sub(r"e?n$", "", base)
@@ -438,6 +440,7 @@ def parse_verb(entry: dict[str, Any]) -> dict[str, Any]:
         "aux": aux,
         "partizip2": partizip2,
         "praeteritum_3sg": praet,
+        "praesens_1sg": pres1,
         "praesens_2sg": pres2,
         "praesens_3sg": pres3,
         "stem_change": stem_change,

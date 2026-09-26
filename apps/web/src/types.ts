@@ -68,12 +68,17 @@ export type Prompt =
       highlightIndex: number;
       word: string;
       hint: string;
-    };
+    }
+  | { type: 'en_de_chunk'; prompt: string; pos: Pos }
+  | { type: 'umformen'; instruction: 'dat_pl' | 'perfekt' | 'du_form'; source: string }
+  | { type: 'satzbau'; chunks: string[]; frame: string }
+  | { type: 'wer_tut_was'; de: string; options: string[] }
+  | { type: 'diktat'; speak: string; words: number };
 
 export interface ExerciseItem {
   kind: 'exercise';
   sentenceId: number;
-  exerciseType: 'kasus_luecke' | 'fehlersuche' | 'bedeutung';
+  exerciseType: Prompt['type'];
   lemmaId: number;
   pos: Pos;
   prompt: Prompt;
@@ -97,6 +102,65 @@ export interface SessionPlan {
   items: SessionItem[];
   deferred: number;
   untrainable: number;
+  komposition: KompositionTask | null;
+}
+
+export interface KompositionTask {
+  lemmas: { id: number; text: string; pos: Pos; article: string | null }[];
+  requiredCase: 'dat' | null;
+}
+
+export interface LtMatch {
+  offset: number;
+  length: number;
+  message: string;
+  replacements: string[];
+  ruleId: string;
+}
+
+export interface TargetCheck {
+  lemmaId: number;
+  found: boolean;
+  span: [number, number] | null;
+  dative: boolean;
+  ltIssue: string | null;
+}
+
+export interface KompositionResult {
+  id: number;
+  checks: TargetCheck[];
+  languageTool: LtMatch[] | null;
+}
+
+export interface ReviewData {
+  disputes: {
+    id: number;
+    by: string;
+    note: string;
+    answer: string;
+    exerciseType: string;
+    prompt: Prompt | null;
+    accepted: string[];
+  }[];
+  myDisputes: { id: number; status: string; answer_raw: string }[];
+  reports: { id: number; sentence_id: number; reason: string; name: string; de: string }[];
+  frames: {
+    lemmaId: number;
+    text: string;
+    gloss: string;
+    proposal: VerbInfo['frame'];
+    corpus: { uses: number; counts: Record<string, number> } | null;
+  }[];
+  lemmas: { id: number; text: string; pos: string; review_reasons: string[] | null }[];
+  kompositions: {
+    id: number;
+    by: string;
+    text: string;
+    targets: string[];
+    checks: TargetCheck[];
+    languageTool: LtMatch[] | null;
+    createdAt: string;
+  }[];
 }
 
 export interface Mark {

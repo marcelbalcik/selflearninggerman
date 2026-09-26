@@ -61,7 +61,12 @@ export type Prompt =
       word: string;
       /** "Tipp": first letter of the expected meaning. */
       hint: string;
-    };
+    }
+  | { type: 'en_de_chunk'; prompt: string; pos: Lemma['pos'] }
+  | { type: 'umformen'; instruction: 'dat_pl' | 'perfekt' | 'du_form'; source: string }
+  | { type: 'satzbau'; chunks: string[]; frame: string }
+  | { type: 'wer_tut_was'; de: string; options: string[] }
+  | { type: 'diktat'; speak: string; words: number };
 
 export interface LemmaCard {
   id: number;
@@ -94,6 +99,12 @@ interface DueCard {
 
 const ARTICLE = { m: 'der', f: 'die', n: 'das' } as const;
 
+function hash(text: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619);
+  return h >>> 0;
+}
+
 export class Sessions {
   constructor(
     private readonly db: Db,
@@ -123,24 +134,47 @@ export class Sessions {
   }
 
   prompt(s: Sentence, lemma: Lemma): Prompt {
-    if (s.exerciseType === 'kasus_luecke') {
-      return {
-        type: 'kasus_luecke',
-        tokens: s.gap.tokens,
-        gapIndex: s.gap.gap_index ?? 0,
-        cue: s.gap.cue ?? lemma.text,
-        en: s.en,
-      };
+    const g = s.gap;
+    switch (s.exerciseType) {
+      case 'kasus_luecke':
+        return {
+          type: 'kasus_luecke',
+          tokens: g.tokens,
+          gapIndex: g.gap_index ?? 0,
+          cue: g.cue ?? lemma.text,
+          en: s.en,
+        };
+      case 'fehlersuche':
+        return { type: 'fehlersuche', tokens: g.tokens };
+      case 'en_de_chunk':
+        return { type: 'en_de_chunk', prompt: g.prompt ?? s.en ?? '', pos: lemma.pos };
+      case 'umformen':
+        return { type: 'umformen', instruction: g.instruction ?? 'dat_pl', source: g.source ?? '' };
+      case 'satzbau': {
+        // Shuffle the chunks deterministically so the order is no hint.
+        const chunks = [...(g.chunks ?? [])].sort(
+          (a, b) => hash(`${s.id}:${a}`) - hash(`${s.id}:${b}`),
+        );
+        return { type: 'satzbau', chunks, frame: g.frame ?? 'hauptsatz' };
+      }
+      case 'wer_tut_was':
+        return { type: 'wer_tut_was', de: s.de, options: g.options ?? [] };
+      case 'diktat':
+        return {
+          type: 'diktat',
+          speak: s.de,
+          words: g.tokens.filter((t) => /\p{L}/u.test(t)).length,
+        };
+      default:
+        return {
+          type: 'bedeutung',
+          de: s.de,
+          tokens: g.tokens,
+          highlightIndex: g.highlight_index ?? 0,
+          word: lemma.text,
+          hint: (s.accepted[0] ?? '').charAt(0),
+        };
     }
-    if (s.exerciseType === 'fehlersuche') return { type: 'fehlersuche', tokens: s.gap.tokens };
-    return {
-      type: 'bedeutung',
-      de: s.de,
-      tokens: s.gap.tokens,
-      highlightIndex: s.gap.highlight_index ?? 0,
-      word: lemma.text,
-      hint: (s.accepted[0] ?? '').charAt(0),
-    };
   }
 
   /** Every exercisable due facet, grouped by lemma, plus due skills. */

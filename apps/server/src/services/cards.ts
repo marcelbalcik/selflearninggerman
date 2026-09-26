@@ -94,6 +94,23 @@ export class Cards {
     return true;
   }
 
+  /** Add facet cards a lemma gained later (e.g. a frame approved in Prüfen). */
+  ensureLexical(lemma: Lemma, now: Date): number {
+    const users = this.db
+      .prepare<[number], { user_id: number }>('SELECT user_id FROM lemma_intro WHERE lemma_id = ?')
+      .all(lemma.id);
+    let added = 0;
+    for (const { user_id } of users) {
+      for (const f of lexicalFacets(lemmaFacts(lemma))) {
+        const key = lemmaFacetKey(lemma.id, f.facet);
+        if (this.get(user_id, key)) continue;
+        this.insert(user_id, key, lemma.id, null, now, f.unlocked);
+        added += 1;
+      }
+    }
+    return added;
+  }
+
   /** Skill cards are created the first time an attempt implicates them. */
   ensureSkill(userId: number, skill: SkillId, now: Date): void {
     this.insert(userId, skillFacetKey(skill), null, skill, now, true);
@@ -107,6 +124,7 @@ export class Cards {
     now: Date,
     attemptId: number | null,
     context: ReviewContext,
+    kompositionId: number | null = null,
   ): StoredCard | null {
     const row = this.get(userId, key);
     if (!row || row.unlocked !== 1) return null;
@@ -114,8 +132,8 @@ export class Cards {
     this.save(userId, key, after);
     this.db
       .prepare(
-        `INSERT INTO review_log (user_id, facet_key, attempt_id, rating, card_before, card_after, ts, context)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO review_log (user_id, facet_key, attempt_id, rating, card_before, card_after, ts, context, komposition_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         userId,
@@ -126,6 +144,7 @@ export class Cards {
         JSON.stringify(after),
         now.toISOString(),
         context,
+        kompositionId,
       );
     if (key.endsWith(':meaning_recv')) this.maybeUnlockProduction(userId, key, after, now);
     return after;

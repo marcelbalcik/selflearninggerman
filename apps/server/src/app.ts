@@ -10,7 +10,10 @@ import { Repo } from './repo';
 import { AttemptError, Attempts } from './services/attempts';
 import type { AttemptInput } from './services/attempts';
 import { Cards } from './services/cards';
+import { Komposition, languageToolClient } from './services/komposition';
+import type { LanguageTool } from './services/komposition';
 import { Learning } from './services/learning';
+import { Review } from './services/review';
 import { Sessions } from './services/session';
 
 export interface AppOptions {
@@ -21,6 +24,8 @@ export interface AppOptions {
   logger?: boolean;
   /** Directory of the built web app to serve (apps/web/dist). */
   webDist?: string;
+  /** LanguageTool client for komposition feedback (default: none). */
+  languageTool?: LanguageTool;
 }
 
 declare module 'fastify' {
@@ -37,6 +42,13 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   const sessions = new Sessions(db, repo);
   const attempts = new Attempts(db, repo, cards);
   const learning = new Learning(db, repo, cards, sessions);
+  const komposition = new Komposition(
+    db,
+    repo,
+    cards,
+    opts.languageTool ?? languageToolClient(undefined),
+  );
+  const review = new Review(db, repo, cards, sessions);
   const limiter = new LoginLimiter();
 
   void app.register(cookie);
@@ -137,8 +149,182 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   app.get<{ Querystring: { mode?: string } }>('/api/session', (req, reply) => {
     const user = auth(req, reply);
     if (!user) return;
-    return sessions.build(user.id, clock.now(), { reviewsOnly: req.query.mode === 'reviews' });
+    const reviewsOnly = req.query.mode === 'reviews';
+    const plan = sessions.build(user.id, clock.now(), { reviewsOnly });
+    return { ...plan, komposition: reviewsOnly ? null : komposition.task(user.id, clock.now()) };
   });
+
+  app.post<{ Body: { lemmaIds: number[]; requiredCase: 'dat' | null; text: string } }>(
+    '/api/komposition',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['lemmaIds', 'text'],
+          properties: {
+            lemmaIds: { type: 'array', items: { type: 'number' }, minItems: 1, maxItems: 5 },
+            requiredCase: { enum: ['dat', null] },
+            text: { type: 'string', minLength: 1, maxLength: 2000 },
+          },
+        },
+      },
+    },
+    async (req, reply) => {
+      const user = auth(req, reply);
+      if (!user) return;
+      return komposition.submit(
+        user.id,
+        {
+          lemmaIds: req.body.lemmaIds,
+          requiredCase: req.body.requiredCase ?? null,
+          text: req.body.text,
+        },
+        clock.now(),
+      );
+    },
+  );
+
+  app.post<{
+    Params: { id: string };
+    Body: { marks: { start: number; end: number; type: string; correction: string }[] };
+  }>(
+    '/api/komposition/:id/review',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['marks'],
+          properties: {
+            marks: {
+              type: 'array',
+              maxItems: 50,
+              items: {
+                type: 'object',
+                required: ['start', 'end', 'type', 'correction'],
+                properties: {
+                  start: { type: 'number' },
+                  end: { type: 'number' },
+                  type: { enum: ['gender', 'case', 'frame', 'ending', 'other'] },
+                  correction: { type: 'string', maxLength: 200 },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    (req, reply) => {
+      const user = auth(req, reply);
+      if (!user) return;
+      return komposition.review(user.id, Number(req.params.id), req.body.marks, clock.now());
+    },
+  );
+
+  app.get('/api/review', (req, reply) => {
+    const user = auth(req, reply);
+    return user ? review.list(user.id) : undefined;
+  });
+
+  app.post<{ Body: { attemptId: number; note?: string } }>(
+    '/api/disputes',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['attemptId'],
+          properties: { attemptId: { type: 'number' }, note: { type: 'string', maxLength: 500 } },
+        },
+      },
+    },
+    (req, reply) => {
+      const user = auth(req, reply);
+      if (!user) return;
+      return review.dispute(user.id, req.body.attemptId, req.body.note ?? '', clock.now());
+    },
+  );
+
+  app.post<{ Params: { id: string }; Body: { approve: boolean } }>(
+    '/api/disputes/:id/decision',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['approve'],
+          properties: { approve: { type: 'boolean' } },
+        },
+      },
+    },
+    (req, reply) => {
+      const user = auth(req, reply);
+      if (!user) return;
+      return review.decideDispute(user.id, Number(req.params.id), req.body.approve, clock.now());
+    },
+  );
+
+  app.post<{ Params: { id: string }; Body: { action: 'reject' | 'fixed' } }>(
+    '/api/reports/:id/decision',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['action'],
+          properties: { action: { enum: ['reject', 'fixed'] } },
+        },
+      },
+    },
+    (req, reply) => {
+      const user = auth(req, reply);
+      if (!user) return;
+      return review.decideReport(Number(req.params.id), req.body.action, clock.now());
+    },
+  );
+
+  app.post<{
+    Params: { id: string };
+    Body: {
+      status: 'approved' | 'rejected';
+      frame?: { objects: string[]; preps?: { prep: string; case: string }[] };
+    };
+  }>(
+    '/api/frames/:id',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['status'],
+          properties: {
+            status: { enum: ['approved', 'rejected'] },
+            frame: {
+              type: 'object',
+              required: ['objects'],
+              properties: {
+                objects: { type: 'array', items: { enum: ['akk', 'dat'] } },
+                preps: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    required: ['prep', 'case'],
+                    properties: { prep: { type: 'string' }, case: { enum: ['akk', 'dat'] } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    (req, reply) => {
+      const user = auth(req, reply);
+      if (!user) return;
+      return review.decideFrame(
+        user.id,
+        Number(req.params.id),
+        req.body.status,
+        req.body.frame ?? null,
+        clock.now(),
+      );
+    },
+  );
 
   app.post<{ Params: { id: string } }>('/api/lemmas/:id/intro', (req, reply) => {
     const user = auth(req, reply);

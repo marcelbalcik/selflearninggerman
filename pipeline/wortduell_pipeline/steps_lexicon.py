@@ -158,9 +158,18 @@ def crosscheck() -> dict[str, Any]:
         if r["pos"] == "noun":
             decision = review["nouns"].get(f"{r['text']} ({r['sense_key']})") if r["sense_key"] else None
             decision = decision or review["nouns"].get(r["text"])
-        if decision and decision["action"] == "restrict_plural_to":
-            r["noun"]["plural"] = decision["plural"]
-            r["_restrict_plural"] = True
+        action = decision["action"] if decision else None
+        if action in ("restrict_plural_to", "no_plural"):
+            plural = decision.get("plural", []) if action == "restrict_plural_to" else []
+            r["noun"]["plural"] = plural
+            if not plural:
+                r["noun"]["no_plural"] = True
+                if r["noun"]["forms"].get("kind") == "regular":
+                    r["noun"]["forms"]["pl"] = None
+            else:
+                r["_restrict_plural"] = True
+        if action == "use_engine_table":
+            r["_use_engine"] = True
         if decision:
             r["review"] = {"decision": decision["action"], "note": decision["note"],
                            "reviewer": review["reviewer"], "date": review["date"]}
@@ -186,6 +195,11 @@ def crosscheck() -> dict[str, Any]:
     for r in rows:
         if r["id"] in engine:
             out = engine[r["id"]]
+            if r.pop("_use_engine", False):
+                # No usable Wiktionary table: the table derived from the reviewed
+                # headword data (gender, plural, genitive) is stored instead.
+                r["noun"]["forms"] = out["table"]
+                r["issues"] = [i for i in r["issues"] if i != "no_declension_table"]
             if r.pop("_restrict_plural", False) and r["noun"]["forms"].get("pl"):
                 allowed = out["table"]["pl"] or {}
                 pl = r["noun"]["forms"]["pl"]
@@ -212,7 +226,13 @@ def crosscheck() -> dict[str, Any]:
             r["verb"]["zu_infinitive_rule"] = out["zuInfinitive"]
             for issue in out["issues"]:
                 r["issues"].append(f"verb:{issue}")
+        decision = r.get("review", {}).get("decision")
+        if decision == "accept":
+            r["review"]["accepted_issues"] = r["issues"]
+            r["issues"] = []
         r["status"] = "needs_review" if r["issues"] else "ok"
+        if decision == "reject":
+            r["status"] = "rejected"
     write_jsonl(LEMMAS, rows)
     report = {
         "nouns_checked": len(engine),

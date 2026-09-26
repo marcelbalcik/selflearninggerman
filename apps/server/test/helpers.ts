@@ -77,7 +77,7 @@ export function rightAnswer(db: Db, sentenceId: number): { answer: string; tappe
   const gap = JSON.parse(s.gap) as Gap;
   const accepted = JSON.parse(s.accepted) as string[];
   if (type === 'fehlersuche')
-    return { answer: gap.correct ?? '', tappedIndex: gap.error_index ?? 0 };
+    return { answer: String(gap.correct ?? ''), tappedIndex: gap.error_index ?? 0 };
   return { answer: accepted[0] ?? '' };
 }
 

@@ -6,6 +6,7 @@
  *   COOKIE_SECURE       "false" only for local development without HTTPS
  *   WEB_DIST            built web app to serve (default ../web/dist)
  *   CLOCK_OFFSET_MS     development/testing only: shift the server clock
+ *   LANGUAGETOOL_URL    self-hosted LanguageTool (e.g. http://languagetool:8010); optional
  *   USER1_NAME, USER1_PASSWORD_HASH, USER2_NAME, USER2_PASSWORD_HASH
  */
 import { mkdirSync } from 'node:fs';
@@ -13,6 +14,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { offsetClock, systemClock } from '@wortduell/core';
 import { buildApp } from './app';
+import { languageToolClient } from './services/komposition';
 import { seedUsers, usersFromEnv } from './auth';
 import { importContent } from './content';
 import { openDb } from './db';
@@ -38,6 +40,7 @@ const app = buildApp({
   secureCookies: process.env.COOKIE_SECURE !== 'false',
   logger: true,
   webDist: resolve(process.env.WEB_DIST ?? join(here, '..', '..', 'web', 'dist')),
+  languageTool: languageToolClient(process.env.LANGUAGETOOL_URL),
 });
 app.log.info({ content: imported }, 'content');
 if (process.env.CLOCK_OFFSET_MS)

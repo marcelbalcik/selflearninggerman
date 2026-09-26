@@ -160,7 +160,9 @@ CREATE TABLE audio(
 CREATE TABLE gender_rule(
   suffix TEXT PRIMARY KEY, gender TEXT NOT NULL, dataset_accuracy REAL NOT NULL, n INTEGER NOT NULL,
   active INTEGER NOT NULL);
+CREATE TABLE lemma_form(lemma_id INTEGER NOT NULL REFERENCES lemma(id), form TEXT NOT NULL);
 CREATE INDEX sentence_lemma ON sentence(lemma_id);
+CREATE INDEX lemma_form_form ON lemma_form(form);
 """
 
 DICTIONARY_SCHEMA = """
@@ -213,12 +215,17 @@ def export() -> dict[str, Any]:
                 int(n["adjectival"]), _j(n["forms"]), _j(r.get("mismatch"))))
         if r["pos"] == "verb":
             v = r["verb"]
-            db.execute("INSERT INTO verb VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+            db.execute("INSERT INTO verb VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
                 r["id"], v["prefix"], int(v["separable"]), int(v["dual_prefix"]), v["aux"],
-                v["partizip2"], v["praeteritum_3sg"], v["praesens_2sg"], v["praesens_3sg"],
+                v["partizip2"], v["praeteritum_3sg"], v.get("praesens_1sg"), v["praesens_2sg"], v["praesens_3sg"],
                 None if v["stem_change"] is None else int(v["stem_change"]), v["reflexive"],
                 _j(v.get("frame")), v.get("frame_status", "needs_review"), _j(v.get("frame_sources")),
                 v["zu_infinitive"] or v.get("zu_infinitive_rule")))
+    for r in rows:
+        forms = {f for f in r.get("surface", []) if f}
+        if r["pos"] == "noun" and r["noun"]["forms"]:
+            forms |= {f for cell in _all_forms(r["noun"]["forms"]) for f in cell}
+        db.executemany("INSERT INTO lemma_form VALUES (?, ?)", [(r["id"], f) for f in sorted(forms)])
     for s in sentences:
         db.execute("INSERT INTO sentence VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (
             s["id"], s["lemma_id"], s["target_facet"], _j(s["skill_ids"]), s["de"], s["en"],
@@ -241,6 +248,20 @@ def export() -> dict[str, Any]:
     report = _m1_report(rows, sentences, audio_rows, rules, version, dict_counts)
     write_report("export", report["summary"])
     return report["summary"]
+
+
+def _all_forms(forms: dict[str, Any]):
+    """Every cell list of a stored Declension."""
+    if forms.get("kind") == "regular":
+        for num in ("sg", "pl"):
+            for cell in (forms.get(num) or {}).values():
+                yield cell
+        return
+    for by_decl in (forms.get("sg") or {}).values():
+        for by_case in by_decl.values():
+            yield from by_case.values()
+    for by_case in (forms.get("pl") or {}).values():
+        yield from by_case.values()
 
 
 def _export_dictionary(version: str, today: str) -> dict[str, int]:

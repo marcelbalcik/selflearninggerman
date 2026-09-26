@@ -100,7 +100,7 @@ def enrich() -> dict[str, Any]:
                     c_preps.append({"prep": prep, "case": case})
                 else:
                     c_objects.append(key)
-        wikt = r["verb"].pop("wiktionary_frame")
+        wikt = r["verb"].pop("wiktionary_frame", None) or r["verb"]["frame_sources"]["wiktionary"]
         objects = [c for c in ("dat", "akk") if c in wikt["objects"] or c in c_objects]
         preps = wikt["preps"] + [p for p in c_preps if p not in wikt["preps"]]
         frame: dict[str, Any] = {"objects": objects}
@@ -295,11 +295,17 @@ def sentences() -> dict[str, Any]:
             out.append({**it, "lemma_id": lemma_id, "lemma": by_id[lemma_id]["text"],
                         "kind": "bedeutung", "target_facet": "meaning_recv"})
 
+    from .templates import generate
+
+    templated, template_stats = generate(rows, meaning)
+    out.extend(templated)
+    stats.update({f"template_{k}": v for k, v in template_stats.items()})
+
     skills = {o["id"]: o for o in core_cli("skills", skill_requests)}
     for it in out:
         req = it.pop("_skill_req", None)
         if req is None:
-            it["skill_ids"] = []
+            it.setdefault("skill_ids", [])
             continue
         s = skills[req]
         it["skill_ids"] = [x for x in (s["caseSkill"], s["prepSkill"]) if x]
@@ -404,6 +410,13 @@ def validate() -> dict[str, Any]:
             accepted = [det_text]
         kept.append(_sentence_row(it, gap, accepted, today))
     for it in items:
+        if it.get("prebuilt"):
+            # Template items are built from stored forms and carry their answers.
+            if not it["accepted"] or not all(it["accepted"]):
+                rejected[f"{it['kind']}:empty_answer"] += 1
+                continue
+            kept.append(_sentence_row(it, it["gap"], it["accepted"], today))
+            continue
         if it["kind"] == "bedeutung":
             accepted = rows[it["lemma_id"]]["glosses_accepted"]
             if not accepted:
@@ -427,7 +440,7 @@ def validate() -> dict[str, Any]:
         "rejection_rate_by_type": {
             k: round(1 - by_kind.get(k, 0) / v, 3) for k, v in candidates_by_kind.items()
         },
-        "not_generated_yet": ["wer_tut_was", "en_de_chunk", "satzbau", "umformen", "diktat"],
+        "not_generated_here": ["komposition (runtime task, server)"],
     }
     write_report("validate", report)
     return report
@@ -446,6 +459,7 @@ def _sentence_row(it: dict[str, Any], gap: dict[str, Any], accepted: list[str], 
         "exercise_types": [it["kind"]],
         "audio_url": None,
         "status": "ok",
-        "generator": f"tatoeba#{it['sentence_id']}+spacy",
+        "generator": (f"template:{it['kind']}" if str(it["sentence_id"]).startswith("t:") and it["kind"] != "diktat"
+                      else f"tatoeba#{str(it['sentence_id']).split(':')[-1]}+spacy"),
         "validated_at": today,
     }

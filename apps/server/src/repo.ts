@@ -47,6 +47,7 @@ export interface VerbData {
   aux: string | null;
   partizip2: string | null;
   praeteritum3sg: string | null;
+  praesens1sg: string | null;
   praesens2sg: string | null;
   praesens3sg: string | null;
   stemChange: boolean | null;
@@ -78,8 +79,23 @@ export interface Gap {
   governed_by?: { type: 'verb' | 'prep'; text: string; lemma_id?: number | null } | null;
   error_index?: number;
   wrong?: string;
-  correct?: string;
+  correct?: string | number;
   highlight_index?: number;
+  /** en_de_chunk */
+  prompt?: string;
+  prep?: string;
+  /** umformen */
+  instruction?: 'dat_pl' | 'perfekt' | 'du_form';
+  source?: string;
+  /** satzbau */
+  chunks?: string[];
+  frame?: 'hauptsatz' | 'nebensatz' | 'perfekt' | 'zu';
+  /** wer_tut_was */
+  options?: string[];
+  correct_option?: number;
+  /** diktat */
+  target_index?: number;
+  target?: string;
 }
 
 interface LemmaRow {
@@ -116,6 +132,7 @@ interface VerbRow {
   aux: string | null;
   partizip2: string | null;
   praeteritum_3sg: string | null;
+  praesens_1sg: string | null;
   praesens_2sg: string | null;
   praesens_3sg: string | null;
   stem_change: number | null;
@@ -197,18 +214,55 @@ export class Repo {
           aux: v.aux,
           partizip2: v.partizip2,
           praeteritum3sg: v.praeteritum_3sg,
+          praesens1sg: v.praesens_1sg,
           praesens2sg: v.praesens_2sg,
           praesens3sg: v.praesens_3sg,
           stemChange: v.stem_change === null ? null : v.stem_change === 1,
           reflexive: v.reflexive,
           frame: json<VerbData['frame']>(v.frame),
           frameStatus: v.frame_status,
+          ...this.reviewedFrame(id),
           zuInfinitive: v.zu_infinitive,
         };
       }
     }
     this.lemmas.set(id, lemma);
     return lemma;
+  }
+
+  /** A frame the users approved or rejected in Prüfen wins over the content. */
+  private reviewedFrame(lemmaId: number): Partial<VerbData> {
+    const r = this.db
+      .prepare<[number], { status: string; frame: string }>(
+        'SELECT status, frame FROM frame_review WHERE lemma_id = ?',
+      )
+      .get(lemmaId);
+    return r ? { frame: json<VerbData['frame']>(r.frame), frameStatus: r.status } : {};
+  }
+
+  /** Forget a cached lemma (after a Prüfen decision). */
+  invalidate(lemmaId: number): void {
+    this.lemmas.delete(lemmaId);
+  }
+
+  /** Answers accepted through approved disputes. */
+  extraAccepted(sentenceId: number): string[] {
+    return this.db
+      .prepare<[number], { answer: string }>(
+        'SELECT answer FROM accepted_extra WHERE sentence_id = ?',
+      )
+      .all(sentenceId)
+      .map((r) => r.answer);
+  }
+
+  /** Every stored form of a lemma, lower-cased. */
+  forms(lemmaId: number): Set<string> {
+    return new Set(
+      this.db
+        .prepare<[number], { form: string }>('SELECT form FROM lemma_form WHERE lemma_id = ?')
+        .all(lemmaId)
+        .map((r) => r.form.toLowerCase()),
+    );
   }
 
   /** Usable sentences of a lemma (status ok, not retired). Not cached: reports change status. */

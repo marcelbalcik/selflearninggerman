@@ -4,8 +4,11 @@
  */
 import {
   displayTable,
+  gradeClosed,
+  gradeDiktat,
   gradeFehlersuche,
   gradeGloss,
+  gradeSentence,
   gradeNp,
   lemmaFacetKey,
   markAnswer,
@@ -91,26 +94,58 @@ export class Attempts {
     };
 
     let grade: NpGrade | null = null;
-    let correct: boolean;
-    let expected: string;
+    let correct = false;
+    let expected = '';
     let typo = false;
     let errorClass: string | null = null;
-    let ratings: FacetRating[];
+    let ratings: FacetRating[] = [];
     const implicated = this.implicated(userId, sentence, lemma, now);
 
-    if (sentence.exerciseType === 'kasus_luecke') {
+    const extra = this.repo.extraAccepted(sentence.id);
+    const simple = (
+      g: { correct: boolean; expected: string; typoTolerated: boolean },
+      wrongClass: string,
+    ) => {
+      correct = g.correct;
+      expected = g.expected;
+      typo = g.typoTolerated;
+      errorClass = correct ? null : wrongClass;
+      ratings = correct
+        ? implicated.map((facet) => ({ facet, rating: successRating(speed, typo) }))
+        : [
+            { facet: lemmaFacetKey(lemma.id, sentence.targetFacet), rating: 'again' as const },
+            ...sentence.skillIds.map((sk) => ({
+              facet: skillFacetKey(sk),
+              rating: 'again' as const,
+            })),
+          ];
+    };
+
+    if (extra.length > 0 && gradeSentence(extra, input.answer).correct) {
+      // Accepted earlier through an approved dispute.
+      simple({ correct: true, expected: input.answer, typoTolerated: false }, '');
+    } else if (
+      sentence.exerciseType === 'kasus_luecke' ||
+      (sentence.exerciseType === 'en_de_chunk' && sentence.gap.features) ||
+      (sentence.exerciseType === 'umformen' && sentence.gap.instruction === 'dat_pl')
+    ) {
       const target = npTarget(sentence, lemma);
       grade = gradeNp(target, input.answer);
       correct = grade.correct;
       expected = matchCase(grade.expected, sentence.gap.expected);
       typo = grade.typoTolerated;
       errorClass = grade.errorClass;
-      ratings = rateNpAttempt(grade, this.ratingContext(sentence, lemma, implicated), speed);
+      const meaning = sentence.exerciseType === 'en_de_chunk' ? 'meaning_prod' : 'meaning_recv';
+      ratings = rateNpAttempt(
+        grade,
+        this.ratingContext(sentence, lemma, implicated, meaning),
+        speed,
+      );
     } else if (sentence.exerciseType === 'fehlersuche') {
       const g = gradeFehlersuche(
-        sentence.gap as Required<
-          Pick<typeof sentence.gap, 'tokens' | 'error_index' | 'wrong' | 'correct'>
-        >,
+        sentence.gap as Required<Pick<typeof sentence.gap, 'tokens' | 'error_index' | 'wrong'>> & {
+          correct: string;
+        },
         input.tappedIndex ?? -1,
         input.answer,
       );
@@ -132,8 +167,29 @@ export class Attempts {
           rating: correct ? successRating(speed, typo) : 'again',
         },
       ];
+    } else if (sentence.exerciseType === 'en_de_chunk' || sentence.exerciseType === 'umformen') {
+      simple(gradeClosed(sentence.accepted, input.answer), 'wrong_form');
+    } else if (sentence.exerciseType === 'satzbau') {
+      simple(gradeSentence(sentence.accepted, input.answer), 'no_match');
+    } else if (sentence.exerciseType === 'wer_tut_was') {
+      const right = sentence.accepted[0] ?? '';
+      const options = sentence.gap.options ?? [];
+      simple(
+        {
+          correct: input.answer.trim() === right,
+          expected: options[Number(right)] ?? right,
+          typoTolerated: false,
+        },
+        'case_error',
+      );
+    } else if (sentence.exerciseType === 'diktat') {
+      const g = gradeDiktat(sentence.de, sentence.gap.target ?? '', input.answer);
+      simple(
+        { ...g, typoTolerated: g.correct && g.typoTolerated },
+        g.targetCorrect ? 'too_many_slips' : 'wrong_word',
+      );
     } else {
-      throw new AttemptError(400, `exercise type ${sentence.exerciseType} not supported yet`);
+      throw new AttemptError(400, `exercise type ${sentence.exerciseType} not supported`);
     }
 
     const pending = grade?.errorClass === 'ambiguous';
@@ -170,7 +226,8 @@ export class Attempts {
       errorClass,
       secondary: grade?.secondary ?? [],
       notes: [...(grade?.notes ?? []), ...(typo && !grade ? ['typo_tolerated'] : [])],
-      marks: markAnswer(expected, input.answer.trim()),
+      marks:
+        sentence.exerciseType === 'wer_tut_was' ? [] : markAnswer(expected, input.answer.trim()),
       followUp: grade?.followUp ?? null,
       ratings: pending ? [] : ratings,
       forms: lemma.noun ? displayTable(nounInput(lemma)) : null,
@@ -248,7 +305,12 @@ export class Attempts {
     return keys;
   }
 
-  private ratingContext(sentence: Sentence, lemma: Lemma, implicated: FacetKey[]): NpRatingContext {
+  private ratingContext(
+    sentence: Sentence,
+    lemma: Lemma,
+    implicated: FacetKey[],
+    meaning: 'meaning_recv' | 'meaning_prod' = 'meaning_recv',
+  ): NpRatingContext {
     const f = sentence.gap.features;
     const gov = sentence.gap.governed_by;
     const prepSkill = sentence.skillIds.find((s): s is PrepSkill => s.startsWith('prep.'));
@@ -258,7 +320,7 @@ export class Attempts {
       case: f?.case ?? 'nom',
       gender: f?.number === 'pl' ? null : (lemma.noun?.gender ?? null),
       primary: lemmaFacetKey(lemma.id, sentence.targetFacet),
-      meaning: lemmaFacetKey(lemma.id, 'meaning_recv'),
+      meaning: lemmaFacetKey(lemma.id, meaning),
       governor:
         gov?.type === 'verb' && gov.lemma_id
           ? { kind: 'verb', lemmaId: gov.lemma_id }
@@ -284,9 +346,19 @@ export class Attempts {
 }
 
 export function npTarget(sentence: Sentence, lemma: Lemma): NpTarget {
-  const f = sentence.gap.features;
+  const f =
+    sentence.gap.features ??
+    (sentence.gap.instruction === 'dat_pl'
+      ? { case: 'dat' as const, number: 'pl' as const, det: 'def' }
+      : undefined);
   if (!f || !lemma.noun) throw new AttemptError(500, 'sentence has no noun gap');
-  return { noun: nounInput(lemma), num: f.number, case: f.case, det: f.det as DetClass };
+  return {
+    noun: nounInput(lemma),
+    num: f.number,
+    case: f.case,
+    det: f.det as DetClass,
+    ...(sentence.gap.prep ? { prep: sentence.gap.prep } : {}),
+  };
 }
 
 /** Keep a sentence-initial capital from the sentence (`Die Texte`). */

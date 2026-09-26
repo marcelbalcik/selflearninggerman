@@ -109,7 +109,7 @@ def select() -> dict[str, Any]:
 
     cfg = config()["PIPELINE"]
     deck_pos = set(cfg["DECK_POS"])
-    limit = cfg["TRIAL_LEMMA_COUNT"]
+    limit = int(__import__("os").environ.get("WORTDUELL_LEMMAS", cfg["CORE_LEMMA_TARGET"]))
 
     grammar_words = _grammar_words()
     top = top_n_list("de", 60_000)

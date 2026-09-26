@@ -1,7 +1,7 @@
 {
-  "nouns_checked": 192,
-  "verbs_checked": 127,
-  "noun_mismatches": 0,
+  "nouns_checked": 977,
+  "verbs_checked": 490,
+  "noun_mismatches": 3,
   "reviewed": {
     "Mann": {
       "decision": "restrict_plural_to",
@@ -44,8 +44,247 @@
           ]
         }
       ]
+    },
+    "Plan": {
+      "decision": "restrict_plural_to",
+      "note": "Plane/Planen belong to die Plane (tarpaulin), mixed into the table",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Kunde": {
+      "decision": "reject",
+      "note": "die Kunde (tidings) is literary; der Kunde stays",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Sport": {
+      "decision": "no_plural",
+      "note": "Sporte is rare; learners use Sportarten",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Morgen": {
+      "decision": "reject",
+      "note": "das Morgen (the future) is literary; der Morgen stays",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Start": {
+      "decision": "use_engine_table",
+      "note": "no Wiktionary table; headword data complete",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Englisch": {
+      "decision": "use_engine_table",
+      "note": "no Wiktionary table; headword data complete (no plural)",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Laden": {
+      "decision": "reject",
+      "note": "das Laden (loading) is a nominalised infinitive; der Laden stays",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Wagen": {
+      "decision": "restrict_plural_to",
+      "note": "Wägen is southern/Austrian",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Party": {
+      "decision": "restrict_plural_to",
+      "note": "Parties is the old English spelling",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Park": {
+      "decision": "restrict_plural_to",
+      "note": "Parke is Swiss",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Nachbar": {
+      "decision": "use_engine_table",
+      "note": "table adds colloquial strong forms (dem Nachbar); standard is weak: dem Nachbarn",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Prinzip": {
+      "decision": "restrict_plural_to",
+      "note": "Prinzipe/Prinzipia are rare",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Finale": {
+      "decision": "accept",
+      "note": "stored genitive is fine",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26",
+      "accepted_issues": [
+        "engine:gen_sg_implausible"
+      ]
+    },
+    "Publikum": {
+      "decision": "no_plural",
+      "note": "Publika is technical; no plural for learners",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Mama": {
+      "decision": "accept",
+      "note": "des Mamas and des Mama are both used",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26",
+      "accepted_issues": [
+        "table_mismatch"
+      ]
+    },
+    "Posten": {
+      "decision": "use_engine_table",
+      "note": "no Wiktionary table; headword data complete",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Schicksal": {
+      "decision": "restrict_plural_to",
+      "note": "Schicksäler is dialectal",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Vorstand": {
+      "decision": "use_engine_table",
+      "note": "no Wiktionary table; headword data complete",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Glaube": {
+      "decision": "no_plural",
+      "note": "Glaube has no plural in use",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
+    },
+    "Tausend": {
+      "decision": "restrict_plural_to",
+      "note": "the uninflected 'Tausend' is the numeral",
+      "reviewer": "Claude (delegated by Marcel)",
+      "date": "2026-09-26"
     }
   },
-  "mismatches": [],
+  "mismatches": [
+    {
+      "id": 205357661704626,
+      "lemma": "Morgen",
+      "cells": [
+        {
+          "cell": "sg.akk",
+          "wiktionary": [],
+          "engine": [
+            "Morgen"
+          ]
+        },
+        {
+          "cell": "sg.dat",
+          "wiktionary": [],
+          "engine": [
+            "Morgen"
+          ]
+        },
+        {
+          "cell": "sg.gen",
+          "wiktionary": [],
+          "engine": [
+            "Morgen"
+          ]
+        },
+        {
+          "cell": "sg.nom",
+          "wiktionary": [],
+          "engine": [
+            "Morgen"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 25196725962068,
+      "lemma": "Laden",
+      "cells": [
+        {
+          "cell": "pl.akk",
+          "wiktionary": [],
+          "engine": [
+            "Läden"
+          ]
+        },
+        {
+          "cell": "pl.dat",
+          "wiktionary": [],
+          "engine": [
+            "Läden"
+          ]
+        },
+        {
+          "cell": "pl.gen",
+          "wiktionary": [],
+          "engine": [
+            "Läden"
+          ]
+        },
+        {
+          "cell": "pl.nom",
+          "wiktionary": [],
+          "engine": [
+            "Läden"
+          ]
+        },
+        {
+          "cell": "sg.akk",
+          "wiktionary": [],
+          "engine": [
+            "Laden"
+          ]
+        },
+        {
+          "cell": "sg.dat",
+          "wiktionary": [],
+          "engine": [
+            "Laden"
+          ]
+        },
+        {
+          "cell": "sg.gen",
+          "wiktionary": [],
+          "engine": [
+            "Ladens"
+          ]
+        },
+        {
+          "cell": "sg.nom",
+          "wiktionary": [],
+          "engine": [
+            "Laden"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 53530691079070,
+      "lemma": "Mama",
+      "cells": [
+        {
+          "cell": "sg.gen",
+          "wiktionary": [
+            "Mama",
+            "Mamas"
+          ],
+          "engine": [
+            "Mama"
+          ]
+        }
+      ]
+    }
+  ],
   "needs_review": {}
 }

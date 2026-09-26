@@ -65,7 +65,11 @@ export interface SentenceInfo {
 /** Facets a sentence implicates (spec §6), whether or not the user has cards for them. */
 export function sentenceFacets(s: SentenceInfo): SentenceFacets {
   const lexical: SentenceFacets['lexical'] = [{ lemmaId: s.lemmaId, facet: s.targetFacet }];
-  if (s.exerciseType === 'kasus_luecke' || s.exerciseType === 'fehlersuche') {
+  if (
+    s.exerciseType === 'kasus_luecke' ||
+    s.exerciseType === 'fehlersuche' ||
+    s.exerciseType === 'en_de_chunk'
+  ) {
     const f = s.features;
     if (s.nounIsWeak && f?.number === 'sg' && f.case !== 'nom') {
       lexical.push({ lemmaId: s.lemmaId, facet: 'weak' });

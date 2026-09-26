@@ -9,6 +9,8 @@ import { existsSync } from 'node:fs';
 import type { Db } from './db';
 
 const TABLES = ['lemma', 'noun', 'verb', 'sentence', 'audio', 'gender_rule'] as const;
+/** Tables without a key: replaced wholesale. */
+const REPLACED = ['lemma_form'] as const;
 
 export interface ImportResult {
   imported: boolean;
@@ -60,6 +62,18 @@ export function importContent(db: Db, contentPath: string): ImportResult {
           )
           .run();
         counts[table] = info.changes;
+      }
+      for (const table of REPLACED) {
+        const exists = db
+          .prepare<[string], { n: number }>(
+            "SELECT COUNT(*) AS n FROM content.sqlite_master WHERE type = 'table' AND name = ?",
+          )
+          .get(table);
+        if (!exists?.n) continue;
+        db.exec(`DELETE FROM main.${table}`);
+        counts[table] = db
+          .prepare(`INSERT INTO main.${table} SELECT * FROM content.${table}`)
+          .run().changes;
       }
       db.exec('UPDATE main.lemma SET retired = 1 WHERE id NOT IN (SELECT id FROM content.lemma)');
       db.exec(

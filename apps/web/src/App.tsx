@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { ApiError, api } from './api';
 import { LangContext, translate } from './i18n';
+import { Pruefen } from './screens/Pruefen';
 import { Session } from './screens/Session';
 import { Login, Placement, Settings, Today, Word } from './screens/Screens';
 import type { Me } from './types';
@@ -10,14 +11,16 @@ type Route =
   | { name: 'heute' }
   | { name: 'session'; reviewsOnly: boolean }
   | { name: 'wort'; id: number }
-  | { name: 'einstellungen' };
+  | { name: 'einstellungen' }
+  | { name: 'pruefen' };
 
-/** Tiny hash router: #/heute, #/session, #/wort/123, #/einstellungen. */
+/** Tiny hash router: #/heute, #/session, #/wort/123, #/pruefen, #/einstellungen. */
 function parse(hash: string): Route {
   const [, name, arg] = hash.replace(/^#/u, '').split('/');
   if (name === 'session') return { name: 'session', reviewsOnly: arg === 'reviews' };
   if (name === 'wort' && arg) return { name: 'wort', id: Number(arg) };
   if (name === 'einstellungen') return { name: 'einstellungen' };
+  if (name === 'pruefen') return { name: 'pruefen' };
   return { name: 'heute' };
 }
 
@@ -71,6 +74,8 @@ export function App(): ReactNode {
     screen = <Session reviewsOnly={route.reviewsOnly} onDone={() => go('/heute')} />;
   } else if (route.name === 'wort') {
     screen = <Word lemmaId={route.id} />;
+  } else if (route.name === 'pruefen') {
+    screen = <Pruefen />;
   } else if (route.name === 'einstellungen') {
     screen = (
       <Settings
@@ -92,6 +97,9 @@ export function App(): ReactNode {
         <nav className="tabs" aria-label="Navigation">
           <a href="#/heute" aria-current={route.name === 'heute' ? 'page' : undefined}>
             {t('today')}
+          </a>
+          <a href="#/pruefen" aria-current={route.name === 'pruefen' ? 'page' : undefined}>
+            {t('review')}
           </a>
           <a
             href="#/einstellungen"

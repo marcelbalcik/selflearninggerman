@@ -84,3 +84,36 @@ describe('facets (spec §5.1)', () => {
     expect(s.skills).toEqual(['case.dat.m']);
   });
 });
+
+describe('M4 graders', () => {
+  it('closed answers: exact endings, stem typos tolerated', async () => {
+    const { gradeClosed } = await import('../src/grading-other');
+    expect(gradeClosed(['den Tischen'], 'den Tischen').correct).toBe(true);
+    expect(gradeClosed(['den Tischen'], 'den Tische').correct).toBe(false);
+    expect(gradeClosed(['er ist geblieben'], 'Er ist geblieben.').correct).toBe(true);
+    expect(gradeClosed(['helfen'], 'hlefen')).toMatchObject({ correct: true, typoTolerated: true });
+  });
+  it('satzbau: variants, optional commas and stops', async () => {
+    const { gradeSentence } = await import('../src/grading-other');
+    const accepted = ['Ich rufe ihn heute an', 'Heute rufe ich ihn an'];
+    expect(gradeSentence(accepted, 'heute rufe ich ihn an.').correct).toBe(true);
+    expect(gradeSentence(accepted, 'Ich rufe heute ihn an').correct).toBe(false);
+    expect(
+      gradeSentence(['weil ich ihn heute anrufe'], '…, weil ich ihn heute anrufe').correct,
+    ).toBe(true);
+    expect(
+      gradeSentence(
+        ['Ich vergesse nicht, ihn heute anzurufen'],
+        'Ich vergesse nicht ihn heute anzurufen',
+      ).correct,
+    ).toBe(true);
+  });
+  it('diktat: exact target word, small slips elsewhere pass', async () => {
+    const { gradeDiktat } = await import('../src/grading-other');
+    const s = 'Wo ist der Eingang des Museums?';
+    expect(gradeDiktat(s, 'Eingang', 'wo ist der Eingang des Museums').correct).toBe(true);
+    expect(gradeDiktat(s, 'Eingang', 'Wo ist der Eingang des Musems').correct).toBe(true);
+    expect(gradeDiktat(s, 'Eingang', 'Wo ist der Eingag des Museums').correct).toBe(false);
+    expect(gradeDiktat(s, 'Eingang', 'Wo ist Eingang').correct).toBe(false);
+  });
+});

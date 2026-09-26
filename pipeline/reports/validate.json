@@ -1,26 +1,33 @@
 {
-  "candidates": 2536,
-  "kept": 2522,
+  "candidates": 18341,
+  "kept": 18282,
   "kept_by_type": {
-    "kasus_luecke": 513,
-    "fehlersuche": 513,
-    "bedeutung": 1496
+    "kasus_luecke": 2521,
+    "fehlersuche": 2518,
+    "bedeutung": 5939,
+    "en_de_chunk": 3952,
+    "umformen": 1496,
+    "satzbau": 165,
+    "wer_tut_was": 94,
+    "diktat": 1597
   },
   "rejected": {
-    "kasus_luecke:render_mismatch": 4,
-    "fehlersuche:render_mismatch": 4,
-    "bedeutung:no_accepted_glosses": 6
+    "kasus_luecke:render_mismatch": 19,
+    "fehlersuche:render_mismatch": 19,
+    "fehlersuche:no_unambiguous_error": 3,
+    "bedeutung:no_accepted_glosses": 18
   },
   "rejection_rate_by_type": {
-    "kasus_luecke": 0.008,
-    "fehlersuche": 0.008,
-    "bedeutung": 0.004
+    "kasus_luecke": 0.007,
+    "fehlersuche": 0.009,
+    "bedeutung": 0.003,
+    "en_de_chunk": 0.0,
+    "umformen": 0.0,
+    "satzbau": 0.0,
+    "wer_tut_was": 0.0,
+    "diktat": 0.0
   },
-  "not_generated_yet": [
-    "wer_tut_was",
-    "en_de_chunk",
-    "satzbau",
-    "umformen",
-    "diktat"
+  "not_generated_here": [
+    "komposition (runtime task, server)"
   ]
 }

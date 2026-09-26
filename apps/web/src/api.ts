@@ -1,4 +1,13 @@
-import type { Feedback, LemmaDetail, Me, PlacementItem, SessionPlan, Today } from './types';
+import type {
+  Feedback,
+  KompositionResult,
+  LemmaDetail,
+  Me,
+  PlacementItem,
+  ReviewData,
+  SessionPlan,
+  Today,
+} from './types';
 
 export class ApiError extends Error {
   constructor(
@@ -48,4 +57,19 @@ export const api = {
   placement: (answers: { lemmaId: number; answer: string }[]) =>
     call<{ introduced: number; passed: number }>('POST', '/api/placement', { answers }),
   skipPlacement: () => call<{ ok: true }>('POST', '/api/placement/skip', {}),
+  dispute: (attemptId: number, note: string) =>
+    call<{ id: number }>('POST', '/api/disputes', { attemptId, note }),
+  komposition: (lemmaIds: number[], requiredCase: 'dat' | null, text: string) =>
+    call<KompositionResult>('POST', '/api/komposition', { lemmaIds, requiredCase, text }),
+  review: () => call<ReviewData>('GET', '/api/review'),
+  decideDispute: (id: number, approve: boolean) =>
+    call<{ status: string }>('POST', `/api/disputes/${id}/decision`, { approve }),
+  decideReport: (id: number, action: 'reject' | 'fixed') =>
+    call<{ ok: true }>('POST', `/api/reports/${id}/decision`, { action }),
+  decideFrame: (lemmaId: number, status: 'approved' | 'rejected') =>
+    call<{ addedCards: number }>('POST', `/api/frames/${lemmaId}`, { status }),
+  reviewKomposition: (
+    id: number,
+    marks: { start: number; end: number; type: string; correction: string }[],
+  ) => call<{ ratings: unknown[] }>('POST', `/api/komposition/${id}/review`, { marks }),
 };

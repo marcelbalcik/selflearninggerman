@@ -26,6 +26,97 @@
       "action": "restrict_plural_to",
       "plural": ["Orte"],
       "note": "Örter is a specialised plural (mathematics, mining)"
+    },
+    "Plan": {
+      "action": "restrict_plural_to",
+      "plural": ["Pläne"],
+      "note": "Plane/Planen belong to die Plane (tarpaulin), mixed into the table"
+    },
+    "Sport": {
+      "action": "no_plural",
+      "note": "Sporte is rare; learners use Sportarten"
+    },
+    "Wagen": {
+      "action": "restrict_plural_to",
+      "plural": ["Wagen"],
+      "note": "Wägen is southern/Austrian"
+    },
+    "Party": {
+      "action": "restrict_plural_to",
+      "plural": ["Partys"],
+      "note": "Parties is the old English spelling"
+    },
+    "Park": {
+      "action": "restrict_plural_to",
+      "plural": ["Parks"],
+      "note": "Parke is Swiss"
+    },
+    "Nachbar": {
+      "action": "use_engine_table",
+      "note": "table adds colloquial strong forms (dem Nachbar); standard is weak: dem Nachbarn"
+    },
+    "Prinzip": {
+      "action": "restrict_plural_to",
+      "plural": ["Prinzipien"],
+      "note": "Prinzipe/Prinzipia are rare"
+    },
+    "Publikum": {
+      "action": "no_plural",
+      "note": "Publika is technical; no plural for learners"
+    },
+    "Mama": {
+      "action": "accept",
+      "note": "des Mamas and des Mama are both used"
+    },
+    "Schicksal": {
+      "action": "restrict_plural_to",
+      "plural": ["Schicksale"],
+      "note": "Schicksäler is dialectal"
+    },
+    "Tausend": {
+      "action": "restrict_plural_to",
+      "plural": ["Tausende"],
+      "note": "the uninflected 'Tausend' is the numeral"
+    },
+    "Kunde (f)": {
+      "action": "reject",
+      "note": "die Kunde (tidings) is literary; der Kunde stays"
+    },
+    "Glaube": {
+      "action": "no_plural",
+      "note": "Glaube has no plural in use"
+    },
+    "Finale": {
+      "action": "accept",
+      "note": "stored genitive is fine"
+    },
+    "Start": {
+      "action": "use_engine_table",
+      "note": "no Wiktionary table; headword data complete"
+    },
+    "Posten": {
+      "action": "use_engine_table",
+      "note": "no Wiktionary table; headword data complete"
+    },
+    "Vorstand": {
+      "action": "use_engine_table",
+      "note": "no Wiktionary table; headword data complete"
+    },
+    "Englisch": {
+      "action": "use_engine_table",
+      "note": "no Wiktionary table; headword data complete (no plural)"
+    },
+    "Morgen (n)": {
+      "action": "reject",
+      "note": "das Morgen (the future) is literary; der Morgen stays"
+    },
+    "Laden (n)": {
+      "action": "reject",
+      "note": "das Laden (loading) is a nominalised infinitive; der Laden stays"
+    },
+    "Tausend (f)": {
+      "action": "reject",
+      "note": "die Tausend (the digit 1000) is marginal; das Tausend stays"
     }
   },
   "frames": {
@@ -682,6 +773,897 @@
           "case": "dat"
         }
       ]
+    },
+    "erfahren": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "von",
+          "case": "dat"
+        }
+      ]
+    },
+    "bezahlen": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "für",
+          "case": "akk"
+        }
+      ]
+    },
+    "schlagen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "berichten": {
+      "objects": ["dat"],
+      "preps": [
+        {
+          "prep": "über",
+          "case": "akk"
+        }
+      ]
+    },
+    "enthalten": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "einsetzen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "starten": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "aufstehen": {
+      "objects": [],
+      "preps": []
+    },
+    "steigen": {
+      "objects": [],
+      "preps": []
+    },
+    "holen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "besuchen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "veröffentlichen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "klingen": {
+      "objects": [],
+      "preps": []
+    },
+    "dienen": {
+      "objects": ["dat"],
+      "preps": []
+    },
+    "erleben": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "teilen": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "mit",
+          "case": "dat"
+        }
+      ]
+    },
+    "schauen": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "auf",
+          "case": "akk"
+        }
+      ]
+    },
+    "geschehen": {
+      "objects": ["dat"],
+      "preps": []
+    },
+    "dauern": {
+      "objects": [],
+      "preps": [],
+      "note": "es dauert + time span"
+    },
+    "melden": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "leisten": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "feiern": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "gelingen": {
+      "objects": ["dat"],
+      "preps": []
+    },
+    "beschäftigen": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "mit",
+          "case": "dat"
+        }
+      ]
+    },
+    "kämpfen": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "für",
+          "case": "akk"
+        },
+        {
+          "prep": "gegen",
+          "case": "akk"
+        }
+      ]
+    },
+    "bestätigen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "fordern": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "unternehmen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "ausgehen": {
+      "objects": [],
+      "preps": []
+    },
+    "bitten": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "um",
+          "case": "akk"
+        }
+      ]
+    },
+    "öffnen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "empfehlen": {
+      "objects": ["dat", "akk"],
+      "preps": []
+    },
+    "planen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "schlafen": {
+      "objects": [],
+      "preps": [],
+      "note": "intransitive"
+    },
+    "erwähnen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "ergeben": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "treten": {
+      "objects": [],
+      "preps": [],
+      "note": "intransitive main use"
+    },
+    "stecken": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "beschreiben": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "bestimmen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "entdecken": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "passen": {
+      "objects": ["dat"],
+      "preps": [
+        {
+          "prep": "zu",
+          "case": "dat"
+        }
+      ]
+    },
+    "vorkommen": {
+      "objects": ["dat"],
+      "preps": []
+    },
+    "erfolgen": {
+      "objects": [],
+      "preps": []
+    },
+    "verhindern": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "schützen": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "vor",
+          "case": "dat"
+        }
+      ]
+    },
+    "sorgen": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "für",
+          "case": "akk"
+        }
+      ],
+      "note": "sich sorgen um (reflexive) is a second pattern"
+    },
+    "lösen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "verlassen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "merken": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "verletzen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "verändern": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "anschauen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "trinken": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "beziehen": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "auf",
+          "case": "akk"
+        }
+      ]
+    },
+    "werfen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "überzeugen": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "von",
+          "case": "dat"
+        }
+      ]
+    },
+    "einstellen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "liefern": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "besitzen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "behandeln": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "erlauben": {
+      "objects": ["dat", "akk"],
+      "preps": []
+    },
+    "töten": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "schließen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "durchführen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "bewegen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "feststellen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "herstellen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "kriegen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "erhöhen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "betreffen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "drehen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "vertreten": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "interessieren": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "für",
+          "case": "akk"
+        }
+      ]
+    },
+    "aufhören": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "mit",
+          "case": "dat"
+        }
+      ]
+    },
+    "verfolgen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "enden": {
+      "objects": [],
+      "preps": []
+    },
+    "erfüllen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "gründen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "retten": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "verschwinden": {
+      "objects": [],
+      "preps": []
+    },
+    "anrufen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "eröffnen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "verbieten": {
+      "objects": ["dat", "akk"],
+      "preps": []
+    },
+    "zerstören": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "entsprechen": {
+      "objects": ["dat"],
+      "preps": []
+    },
+    "behaupten": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "betreiben": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "fliegen": {
+      "objects": [],
+      "preps": []
+    },
+    "beobachten": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "einladen": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "zu",
+          "case": "dat"
+        }
+      ]
+    },
+    "betrachten": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "singen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "verlangen": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "von",
+          "case": "dat"
+        }
+      ]
+    },
+    "wachsen": {
+      "objects": [],
+      "preps": []
+    },
+    "beenden": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "betragen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "informieren": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "über",
+          "case": "akk"
+        }
+      ]
+    },
+    "aufgeben": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "bestellen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "leiden": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "an",
+          "case": "dat"
+        },
+        {
+          "prep": "unter",
+          "case": "dat"
+        }
+      ]
+    },
+    "wechseln": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "stammen": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "aus",
+          "case": "dat"
+        }
+      ]
+    },
+    "rufen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "aufbauen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "trennen": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "von",
+          "case": "dat"
+        }
+      ]
+    },
+    "präsentieren": {
+      "objects": ["dat", "akk"],
+      "preps": []
+    },
+    "ermöglichen": {
+      "objects": ["dat", "akk"],
+      "preps": []
+    },
+    "gebären": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "antworten": {
+      "objects": ["dat"],
+      "preps": [
+        {
+          "prep": "auf",
+          "case": "akk"
+        }
+      ],
+      "note": "jdm antworten; auf etw antworten"
+    },
+    "erzielen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "auftreten": {
+      "objects": [],
+      "preps": []
+    },
+    "angreifen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "beteiligen": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "an",
+          "case": "dat"
+        }
+      ]
+    },
+    "rechnen": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "mit",
+          "case": "dat"
+        }
+      ]
+    },
+    "beweisen": {
+      "objects": ["dat", "akk"],
+      "preps": []
+    },
+    "zugeben": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "sammeln": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "sichern": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "lachen": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "über",
+          "case": "akk"
+        }
+      ],
+      "note": "über etw. lachen"
+    },
+    "unterscheiden": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "von",
+          "case": "dat"
+        }
+      ]
+    },
+    "anziehen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "schätzen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "vorbereiten": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "auf",
+          "case": "akk"
+        }
+      ]
+    },
+    "überlegen": {
+      "objects": ["akk"],
+      "preps": [],
+      "note": "sich etw. überlegen (dat reflexive) is common too"
+    },
+    "ablehnen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "richten": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "an",
+          "case": "akk"
+        }
+      ]
+    },
+    "zurückkehren": {
+      "objects": [],
+      "preps": []
+    },
+    "kümmern": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "um",
+          "case": "akk"
+        }
+      ],
+      "note": "sich kümmern um (reflexive)"
+    },
+    "nachdenken": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "über",
+          "case": "akk"
+        }
+      ]
+    },
+    "reagieren": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "auf",
+          "case": "akk"
+        }
+      ]
+    },
+    "angehen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "fördern": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "teilnehmen": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "an",
+          "case": "dat"
+        }
+      ]
+    },
+    "abgeben": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "diskutieren": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "über",
+          "case": "akk"
+        }
+      ]
+    },
+    "ersetzen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "sparen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "zustimmen": {
+      "objects": ["dat"],
+      "preps": []
+    },
+    "gestalten": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "zwingen": {
+      "objects": ["akk"],
+      "preps": [
+        {
+          "prep": "zu",
+          "case": "dat"
+        }
+      ]
+    },
+    "begleiten": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "benötigen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "landen": {
+      "objects": [],
+      "preps": []
+    },
+    "verbreiten": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "treiben": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "prüfen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "anzeigen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "verbringen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "geraten": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "in",
+          "case": "akk"
+        }
+      ],
+      "note": "in etwas geraten"
+    },
+    "erheben": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "hassen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "verzichten": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "auf",
+          "case": "akk"
+        }
+      ]
+    },
+    "brechen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "existieren": {
+      "objects": [],
+      "preps": []
+    },
+    "hängen": {
+      "objects": [],
+      "preps": [],
+      "note": "hängen (hing) intransitive; hängen (hängte) + Akk is a second sense"
+    },
+    "verpassen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "stören": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "belegen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "angeben": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "fassen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "überraschen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "zurückkommen": {
+      "objects": [],
+      "preps": []
+    },
+    "aufstellen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "produzieren": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "untersuchen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "eingehen": {
+      "objects": [],
+      "preps": [
+        {
+          "prep": "auf",
+          "case": "akk"
+        }
+      ]
+    },
+    "verbessern": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "mitnehmen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "erstellen": {
+      "objects": ["akk"],
+      "preps": []
+    },
+    "schenken": {
+      "objects": ["dat", "akk"],
+      "preps": []
+    },
+    "behalten": {
+      "objects": ["akk"],
+      "preps": []
     }
   }
 }
