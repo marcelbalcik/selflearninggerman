@@ -7,7 +7,7 @@ from collections import defaultdict
 from typing import Any
 
 from .common import WORK, config, core_cli, lemma_id, read_jsonl, write_jsonl, write_report
-from .kaikki import glosses, noun_input, parse_noun, parse_verb, sounds, topics
+from .kaikki import glosses, noun_input, parse_noun, parse_verb, topics
 
 LEMMAS = WORK / "lemmas.jsonl"
 
@@ -36,7 +36,6 @@ def _row(entry: dict[str, Any], sense_key: str) -> dict[str, Any]:
         "glosses_accepted": accepted,
         "freq_rank": entry["_rank"],
         "topics": topics(entry),
-        "sounds": sounds(entry),
         "surface": _surface(entry),
         "track": "core",
         "status": "ok",

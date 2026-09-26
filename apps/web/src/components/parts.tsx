@@ -176,16 +176,6 @@ export function VerbForms({ verb, infinitive }: { verb: VerbInfo; infinitive: st
   );
 }
 
-export function AudioButton({ url }: { url: string | null }): ReactNode {
-  const t = useT();
-  if (!url) return null;
-  return (
-    <button type="button" className="btn btn-quiet" onClick={() => void new Audio(url).play()}>
-      <span aria-hidden="true">▶</span> {t('play')}
-    </button>
-  );
-}
-
 /** Word title with its article as one unit (spec §1.4). */
 export function WordTitle({ article, text }: { article: string | null; text: string }): ReactNode {
   return (
@@ -210,7 +200,6 @@ export function WordDetail({ lemmaId }: { lemmaId: number }): ReactNode {
     <div>
       <WordTitle article={data.article} text={data.text} />
       <p className="muted">{data.gloss}</p>
-      <AudioButton url={data.audioUrl} />
       {data.forms && <Declension forms={data.forms} />}
       {data.verb && <VerbForms verb={data.verb} infinitive={data.text} />}
       {data.examples.length > 0 && (

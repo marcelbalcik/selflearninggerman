@@ -11,7 +11,7 @@ warnings.filterwarnings("ignore", message=r"\[W095\]")
 
 STEPS = [
     "download", "select", "extract", "crosscheck", "gender_rules",
-    "enrich", "sentences", "validate", "audio", "export",
+    "enrich", "sentences", "validate", "export",
 ]
 
 
@@ -28,7 +28,7 @@ def run(step: str) -> dict:
     if step in ("enrich", "sentences", "validate"):
         from . import steps_corpus
         return getattr(steps_corpus, step)()
-    if step in ("audio", "export"):
+    if step == "export":
         from . import steps_output
         return getattr(steps_output, step)()
     raise SystemExit(f"unknown step {step}")

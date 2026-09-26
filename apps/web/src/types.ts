@@ -45,7 +45,6 @@ export interface LemmaCard {
   forms: { sg: Row | null; pl: Row | null } | null;
   verb: VerbInfo | null;
   example: { de: string; en: string | null } | null;
-  audioUrl: string | null;
 }
 
 export interface LemmaDetail extends LemmaCard {

@@ -46,7 +46,6 @@ const de = {
   cancel: 'Abbrechen',
   showWord: 'Wort ansehen',
   close: 'Schließen',
-  play: 'Anhören',
   progress: '{n} von {total}',
   // exercises
   kasusTask: 'Setze die passende Form ein.',
@@ -360,7 +359,6 @@ const en: Record<MessageKey, string> = {
   cancel: 'Cancel',
   showWord: 'Show word',
   close: 'Close',
-  play: 'Listen',
   progress: '{n} of {total}',
   kasusTask: 'Fill in the right form.',
   fehlerTask: 'Tap the wrong word and correct it.',

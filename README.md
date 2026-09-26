@@ -7,15 +7,15 @@ decisions taken on top of it are in [docs/DECISIONS.md](docs/DECISIONS.md).
 
 ## Status
 
-| Milestone             | State                                  |
-| --------------------- | -------------------------------------- |
-| M0 Scaffold and core  | done                                   |
-| M1 Pipeline           | done (reviewed)                        |
-| M2 Server core        | done (30-day simulation passes)        |
-| M3 Web                | done (real-phone check by Marcel open) |
-| M4 Content at scale   | done, awaiting review                  |
-| M5 Competition        | next                                   |
-| M6 Remaining features | not started                            |
+| Milestone            | State                                         |
+| -------------------- | --------------------------------------------- |
+| M0 Scaffold and core | done                                          |
+| M1 Pipeline          | done (reviewed)                               |
+| M2 Server core       | done (30-day simulation passes)               |
+| M3 Web               | done (real-phone check by Marcel open)        |
+| M4 Content at scale  | done                                          |
+| M5 Competition       | done, awaiting review                         |
+| M6 Push and deploy   | next (audio and personal tracks out of scope) |
 
 ## Layout
 
@@ -44,8 +44,7 @@ pnpm start                                         # builds the web app, serves 
 ```
 
 The server imports `apps/server/content/content.sqlite` on startup when its
-content version changed; user data is never touched. Pronunciation audio is
-not in git: run the pipeline (`pipeline/README.md`) or play without sound.
+content version changed; user data is never touched.
 
 **Trying it on a phone in the same Wi-Fi:** set `HOST=0.0.0.0` and
 `COOKIE_SECURE=false` in `apps/server/.env`, run `pnpm start`, and open

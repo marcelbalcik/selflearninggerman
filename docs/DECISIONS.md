@@ -173,7 +173,7 @@ Marcel delegated the review of the M1 report to Claude. The decisions live in
 - **M1 is accepted.**
 - **The word database `apps/server/content/content.sqlite` (about 1.5 MB) is
   committed** so the server needs no pipeline run. `dictionary.sqlite` (59 MB)
-  and the audio files stay out of git; they are rebuilt with
+  stays out of git; it is rebuilt with
   `python -m wortduell_pipeline all`.
 
 ## M2 server core (2026-09-26)
@@ -230,7 +230,7 @@ Marcel delegated the review of the M1 report to Claude. The decisions live in
 - **Stack.**
   - Vite 8, React 19 and vite-plugin-pwa (generateSW).
   - The app shell and Latin font subsets are precached (about 450 KB). The API
-    is never cached (online-only v1). Audio is cached on first play.
+    is never cached (online-only v1).
   - The server serves the built app (`WEB_DIST`), so one process is enough.
 - **Look (spec §10).**
   - Squared paper (5 mm grid).
@@ -327,10 +327,6 @@ Marcel delegated the review of the M1 report to Claude. The decisions live in
 
   Long lists show 5 items and a "show all" button.
 
-- **Audio.** Wikimedia now throttles downloads to about one file a minute, so
-  the 2,000-lemma export keeps the 502 recordings from M1. The other words
-  play without sound. Run `python -m wortduell_pipeline audio && python -m
-wortduell_pipeline export` again later; it resumes where it stopped.
 - **Acceptance.**
   - Server tests cover every new exercise type, disputes (other person only,
     regrade, answer accepted for the partner, reject), komposition (checks,
@@ -449,3 +445,20 @@ wortduell_pipeline export` again later; it resumes where it stopped.
     30 € falls back to 20 € without a babysitter, with 20 € change. Undo
     then restores every voucher and removes the change.
   - `pnpm e2e` plays the same on emulated phones.
+
+## Scope change before M6 (2026-09-27)
+
+Marcel: no audio, and no personal word lists for now.
+
+- **Recorded audio removed.** The pipeline's `audio` step (Wikimedia Commons
+  recordings) and the play buttons on the intro and Wort screens are gone.
+  Migration `004_no_audio.sql` drops the `audio` table and
+  `sentence.audio_url`. The service worker no longer caches audio.
+- **`diktat` stays** (Marcel's choice). It never used recordings: the
+  browser's German speech synthesis reads the sentence.
+- **Personal tracks and EPUB/CSV import** are out of scope (SPEC §15).
+  `lemma.track` stays `core` everywhere. `dictionary.sqlite` still feeds the
+  chore catalog's words.
+- **M6 is now** Web Push (duel reminder at 19:00, voucher deadlines) plus
+  deployment (Docker Compose, Caddy, LanguageTool, backups, operations
+  notes).

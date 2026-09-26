@@ -78,7 +78,6 @@ export interface LemmaCard {
   forms: ReturnType<typeof displayTable> | null;
   verb: Lemma['verb'];
   example: { de: string; en: string | null } | null;
-  audioUrl: string | null;
 }
 
 export interface SessionPlan {
@@ -120,9 +119,6 @@ export class Sessions {
 
   lemmaCard(lemma: Lemma): LemmaCard {
     const example = this.repo.sentences(lemma.id).find((s) => s.exerciseType === 'bedeutung');
-    const audio = this.db
-      .prepare<[number], { url: string }>('SELECT url FROM audio WHERE lemma_id = ?')
-      .get(lemma.id);
     return {
       id: lemma.id,
       text: lemma.text,
@@ -136,7 +132,6 @@ export class Sessions {
       forms: lemma.noun ? displayTable(nounInput(lemma)) : null,
       verb: lemma.verb,
       example: example ? { de: example.de, en: example.en } : null,
-      audioUrl: audio?.url ?? null,
     };
   }
 

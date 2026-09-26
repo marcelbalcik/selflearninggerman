@@ -14,6 +14,5 @@ coverage/
 __pycache__/
 .venv/
 pipeline/work/
-apps/web/public/audio/*.mp3
 apps/server/data/
 apps/web/e2e/screenshots/

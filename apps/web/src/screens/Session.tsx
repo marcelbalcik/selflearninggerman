@@ -3,7 +3,6 @@ import type { ReactNode } from 'react';
 import { ApiError, api } from '../api';
 import {
   AnswerInput,
-  AudioButton,
   Declension,
   Marks,
   Overlay,
@@ -107,7 +106,6 @@ function Intro({ item, onNext }: { item: IntroItem; onNext: () => void }): React
       <p className="muted">{t('newWord')}</p>
       <WordTitle article={l.article} text={l.text} />
       <p>{l.gloss}</p>
-      <AudioButton url={l.audioUrl} />
       {l.example && (
         <p style={{ marginTop: 12 }}>
           <span className="de">{l.example.de}</span>

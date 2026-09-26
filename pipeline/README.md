@@ -1,13 +1,12 @@
 # Content pipeline
 
 Builds `content.sqlite` (core deck) and `dictionary.sqlite` (all German nouns,
-verbs, adjectives and adverbs, for personal-track lookups) from free data only:
+verbs, adjectives and adverbs; the chore catalog's words come from it) from free data only:
 
-- **Wiktionary** via kaikki.org (grammar, glosses, audio links), CC BY-SA 4.0
+- **Wiktionary** via kaikki.org (grammar, glosses), CC BY-SA 4.0
 - **Tatoeba** German–English sentences, CC BY 2.0 FR
 - **spaCy** `de_core_news_md` (parsing, run locally)
 - **wordfreq** (frequencies)
-- **Wikimedia Commons** (pronunciation audio, per-file licences)
 
 No LLM or paid API is used (docs/DECISIONS.md).
 
@@ -37,13 +36,12 @@ python -m pytest                          # parser tests
 | -------------- | ------------------------------------------------------------------------------------------------------------ |
 | `download`     | kaikki German JSONL and Tatoeba files into `work/raw/` (skips existing)                                      |
 | `select`       | top `PIPELINE.TRIAL_LEMMA_COUNT` lemmas: wordfreq frequency split over spaCy readings in Tatoeba             |
-| `extract`      | gender, plural, form tables, verb data, glosses, audio links; splits senses by gender/separability           |
+| `extract`      | gender, plural, form tables, verb data, glosses; splits senses by gender/separability                        |
 | `crosscheck`   | every noun table against the rule engine (`pnpm core:decline --json`), verb rules; mismatch → `needs_review` |
 | `gender_rules` | accuracy of each suffix rule on the selected nouns                                                           |
 | `enrich`       | semantic field/theme (Wiktionary topics), CEFR hint (frequency band), verb frame proposals                   |
 | `sentences`    | exercise candidates from parsed Tatoeba sentences                                                            |
 | `validate`     | gaps recomputed from the form tables; `fehlersuche` errors built and checked                                 |
-| `audio`        | Commons recordings into `apps/web/public/audio/` with `ATTRIBUTION.md`                                       |
 | `export`       | `work/out/content.sqlite`, `work/out/dictionary.sqlite`, `reports/M1-REPORT.md`                              |
 
 Every step writes `reports/<step>.json`. The Tatoeba parse is cached in

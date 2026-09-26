@@ -64,7 +64,7 @@ A private web app (installable PWA) for exactly two users, Marcel and his wife, 
 ```
 lemma(id, pos['noun'|'verb'|'adj'|'adv'|'other'], text, sense_key, gloss_en,
       freq_rank, cefr_hint, semantic_field, theme,
-      track['core'|'personal'], owner_user_id NULL,
+      track['core'], owner_user_id NULL,   -- personal tracks are out of scope (§15)
       status['ok'|'needs_review'|'reported'], source, created_at)
 
 noun(lemma_id PK, gender['m'|'f'|'n'], alt_genders JSON NULL,
@@ -79,10 +79,9 @@ verb(lemma_id PK, prefix NULL, separable BOOL, dual_prefix BOOL,
      -- frame e.g. {"objects":["dat","akk"]} or {"prep":"an","case":"akk"}
 
 sentence(id, lemma_id, target_facet, skill_ids JSON, de, en,
-         gap JSON, accepted JSON, exercise_types JSON, audio_url NULL,
+         gap JSON, accepted JSON, exercise_types JSON,
          status, generator, validated_at)
 
-audio(lemma_id, url, local_path, license, attribution)
 gender_rule(suffix, gender, dataset_accuracy, n, active BOOL)
 ```
 
@@ -239,7 +238,7 @@ Skills are updated by the same attempts that update lexical facets. Skills are *
 | `wer_tut_was` | 2-option choice | yes |
 | `satzbau` | open sentence | no |
 | `umformen` | semi-open | no |
-| `diktat` | typed from audio | no |
+| `diktat` | typed from speech | no |
 | `en_de_chunk` | closed | yes |
 | `fehlersuche` | tap + closed correction | yes |
 | `komposition` | open, LanguageTool + partner feedback | no |
@@ -257,7 +256,7 @@ Skills are updated by the same attempts that update lexical facets. Skills are *
    - Answers are checked against the accepted variants.
    - If there is no match, the answer is wrong, and the user can dispute it (see **Disputes** below).
 4. **`umformen`.** A transformation task, e.g. singular to dative plural, Präsens to Perfekt, mit ↔ ohne, Hauptsatz to Nebensatz.
-5. **`diktat`.** Audio (lemma audio file, or `speechSynthesis` de-DE for a sentence), then the user types what they heard.
+5. **`diktat`.** The device's `speechSynthesis` (de-DE) reads the sentence aloud, then the user types what they heard. (There is no recorded audio; see §15.)
    - The target NP must be exact.
    - The rest of the sentence passes if the normalised edit distance is ≤ 0.1.
 6. **`en_de_chunk`.** Short phrase translation, e.g. "with the colleague" → `mit dem Kollegen`.
@@ -280,7 +279,7 @@ Skills are updated by the same attempts that update lexical facets. Skills are *
 
 **New-word introduction** (not an exercise):
 
-- The intro screen shows a sentence with audio, the gloss, the declension strip or verb forms, and the gender hint.
+- The intro screen shows a sentence, the gloss, the declension strip or verb forms, and the gender hint.
 - The word reappears as a `meaning_recv` retrieval item after 3–5 other items.
 
 ---
@@ -362,7 +361,7 @@ Log every classification together with the raw answer.
    - Never show the same lemma twice in a row.
    - Interleave parts of speech and themes.
 3. **New words.**
-   - Up to `NEW_PER_DAY` (default 5). The cap is identical for both users and counts the total across the core and personal tracks.
+   - Up to `NEW_PER_DAY` (default 5). The cap is identical for both users.
    - The core deck is ordered by frequency rank within thematic batches.
    - Never introduce two new lemmas with the same `semantic_field` on the same day.
 4. **Komposition.** One task, if at least 3 suitable due or recent lemmas exist.
@@ -578,7 +577,7 @@ reward(id, budget_eur[3|5|10|15|20|30], kind['together'|'buy'], title_de, title_
 - **Wettbewerb:** daily, weekly and monthly results, plus the ledger.
 - **Wochenziel:** weekly progress, the Gutschein-Konto (banked reward vouchers), select-and-combine redemption, reward reveal, history.
 - **Aufgaben:** chore vouchers.
-- **Einstellungen:** settings, catalogs, personal tracks, import.
+- **Einstellungen:** settings and catalogs.
 - **Prüfen:** review queue.
 
 **Settings that require dual approval:** `NEW_PER_DAY`, `DUEL_MODE`, `STARS_PER_S_VOUCHER`, the tier thresholds and voucher values, and `REWARD_BANDS`.
@@ -607,7 +606,7 @@ Each step below is a CLI command and writes a report.
 3. **`extract`.**
    - Nouns: gender(s), plural, form tables (tags nominative/accusative/dative/genitive × singular/plural).
    - Verbs: separability, auxiliary, Partizip II, Präteritum, present 2sg/3sg.
-   - All: audio URLs and glosses.
+   - All: glosses.
    - Split a lemma into separate rows when gender or separability differs by sense.
 4. **`crosscheck`.** Compare the extracted tables against the TypeScript rule engine through a small CLI (`pnpm core:decline --json`). Mismatches become `needs_review` with a reason.
 5. **`gender_rules`.** Compute each suffix rule's accuracy on the selected set and write the `gender_rule` table.
@@ -622,22 +621,14 @@ Each step below is a CLI command and writes a report.
    - `wer_tut_was`: an unambiguous masculine singular NP must exist.
    - `fehlersuche`: exactly one token differs from a valid sentence.
    - Lemmas left with no usable sentence are listed in the report and get only the exercise types that need none.
-9. **`audio`.** Download lemma audio (mp3) into `apps/web/public/audio/` and write `ATTRIBUTION.md` covering the Wikimedia Commons licences.
-10. **`export`.** Produce:
+9. **`export`.** Produce:
     - `content.sqlite` (core track);
-    - `dictionary.sqlite` (all German nouns and verbs with forms, used for personal-track lookups);
+    - `dictionary.sqlite` (all German nouns and verbs with forms; the source of the chore-catalog words);
     - a JSON report with counts, rejection rates and the `needs_review` list.
 
 **Server import.** The server imports content on startup when the content version has changed. User data is never touched.
 
-**Licences.** Tatoeba (CC BY 2.0 FR), Wiktionary (CC BY-SA), OdeNet (CC BY-SA) and Commons audio are credited in `ATTRIBUTION.md`, generated by the pipeline.
-
-### Personal tracks and EPUB import
-
-- Import accepts CSV/JSON rows of `word, sentence, source`. This covers words looked up in Marcel's Android EPUB reader.
-- For each row, the server looks the word up in `dictionary.sqlite` and creates a personal lemma with the user's sentence as its first context sentence.
-- Further sentences come from the corpus (Tatoeba, Wiktionary examples) with the same parsing and validation as the pipeline; there is no on-demand generation.
-- Personal-track lemmas **never** appear in the duel or the monthly exam. They do count toward the Behalten-Score and the `NEW_PER_DAY` cap.
+**Licences.** Tatoeba (CC BY 2.0 FR), Wiktionary (CC BY-SA) and OdeNet (CC BY-SA) are credited in the content's `meta.sources`.
 
 ---
 
@@ -768,7 +759,7 @@ push_subscription(user_id, endpoint, keys JSON)
   - Build: duel, snapshots, weekly and monthly settlement, stars, vouchers, joint-goal tiers, reward vouchers (issue, combine, change, redeem, reveal, reroll, undo), dual-approval settings and the ledger.
   - Acceptance: a simulation of two synthetic users over 90 days passes. It must include both DST switches (last Sunday of March and of October), forfeits, draws, report voiding with re-settlement, idempotent re-runs of every settlement job, and voucher combination with change (including the band-fallback case and undo).
 - **M6: Remaining features.**
-  - Build: personal tracks and EPUB import, and Web Push (duel reminder at 19:00 if not yet played; voucher deadlines).
+  - Build: Web Push (duel reminder at 19:00 if not yet played; voucher deadlines).
   - Deployment: Docker Compose + Caddy + LanguageTool, backups, and a README with operations notes.
 
 ---
@@ -777,6 +768,8 @@ push_subscription(user_id, endpoint, keys JSON)
 
 - Offline mode, native apps, more than two users.
 - Speech recognition.
+- Recorded pronunciation audio (removed 2026-09-27; `diktat` uses the device's speech synthesis).
+- Personal tracks and EPUB/CSV word import (removed 2026-09-27).
 - Adjective-declension exercises (adjectives get meaning facets only).
 - Genitive training.
 

@@ -457,7 +457,6 @@ def _sentence_row(it: dict[str, Any], gap: dict[str, Any], accepted: list[str], 
         "gap": gap,
         "accepted": accepted,
         "exercise_types": [it["kind"]],
-        "audio_url": None,
         "status": "ok",
         "generator": (f"template:{it['kind']}" if str(it["sentence_id"]).startswith("t:") and it["kind"] != "diktat"
                       else f"tatoeba#{str(it['sentence_id']).split(':')[-1]}+spacy"),

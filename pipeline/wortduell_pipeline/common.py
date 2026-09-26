@@ -15,7 +15,6 @@ PIPELINE = REPO / "pipeline"
 REPORTS = PIPELINE / "reports"
 WORK = Path(os.environ.get("WORTDUELL_WORK", PIPELINE / "work"))
 RAW = WORK / "raw"
-AUDIO_DIR = REPO / "apps" / "web" / "public" / "audio"
 
 KAIKKI_URL = "https://kaikki.org/dictionary/German/kaikki.org-dictionary-German.jsonl"
 TATOEBA_BASE = "https://downloads.tatoeba.org/exports/per_language"

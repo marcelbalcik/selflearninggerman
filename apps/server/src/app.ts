@@ -501,7 +501,7 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   competitionRoutes(app, { db, clock, rounds, competition, chores, rewards, settings, auth });
 
   if (opts.webDist && existsSync(opts.webDist)) {
-    // The built PWA and its audio, with a fallback to index.html for app routes.
+    // The built PWA, with a fallback to index.html for app routes.
     void app.register(fastifyStatic, { root: opts.webDist, wildcard: false });
     app.setNotFoundHandler((req, reply) => {
       if (req.method === 'GET' && !req.url.startsWith('/api/')) return reply.sendFile('index.html');

@@ -8,7 +8,7 @@
 import { existsSync } from 'node:fs';
 import type { Db } from './db';
 
-const TABLES = ['lemma', 'noun', 'verb', 'sentence', 'audio', 'gender_rule'] as const;
+const TABLES = ['lemma', 'noun', 'verb', 'sentence', 'gender_rule'] as const;
 /** Tables without a key: replaced wholesale. */
 const REPLACED = ['lemma_form', 'catalog_word'] as const;
 

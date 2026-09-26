@@ -33,19 +33,12 @@ export default defineConfig({
       workbox: {
         // Online-only in v1 (spec §10): the app shell is cached, the API never is.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
-        navigateFallbackDenylist: [/^\/api\//u, /^\/audio\//u],
-        runtimeCaching: [
-          {
-            urlPattern: /\/audio\/.*\.mp3$/u,
-            handler: 'CacheFirst',
-            options: { cacheName: 'audio', expiration: { maxEntries: 600 } },
-          },
-        ],
+        navigateFallbackDenylist: [/^\/api\//u],
       },
     }),
   ],
   server: {
-    proxy: { '/api': server, '/audio': server },
+    proxy: { '/api': server },
   },
   test: {
     environment: 'jsdom',

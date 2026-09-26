@@ -1,125 +1,21 @@
-"""Steps `audio` and `export` (spec §11.9–10)."""
+"""Step `export` (spec §11): content.sqlite, dictionary.sqlite and the pipeline report."""
 
 from __future__ import annotations
 
 import hashlib
-import html
 import json
-import re
 import sqlite3
 import time
-import urllib.parse
-import urllib.request
 from collections import defaultdict
 from typing import Any
 
-from .common import AUDIO_DIR, REPO, REPORTS, WORK, USER_AGENT, config, read_jsonl, write_report
+from .common import REPO, REPORTS, WORK, read_jsonl, write_report
 from .kaikki import exclusion_reason, glosses, parse_noun, parse_verb
 from .steps_lexicon import LEMMAS
 from .steps_corpus import SENTENCES
 from .steps_source import KAIKKI_FILE
 
-AUDIO_ROWS = WORK / "audio.jsonl"
 OUT = WORK / "out"
-COMMONS_API = "https://commons.wikimedia.org/w/api.php"
-
-
-def _get(url: str, retries: int = 6) -> bytes:
-    """GET with a descriptive User-Agent; backs off on 429/503 (Wikimedia rate limits)."""
-    import urllib.error
-
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    for attempt in range(retries):
-        try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                return resp.read()
-        except urllib.error.HTTPError as err:
-            if err.code not in (429, 503) or attempt == retries - 1:
-                raise
-            wait = int(err.headers.get("Retry-After") or 0) or 2 ** (attempt + 1)
-            time.sleep(min(wait, 120))
-    raise RuntimeError("unreachable")
-
-
-def _licences(files: list[str]) -> dict[str, dict[str, str]]:
-    """Licence and author of Commons files, 50 per request, throttled."""
-    interval = config()["PIPELINE"]["COMMONS_REQUEST_INTERVAL_MS"] / 1000
-    out: dict[str, dict[str, str]] = {}
-    for i in range(0, len(files), 50):
-        titles = "|".join(f"File:{f}" for f in files[i:i + 50])
-        query = urllib.parse.urlencode({
-            "action": "query", "titles": titles, "prop": "imageinfo",
-            "iiprop": "extmetadata", "format": "json", "formatversion": "2",
-        })
-        try:
-            data = json.loads(_get(f"{COMMONS_API}?{query}"))
-        except Exception:
-            continue
-        for page in data.get("query", {}).get("pages", []):
-            info = (page.get("imageinfo") or [{}])[0].get("extmetadata", {})
-            name = page.get("title", "").removeprefix("File:")
-            strip = lambda v: html.unescape(re.sub(r"<[^>]+>", "", v or "")).strip()  # noqa: E731
-            out[name.replace(" ", "_")] = {
-                "license": strip(info.get("LicenseShortName", {}).get("value")),
-                "artist": strip(info.get("Artist", {}).get("value")),
-                "credit": strip(info.get("Credit", {}).get("value")),
-            }
-        time.sleep(interval)
-    return out
-
-
-def audio() -> dict[str, Any]:
-    """Download one lemma recording per lemma and record its Commons licence."""
-    rows = list(read_jsonl(LEMMAS))
-    interval = config()["PIPELINE"]["COMMONS_REQUEST_INTERVAL_MS"] / 1000
-    AUDIO_DIR.mkdir(parents=True, exist_ok=True)
-    wanted = [(r, r["sounds"][0]) for r in rows if r["sounds"]]
-    lic = _licences([s["file"].replace(" ", "_") for _, s in wanted])
-    audio_rows, missing_licence, failed = [], [], []
-    for r, s in wanted:
-        meta = lic.get(s["file"].replace(" ", "_"))
-        if not meta or not meta["license"]:
-            missing_licence.append(r["text"])
-            continue
-        path = AUDIO_DIR / f"{r['id']}.mp3"
-        if not path.exists():
-            try:
-                path.write_bytes(_get(s["mp3_url"]))
-            except Exception:
-                failed.append(r["text"])
-                continue
-            time.sleep(interval)
-        audio_rows.append({
-            "lemma_id": r["id"], "url": f"/audio/{r['id']}.mp3", "local_path": str(path.name),
-            "license": meta["license"], "attribution": meta["artist"] or meta["credit"],
-            "source": f"https://commons.wikimedia.org/wiki/File:{s['file'].replace(' ', '_')}",
-        })
-    with AUDIO_ROWS.open("w", encoding="utf-8") as f:
-        for a in audio_rows:
-            f.write(json.dumps(a, ensure_ascii=False) + "\n")
-    by_id = {r["id"]: r for r in rows}
-    lines = [
-        "# Audio attribution",
-        "",
-        "Pronunciation recordings from Wikimedia Commons, used under the licences below.",
-        "",
-        "| Word | File | Licence | Author |",
-        "|------|------|---------|--------|",
-    ]
-    for a in audio_rows:
-        lines.append(f"| {by_id[a['lemma_id']]['text']} | [{a['source'].rsplit(':', 1)[-1]}]({a['source']}) "
-                     f"| {a['license']} | {a['attribution'].replace('|', '/')} |")
-    (AUDIO_DIR / "ATTRIBUTION.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    report = {
-        "lemmas": len(rows),
-        "with_recording": len(wanted),
-        "downloaded": len(audio_rows),
-        "missing_licence": missing_licence,
-        "download_failed": failed,
-        "licences": dict(sorted(_tally(a["license"] for a in audio_rows).items())),
-    }
-    write_report("audio", report)
-    return report
 
 
 def _tally(xs) -> dict[str, int]:
@@ -152,11 +48,8 @@ CREATE TABLE verb(
 CREATE TABLE sentence(
   id INTEGER PRIMARY KEY, lemma_id INTEGER NOT NULL REFERENCES lemma(id), target_facet TEXT NOT NULL,
   skill_ids TEXT NOT NULL, de TEXT NOT NULL, en TEXT, gap TEXT NOT NULL, accepted TEXT NOT NULL,
-  exercise_types TEXT NOT NULL, audio_url TEXT, status TEXT NOT NULL, generator TEXT NOT NULL,
+  exercise_types TEXT NOT NULL, status TEXT NOT NULL, generator TEXT NOT NULL,
   validated_at TEXT NOT NULL);
-CREATE TABLE audio(
-  lemma_id INTEGER PRIMARY KEY REFERENCES lemma(id), url TEXT NOT NULL, local_path TEXT NOT NULL,
-  license TEXT NOT NULL, attribution TEXT NOT NULL, source TEXT NOT NULL);
 CREATE TABLE gender_rule(
   suffix TEXT PRIMARY KEY, gender TEXT NOT NULL, dataset_accuracy REAL NOT NULL, n INTEGER NOT NULL,
   active INTEGER NOT NULL);
@@ -187,11 +80,11 @@ def export() -> dict[str, Any]:
     OUT.mkdir(parents=True, exist_ok=True)
     rows = list(read_jsonl(LEMMAS))
     sentences = list(read_jsonl(SENTENCES))
-    audio_rows = list(read_jsonl(AUDIO_ROWS)) if AUDIO_ROWS.exists() else []
     rules = json.loads((WORK / "gender_rules.json").read_text(encoding="utf-8"))
     digest = hashlib.sha256()
     catalog = json.loads(CATALOG_WORDS.read_text(encoding="utf-8"))
-    for part in (rows, sentences, audio_rows, rules, catalog):
+    # "schema" bumps the version when the table layout changes (M5: no audio).
+    for part in (rows, sentences, rules, catalog, {"schema": 2}):
         digest.update(json.dumps(part, sort_keys=True, ensure_ascii=False).encode())
     version = digest.hexdigest()[:16]
     today = time.strftime("%Y-%m-%d")
@@ -202,8 +95,7 @@ def export() -> dict[str, Any]:
     db.executescript(CONTENT_SCHEMA)
     db.executemany("INSERT INTO meta VALUES (?, ?)", [
         ("content_version", version), ("generated_at", today),
-        ("sources", "en.wiktionary.org via kaikki.org (CC BY-SA 4.0); tatoeba.org (CC BY 2.0 FR); "
-                    "Wikimedia Commons audio (see audio.license)"),
+        ("sources", "en.wiktionary.org via kaikki.org (CC BY-SA 4.0); tatoeba.org (CC BY 2.0 FR)"),
     ])
     for r in rows:
         db.execute("INSERT INTO lemma VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
@@ -230,13 +122,10 @@ def export() -> dict[str, Any]:
             forms |= {f for cell in _all_forms(r["noun"]["forms"]) for f in cell}
         db.executemany("INSERT INTO lemma_form VALUES (?, ?)", [(r["id"], f) for f in sorted(forms)])
     for s in sentences:
-        db.execute("INSERT INTO sentence VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+        db.execute("INSERT INTO sentence VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (
             s["id"], s["lemma_id"], s["target_facet"], _j(s["skill_ids"]), s["de"], s["en"],
-            _j(s["gap"]), _j(s["accepted"]), _j(s["exercise_types"]), s["audio_url"], s["status"],
+            _j(s["gap"]), _j(s["accepted"]), _j(s["exercise_types"]), s["status"],
             s["generator"], s["validated_at"]))
-    for a in audio_rows:
-        db.execute("INSERT INTO audio VALUES (?,?,?,?,?,?)", (
-            a["lemma_id"], a["url"], a["local_path"], a["license"], a["attribution"], a["source"]))
     for g in rules:
         db.execute("INSERT INTO gender_rule VALUES (?,?,?,?,?)", (
             g["suffix"], g["gender"], g["dataset_accuracy"], g["n"], int(g["active"])))
@@ -250,7 +139,7 @@ def export() -> dict[str, Any]:
     server_copy.parent.mkdir(parents=True, exist_ok=True)
     server_copy.write_bytes(path.read_bytes())
 
-    report = _m1_report(rows, sentences, audio_rows, rules, version, dict_counts)
+    report = _m1_report(rows, sentences, rules, version, dict_counts)
     report["summary"]["catalog_words_missing"] = missing
     write_report("export", report["summary"])
     return report["summary"]
@@ -331,7 +220,7 @@ def _export_dictionary(version: str, today: str) -> dict[str, int]:
     return dict(counts)
 
 
-def _m1_report(rows, sentences, audio_rows, rules, version, dict_counts) -> dict[str, Any]:
+def _m1_report(rows, sentences, rules, version, dict_counts) -> dict[str, Any]:
     reports = {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in REPORTS.glob("*.json")}
     status = _tally(r["status"] for r in rows)
     reasons = _tally(i.split(":")[0] for r in rows for i in r["issues"])
@@ -343,7 +232,6 @@ def _m1_report(rows, sentences, audio_rows, rules, version, dict_counts) -> dict
         "review_reasons": dict(reasons),
         "noun_table_mismatches": len(mismatches),
         "sentences": len(sentences),
-        "audio_files": len(audio_rows),
         "active_gender_rules": sum(1 for g in rules if g["active"]),
         "dictionary_entries": dict_counts,
     }
@@ -357,7 +245,6 @@ def _write_markdown(rows, reports, summary, mismatches) -> None:
     sen = reports.get("sentences", {})
     enr = reports.get("enrich", {})
     gr = reports.get("gender_rules", {})
-    au = reports.get("audio", {})
     L: list[str] = []
     L += ["# M1 pipeline report", "",
           f"Content version `{summary['content_version']}`. Generated by `python -m wortduell_pipeline all`.",
@@ -368,7 +255,7 @@ def _write_markdown(rows, reports, summary, mismatches) -> None:
           f"- Review reasons: {', '.join(f'{k} {v}' for k, v in summary['review_reasons'].items()) or 'none'}",
           f"- Noun tables that differ from the rule engine: **{summary['noun_table_mismatches']}**",
           f"- Exercise sentences: **{summary['sentences']}** ({', '.join(f'{k} {v}' for k, v in val.get('kept_by_type', {}).items())})",
-          f"- Audio files: {summary['audio_files']}; active gender hints: {summary['active_gender_rules']}",
+          f"- Active gender hints: {summary['active_gender_rules']}",
           f"- dictionary.sqlite: {', '.join(f'{k} {v}' for k, v in summary['dictionary_entries'].items())}",
           ""]
     L += ["## What to review", "",
@@ -434,8 +321,4 @@ def _write_markdown(rows, reports, summary, mismatches) -> None:
     L += ["", "## Enrichment", "",
           f"- Lemmas with a semantic field: {enr.get('with_semantic_field')}; without: {enr.get('without_semantic_field')}",
           f"- CEFR hints (frequency band): {json.dumps(enr.get('cefr_hint', {}))}", ""]
-    L += ["## Audio", "",
-          f"- Recordings: {au.get('downloaded')} of {au.get('with_recording')} lemmas with a Commons file "
-          f"({au.get('lemmas')} lemmas total). Licences: {json.dumps(au.get('licences', {}))}",
-          f"- Skipped for missing licence data: {', '.join(au.get('missing_licence', [])) or 'none'}", ""]
     (REPORTS / "M1-REPORT.md").write_text("\n".join(L) + "\n", encoding="utf-8")

@@ -189,14 +189,6 @@ def first_table(entry: dict[str, Any], source: str) -> list[dict[str, Any]]:
     return table
 
 
-def sounds(entry: dict[str, Any]) -> list[dict[str, str]]:
-    out = []
-    for s in entry.get("sounds") or []:
-        if s.get("mp3_url") and s.get("audio"):
-            out.append({"file": s["audio"], "mp3_url": s["mp3_url"]})
-    return out
-
-
 def topics(entry: dict[str, Any]) -> list[str]:
     """Topical categories such as `Furniture` (orig `de:Furniture`)."""
     out: list[str] = []

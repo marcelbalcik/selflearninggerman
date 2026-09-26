@@ -173,8 +173,6 @@ export const PIPELINE = {
   FRAME_MIN_CORPUS_EXAMPLES: 5,
   /** A case enters a proposed frame when this share of the verb's corpus uses has it. */
   FRAME_MIN_SHARE: 0.2,
-  /** Commons API politeness: pause between batched licence queries. */
-  COMMONS_REQUEST_INTERVAL_MS: 1_000,
 } as const;
 
 export const FEEDBACK = {
