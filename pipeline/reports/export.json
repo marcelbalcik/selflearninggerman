@@ -1,5 +1,5 @@
 {
-  "content_version": "a4f2cddf5621d98a",
+  "content_version": "a7d5a299f9aeaac6",
   "lemma_rows": 2032,
   "status": {
     "ok": 2028,
@@ -19,5 +19,6 @@
     "adv": 1694,
     "noun": 53347,
     "verb": 9226
-  }
+  },
+  "catalog_words_missing": []
 }

@@ -10,7 +10,7 @@ import type { Db } from './db';
 
 const TABLES = ['lemma', 'noun', 'verb', 'sentence', 'audio', 'gender_rule'] as const;
 /** Tables without a key: replaced wholesale. */
-const REPLACED = ['lemma_form'] as const;
+const REPLACED = ['lemma_form', 'catalog_word'] as const;
 
 export interface ImportResult {
   imported: boolean;

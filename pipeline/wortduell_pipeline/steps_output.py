@@ -161,6 +161,8 @@ CREATE TABLE gender_rule(
   suffix TEXT PRIMARY KEY, gender TEXT NOT NULL, dataset_accuracy REAL NOT NULL, n INTEGER NOT NULL,
   active INTEGER NOT NULL);
 CREATE TABLE lemma_form(lemma_id INTEGER NOT NULL REFERENCES lemma(id), form TEXT NOT NULL);
+CREATE TABLE catalog_word(text TEXT NOT NULL, pos TEXT NOT NULL, gloss_en TEXT NOT NULL, data TEXT NOT NULL,
+  PRIMARY KEY (text, pos));
 CREATE INDEX sentence_lemma ON sentence(lemma_id);
 CREATE INDEX lemma_form_form ON lemma_form(form);
 """
@@ -188,7 +190,8 @@ def export() -> dict[str, Any]:
     audio_rows = list(read_jsonl(AUDIO_ROWS)) if AUDIO_ROWS.exists() else []
     rules = json.loads((WORK / "gender_rules.json").read_text(encoding="utf-8"))
     digest = hashlib.sha256()
-    for part in (rows, sentences, audio_rows, rules):
+    catalog = json.loads(CATALOG_WORDS.read_text(encoding="utf-8"))
+    for part in (rows, sentences, audio_rows, rules, catalog):
         digest.update(json.dumps(part, sort_keys=True, ensure_ascii=False).encode())
     version = digest.hexdigest()[:16]
     today = time.strftime("%Y-%m-%d")
@@ -238,16 +241,40 @@ def export() -> dict[str, Any]:
         db.execute("INSERT INTO gender_rule VALUES (?,?,?,?,?)", (
             g["suffix"], g["gender"], g["dataset_accuracy"], g["n"], int(g["active"])))
     db.commit()
+    dict_counts = _export_dictionary(version, today)
+    missing = _catalog_words(db)
+    db.commit()
     db.close()
     # The server imports this committed copy on startup (spec §11 "Server import").
     server_copy = REPO / "apps" / "server" / "content" / "content.sqlite"
     server_copy.parent.mkdir(parents=True, exist_ok=True)
     server_copy.write_bytes(path.read_bytes())
 
-    dict_counts = _export_dictionary(version, today)
     report = _m1_report(rows, sentences, audio_rows, rules, version, dict_counts)
+    report["summary"]["catalog_words_missing"] = missing
     write_report("export", report["summary"])
     return report["summary"]
+
+
+CATALOG_WORDS = REPO / "pipeline" / "review" / "catalog_words.json"
+
+
+def _catalog_words(db: sqlite3.Connection) -> list[str]:
+    """Copy the chore catalog's words from dictionary.sqlite into content.sqlite."""
+    wanted = json.loads(CATALOG_WORDS.read_text(encoding="utf-8"))
+    dic = sqlite3.connect(OUT / "dictionary.sqlite")
+    missing: list[str] = []
+    for pos in ("noun", "verb"):
+        for word in wanted[pos]:
+            row = dic.execute(
+                "SELECT gloss_en, data FROM entry WHERE word = ? AND pos = ? ORDER BY id LIMIT 1",
+                (word, pos)).fetchone()
+            if row is None:
+                missing.append(word)
+                continue
+            db.execute("INSERT INTO catalog_word VALUES (?,?,?,?)", (word, pos, row[0], row[1]))
+    dic.close()
+    return missing
 
 
 def _all_forms(forms: dict[str, Any]):

@@ -41,6 +41,7 @@ const app = buildApp({
   logger: true,
   webDist: resolve(process.env.WEB_DIST ?? join(here, '..', '..', 'web', 'dist')),
   languageTool: languageToolClient(process.env.LANGUAGETOOL_URL),
+  tickEveryMs: 60_000,
 });
 app.log.info({ content: imported }, 'content');
 if (process.env.CLOCK_OFFSET_MS)

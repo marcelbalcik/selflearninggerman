@@ -2,7 +2,7 @@
  * Reports with voiding (spec §8.4), placement (docs/DECISIONS.md: both users
  * start at A2.1), lemma detail (Wort screen) and today's numbers (Heute).
  */
-import { PLACEMENT, SESSION, dayKey, dayStart, gradeGloss, recall } from '@wortduell/core';
+import { PLACEMENT, dayKey, dayStart, gradeGloss, recall } from '@wortduell/core';
 import type { FacetKey, StoredCard } from '@wortduell/core';
 import { json } from '../db';
 import type { Db } from '../db';
@@ -199,7 +199,7 @@ export class Learning {
       backlog: plan.backlog,
       reviewsToday: reviews,
       newToday,
-      newRemaining: Math.max(0, SESSION.NEW_PER_DAY - newToday),
+      newRemaining: Math.max(0, this.sessions.newPerDay(now) - newToday),
     };
   }
 }

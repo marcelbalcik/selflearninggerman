@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import cookie from '@fastify/cookie';
 import fastifyStatic from '@fastify/static';
@@ -14,7 +15,13 @@ import { Komposition, languageToolClient } from './services/komposition';
 import type { LanguageTool } from './services/komposition';
 import { Learning } from './services/learning';
 import { Review } from './services/review';
+import { Rewards } from './services/rewards';
+import { Rounds } from './services/rounds';
 import { Sessions } from './services/session';
+import { Settings } from './services/settings';
+import { Chores } from './services/chores';
+import { Competition } from './services/competition';
+import { competitionRoutes } from './routes-competition';
 
 export interface AppOptions {
   db: Db;
@@ -26,6 +33,10 @@ export interface AppOptions {
   webDist?: string;
   /** LanguageTool client for komposition feedback (default: none). */
   languageTool?: LanguageTool;
+  /** Seed source for reward draws (default: crypto random). */
+  seed?: () => number;
+  /** Run the settlement tick on a timer (production); off in tests. */
+  tickEveryMs?: number;
 }
 
 declare module 'fastify' {
@@ -39,7 +50,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
   const app = Fastify({ logger: opts.logger ?? false });
   const repo = new Repo(db);
   const cards = new Cards(db);
-  const sessions = new Sessions(db, repo);
+  const settings = new Settings(db);
+  const sessions = new Sessions(db, repo, settings);
   const attempts = new Attempts(db, repo, cards);
   const learning = new Learning(db, repo, cards, sessions);
   const komposition = new Komposition(
@@ -49,6 +61,23 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     opts.languageTool ?? languageToolClient(undefined),
   );
   const review = new Review(db, repo, cards, sessions);
+  const rounds = new Rounds(db, repo, attempts, sessions);
+  const chores = new Chores(db, settings);
+  const competition = new Competition(db, rounds, chores, settings, sessions);
+  const rewards = new Rewards(db, settings, opts.seed ?? (() => randomInt(2 ** 31 - 1)));
+  if (opts.tickEveryMs) {
+    const timer = setInterval(() => {
+      try {
+        competition.tick(clock.now());
+      } catch (err) {
+        app.log.error(err, 'settlement tick failed');
+      }
+    }, opts.tickEveryMs);
+    app.addHook('onClose', (_app, done) => {
+      clearInterval(timer);
+      done();
+    });
+  }
   const limiter = new LoginLimiter();
 
   void app.register(cookie);
@@ -143,7 +172,13 @@ export function buildApp(opts: AppOptions): FastifyInstance {
 
   app.get('/api/today', (req, reply) => {
     const user = auth(req, reply);
-    return user ? learning.today(user.id, clock.now()) : undefined;
+    if (!user) return;
+    const now = clock.now();
+    competition.tick(now);
+    const today = learning.today(user.id, now);
+    // An empty due queue counts toward an active day (spec §8.3).
+    if (today.dueItems === 0) competition.markCleared(user.id, now);
+    return today;
   });
 
   app.get<{ Querystring: { mode?: string } }>('/api/session', (req, reply) => {
@@ -257,7 +292,14 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     (req, reply) => {
       const user = auth(req, reply);
       if (!user) return;
-      return review.decideDispute(user.id, Number(req.params.id), req.body.approve, clock.now());
+      const now = clock.now();
+      const result = review.decideDispute(user.id, Number(req.params.id), req.body.approve, now);
+      const attempt = db
+        .prepare<[number], { attempt_id: number }>('SELECT attempt_id FROM dispute WHERE id = ?')
+        .get(Number(req.params.id));
+      // A regraded duel or exam answer changes its round's result (spec §6 disputes, §8.4).
+      if (req.body.approve && attempt) competition.resettleAttempts([attempt.attempt_id], now);
+      return result;
     },
   );
 
@@ -402,7 +444,10 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     (req, reply) => {
       const user = auth(req, reply);
       if (!user) return;
-      return learning.report(user.id, req.body.sentenceId, req.body.reason ?? '', clock.now());
+      const now = clock.now();
+      const result = learning.report(user.id, req.body.sentenceId, req.body.reason ?? '', now);
+      competition.resettleSentence(req.body.sentenceId, now);
+      return result;
     },
   );
 
@@ -448,6 +493,8 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     learning.skipPlacement(user.id, clock.now());
     return { ok: true };
   });
+
+  competitionRoutes(app, { db, clock, rounds, competition, chores, rewards, settings, auth });
 
   if (opts.webDist && existsSync(opts.webDist)) {
     // The built PWA and its audio, with a fallback to index.html for app routes.

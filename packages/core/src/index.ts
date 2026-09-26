@@ -12,3 +12,4 @@ export * from './clock';
 export * from './fsrs';
 export * from './facets';
 export * from './grading-other';
+export * from './competition';

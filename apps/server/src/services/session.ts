@@ -24,6 +24,7 @@ import {
 } from '@wortduell/core';
 import type { ExerciseType, FacetKey, StoredCard } from '@wortduell/core';
 import { json } from '../db';
+import { Settings } from './settings';
 import type { Db } from '../db';
 import { nounInput } from '../repo';
 import type { Lemma, Repo, Sentence } from '../repo';
@@ -109,7 +110,13 @@ export class Sessions {
   constructor(
     private readonly db: Db,
     private readonly repo: Repo,
+    private readonly settings: Settings = new Settings(db),
   ) {}
+
+  /** The new-word cap in effect (dual-approval setting). */
+  newPerDay(now: Date): number {
+    return this.settings.get('NEW_PER_DAY', now);
+  }
 
   lemmaCard(lemma: Lemma): LemmaCard {
     const example = this.repo.sentences(lemma.id).find((s) => s.exerciseType === 'bedeutung');
@@ -309,7 +316,7 @@ export class Sessions {
 
     // 4. New words, each followed a few items later by its first retrieval.
     const today = this.introducedToday(userId, now);
-    let newRemaining = Math.max(0, SESSION.NEW_PER_DAY - today.length);
+    let newRemaining = Math.max(0, this.newPerDay(now) - today.length);
     const retrievals: { item: ExerciseItem; gap: number }[] = [];
     if (!opts.reviewsOnly && newRemaining > 0) {
       const fields = new Set(today.map((l) => l.semanticField).filter((f) => f !== null));

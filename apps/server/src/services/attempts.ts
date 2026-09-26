@@ -42,7 +42,9 @@ export interface AttemptInput {
   tappedIndex?: number;
   latencyMs: number;
   hintUsed?: boolean;
-  context?: 'session';
+  context?: 'session' | 'duel' | 'exam';
+  /** Duel or exam item this attempt answers. */
+  round?: { duelId?: number; examId?: number; index: number };
 }
 
 export interface Feedback {
@@ -90,7 +92,8 @@ export class Attempts {
     const speed = {
       latencyMs: input.latencyMs,
       medianLatencyMs: median,
-      hintUsed: input.hintUsed === true,
+      // No hints in the duel or the exam (docs/DECISIONS.md).
+      hintUsed: context === 'session' && input.hintUsed === true,
     };
 
     let grade: NpGrade | null = null;
@@ -197,8 +200,8 @@ export class Attempts {
       const info = this.db
         .prepare(
           `INSERT INTO attempt (user_id, sentence_id, exercise_type, answer_raw, correct, error_class,
-             classification, latency_ms, context, ts, pending_followup)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             classification, latency_ms, context, ts, pending_followup, duel_id, exam_id, item_index)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         )
         .run(
           userId,
@@ -212,13 +215,16 @@ export class Attempts {
           context,
           now.toISOString(),
           pending ? 1 : 0,
+          input.round?.duelId ?? null,
+          input.round?.examId ?? null,
+          input.round?.index ?? null,
         );
       const id = Number(info.lastInsertRowid);
       if (!pending) ratings = this.apply(userId, ratings, now, id, context);
       return id;
     })();
 
-    return {
+    const feedback: Feedback = {
       attemptId,
       correct,
       expected,
@@ -232,6 +238,13 @@ export class Attempts {
       ratings: pending ? [] : ratings,
       forms: lemma.noun ? displayTable(nounInput(lemma)) : null,
     };
+    if (context !== 'session') {
+      // Shown only at the end of the duel or exam.
+      this.db
+        .prepare('UPDATE attempt SET feedback = ? WHERE id = ?')
+        .run(JSON.stringify(feedback), attemptId);
+    }
+    return feedback;
   }
 
   /** Settle an `ambiguous` attempt with the one-tap gender answer (spec §7.3). */
