@@ -61,3 +61,14 @@ describe('determiner tables (spec §4.2)', () => {
     expect(contract('mit', 'dem')).toBeNull();
   });
 });
+
+describe('preposition skills', () => {
+  it('maps prepositions and cases to skills', async () => {
+    const { prepSkillFor } = await import('../src/prepositions');
+    expect(prepSkillFor('mit', 'dat')).toBe('prep.dat');
+    expect(prepSkillFor('für', 'akk')).toBe('prep.akk');
+    expect(prepSkillFor('in', 'dat')).toBe('prep.wechsel.loc');
+    expect(prepSkillFor('in', 'akk')).toBe('prep.wechsel.dir');
+    expect(prepSkillFor('mit', 'akk')).toBeNull();
+  });
+});

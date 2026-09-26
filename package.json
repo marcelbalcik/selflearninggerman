@@ -12,7 +12,9 @@
     "format:check": "prettier --check .",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
-    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test"
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
+    "core:cli": "pnpm --silent --filter @wortduell/core cli",
+    "core:decline": "pnpm --silent --filter @wortduell/core cli decline"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

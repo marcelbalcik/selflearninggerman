@@ -5,3 +5,5 @@ export * from './determiners';
 export * from './declension';
 export * from './grading';
 export * from './rating';
+export * from './verbs';
+export * from './prepositions';

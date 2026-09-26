@@ -1,0 +1,3320 @@
+{
+  "method": "wordfreq 'de' frequency summed over each lemma's Wiktionary forms",
+  "selected": 500,
+  "by_pos": {
+    "verb": 129,
+    "adj": 83,
+    "noun": 185,
+    "adv": 103
+  },
+  "entries_kept": 520,
+  "excluded_entries": {
+    "form_of": 248126,
+    "abbreviation": 661,
+    "no_current_sense": 3458,
+    "vulgar": 809,
+    "not_a_single_word": 22988
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "word": "sein",
+      "pos": "verb",
+      "score": 23139.1
+    },
+    {
+      "rank": 2,
+      "word": "in",
+      "pos": "adj",
+      "score": 17400.0
+    },
+    {
+      "rank": 3,
+      "word": "einen",
+      "pos": "verb",
+      "score": 12058.8
+    },
+    {
+      "rank": 4,
+      "word": "Ich",
+      "pos": "noun",
+      "score": 12010.5
+    },
+    {
+      "rank": 5,
+      "word": "nicht",
+      "pos": "adv",
+      "score": 10225.0
+    },
+    {
+      "rank": 6,
+      "word": "werden",
+      "pos": "verb",
+      "score": 9960.3
+    },
+    {
+      "rank": 7,
+      "word": "mit",
+      "pos": "adv",
+      "score": 9550.0
+    },
+    {
+      "rank": 8,
+      "word": "haben",
+      "pos": "verb",
+      "score": 6446.4
+    },
+    {
+      "rank": 9,
+      "word": "auch",
+      "pos": "adv",
+      "score": 6030.0
+    },
+    {
+      "rank": 10,
+      "word": "können",
+      "pos": "verb",
+      "score": 5571.4
+    },
+    {
+      "rank": 11,
+      "word": "Des",
+      "pos": "noun",
+      "score": 5500.0
+    },
+    {
+      "rank": 12,
+      "word": "Als",
+      "pos": "noun",
+      "score": 5130.0
+    },
+    {
+      "rank": 13,
+      "word": "Er",
+      "pos": "noun",
+      "score": 5130.0
+    },
+    {
+      "rank": 14,
+      "word": "zu",
+      "pos": "adj",
+      "score": 5100.0
+    },
+    {
+      "rank": 15,
+      "word": "zu",
+      "pos": "adv",
+      "score": 5100.0
+    },
+    {
+      "rank": 16,
+      "word": "so",
+      "pos": "adv",
+      "score": 4900.0
+    },
+    {
+      "rank": 17,
+      "word": "wie",
+      "pos": "adv",
+      "score": 4470.0
+    },
+    {
+      "rank": 18,
+      "word": "auf",
+      "pos": "adj",
+      "score": 3885.5
+    },
+    {
+      "rank": 19,
+      "word": "auf",
+      "pos": "adv",
+      "score": 3885.5
+    },
+    {
+      "rank": 20,
+      "word": "nach",
+      "pos": "adv",
+      "score": 3630.0
+    },
+    {
+      "rank": 21,
+      "word": "noch",
+      "pos": "adv",
+      "score": 3550.0
+    },
+    {
+      "rank": 22,
+      "word": "Du",
+      "pos": "noun",
+      "score": 3392.6
+    },
+    {
+      "rank": 23,
+      "word": "nur",
+      "pos": "adv",
+      "score": 3310.0
+    },
+    {
+      "rank": 24,
+      "word": "Wenn",
+      "pos": "noun",
+      "score": 3253.8
+    },
+    {
+      "rank": 25,
+      "word": "e",
+      "pos": "noun",
+      "score": 3052.5
+    },
+    {
+      "rank": 26,
+      "word": "E",
+      "pos": "noun",
+      "score": 3016.3
+    },
+    {
+      "rank": 27,
+      "word": "Es",
+      "pos": "noun",
+      "score": 2903.3
+    },
+    {
+      "rank": 28,
+      "word": "ein",
+      "pos": "adj",
+      "score": 2710.0
+    },
+    {
+      "rank": 29,
+      "word": "ein",
+      "pos": "adv",
+      "score": 2710.0
+    },
+    {
+      "rank": 30,
+      "word": "Einer",
+      "pos": "noun",
+      "score": 2630.0
+    },
+    {
+      "rank": 31,
+      "word": "an",
+      "pos": "adj",
+      "score": 2450.0
+    },
+    {
+      "rank": 32,
+      "word": "an",
+      "pos": "adv",
+      "score": 2450.0
+    },
+    {
+      "rank": 33,
+      "word": "da",
+      "pos": "adv",
+      "score": 2340.0
+    },
+    {
+      "rank": 34,
+      "word": "meinen",
+      "pos": "verb",
+      "score": 2339.7
+    },
+    {
+      "rank": 35,
+      "word": "dann",
+      "pos": "adv",
+      "score": 2240.0
+    },
+    {
+      "rank": 36,
+      "word": "machen",
+      "pos": "verb",
+      "score": 2177.6
+    },
+    {
+      "rank": 37,
+      "word": "geben",
+      "pos": "verb",
+      "score": 2153.7
+    },
+    {
+      "rank": 38,
+      "word": "Jahr",
+      "pos": "noun",
+      "score": 2136.0
+    },
+    {
+      "rank": 39,
+      "word": "Aber",
+      "pos": "noun",
+      "score": 2135.0
+    },
+    {
+      "rank": 40,
+      "word": "aber",
+      "pos": "adv",
+      "score": 2135.0
+    },
+    {
+      "rank": 41,
+      "word": "kommen",
+      "pos": "verb",
+      "score": 2071.2
+    },
+    {
+      "rank": 42,
+      "word": "gehen",
+      "pos": "verb",
+      "score": 2040.5
+    },
+    {
+      "rank": 43,
+      "word": "haten",
+      "pos": "verb",
+      "score": 1996.7
+    },
+    {
+      "rank": 44,
+      "word": "Mann",
+      "pos": "noun",
+      "score": 1990.2
+    },
+    {
+      "rank": 45,
+      "word": "etwas",
+      "pos": "adv",
+      "score": 1980.5
+    },
+    {
+      "rank": 46,
+      "word": "sehr",
+      "pos": "adv",
+      "score": 1808.0
+    },
+    {
+      "rank": 47,
+      "word": "wollen",
+      "pos": "verb",
+      "score": 1705.4
+    },
+    {
+      "rank": 48,
+      "word": "Bis",
+      "pos": "noun",
+      "score": 1700.0
+    },
+    {
+      "rank": 49,
+      "word": "müssen",
+      "pos": "verb",
+      "score": 1680.6
+    },
+    {
+      "rank": 50,
+      "word": "sollen",
+      "pos": "verb",
+      "score": 1679.0
+    },
+    {
+      "rank": 51,
+      "word": "doch",
+      "pos": "adv",
+      "score": 1660.0
+    },
+    {
+      "rank": 52,
+      "word": "immer",
+      "pos": "adv",
+      "score": 1620.0
+    },
+    {
+      "rank": 53,
+      "word": "sehen",
+      "pos": "verb",
+      "score": 1618.6
+    },
+    {
+      "rank": 54,
+      "word": "was",
+      "pos": "adv",
+      "score": 1549.6
+    },
+    {
+      "rank": 55,
+      "word": "man",
+      "pos": "adv",
+      "score": 1440.0
+    },
+    {
+      "rank": 56,
+      "word": "um",
+      "pos": "adj",
+      "score": 1440.0
+    },
+    {
+      "rank": 57,
+      "word": "um",
+      "pos": "adv",
+      "score": 1440.0
+    },
+    {
+      "rank": 58,
+      "word": "viel",
+      "pos": "adv",
+      "score": 1428.0
+    },
+    {
+      "rank": 59,
+      "word": "alle",
+      "pos": "adj",
+      "score": 1410.0
+    },
+    {
+      "rank": 60,
+      "word": "sagen",
+      "pos": "verb",
+      "score": 1349.8
+    },
+    {
+      "rank": 61,
+      "word": "Aus",
+      "pos": "noun",
+      "score": 1326.7
+    },
+    {
+      "rank": 62,
+      "word": "aus",
+      "pos": "adj",
+      "score": 1326.7
+    },
+    {
+      "rank": 63,
+      "word": "aus",
+      "pos": "adv",
+      "score": 1326.7
+    },
+    {
+      "rank": 64,
+      "word": "finden",
+      "pos": "verb",
+      "score": 1277.2
+    },
+    {
+      "rank": 65,
+      "word": "Unter",
+      "pos": "noun",
+      "score": 1264.6
+    },
+    {
+      "rank": 66,
+      "word": "über",
+      "pos": "adj",
+      "score": 1234.6
+    },
+    {
+      "rank": 67,
+      "word": "über",
+      "pos": "adv",
+      "score": 1234.6
+    },
+    {
+      "rank": 68,
+      "word": "schonen",
+      "pos": "verb",
+      "score": 1105.3
+    },
+    {
+      "rank": 69,
+      "word": "schon",
+      "pos": "adv",
+      "score": 1095.0
+    },
+    {
+      "rank": 70,
+      "word": "Zeit",
+      "pos": "noun",
+      "score": 1077.0
+    },
+    {
+      "rank": 71,
+      "word": "Geg",
+      "pos": "noun",
+      "score": 1070.0
+    },
+    {
+      "rank": 72,
+      "word": "Habe",
+      "pos": "noun",
+      "score": 1070.0
+    },
+    {
+      "rank": 73,
+      "word": "Ja",
+      "pos": "noun",
+      "score": 1070.0
+    },
+    {
+      "rank": 74,
+      "word": "ja",
+      "pos": "adv",
+      "score": 1070.0
+    },
+    {
+      "rank": 75,
+      "word": "neu",
+      "pos": "adj",
+      "score": 1057.4
+    },
+    {
+      "rank": 76,
+      "word": "stehen",
+      "pos": "verb",
+      "score": 1045.0
+    },
+    {
+      "rank": 77,
+      "word": "also",
+      "pos": "adv",
+      "score": 1000.0
+    },
+    {
+      "rank": 78,
+      "word": "gut",
+      "pos": "adj",
+      "score": 982.8
+    },
+    {
+      "rank": 79,
+      "word": "ohne",
+      "pos": "adv",
+      "score": 980.1
+    },
+    {
+      "rank": 80,
+      "word": "weit",
+      "pos": "adj",
+      "score": 962.5
+    },
+    {
+      "rank": 81,
+      "word": "ab",
+      "pos": "adj",
+      "score": 955.0
+    },
+    {
+      "rank": 82,
+      "word": "Mensch",
+      "pos": "noun",
+      "score": 938.0
+    },
+    {
+      "rank": 83,
+      "word": "denn",
+      "pos": "adv",
+      "score": 933.0
+    },
+    {
+      "rank": 84,
+      "word": "damit",
+      "pos": "adv",
+      "score": 912.0
+    },
+    {
+      "rank": 85,
+      "word": "hier",
+      "pos": "adv",
+      "score": 911.7
+    },
+    {
+      "rank": 86,
+      "word": "Hier",
+      "pos": "noun",
+      "score": 910.0
+    },
+    {
+      "rank": 87,
+      "word": "durch",
+      "pos": "adj",
+      "score": 910.0
+    },
+    {
+      "rank": 88,
+      "word": "durch",
+      "pos": "adv",
+      "score": 910.0
+    },
+    {
+      "rank": 89,
+      "word": "Zwei",
+      "pos": "noun",
+      "score": 872.6
+    },
+    {
+      "rank": 90,
+      "word": "jetzt",
+      "pos": "adv",
+      "score": 816.4
+    },
+    {
+      "rank": 91,
+      "word": "Jetzt",
+      "pos": "noun",
+      "score": 810.0
+    },
+    {
+      "rank": 92,
+      "word": "Frau",
+      "pos": "noun",
+      "score": 801.2
+    },
+    {
+      "rank": 93,
+      "word": "wo",
+      "pos": "adv",
+      "score": 794.0
+    },
+    {
+      "rank": 94,
+      "word": "ganz",
+      "pos": "adj",
+      "score": 776.8
+    },
+    {
+      "rank": 95,
+      "word": "Widder",
+      "pos": "noun",
+      "score": 771.7
+    },
+    {
+      "rank": 96,
+      "word": "nun",
+      "pos": "adv",
+      "score": 763.8
+    },
+    {
+      "rank": 97,
+      "word": "Nichts",
+      "pos": "noun",
+      "score": 759.0
+    },
+    {
+      "rank": 98,
+      "word": "nehmen",
+      "pos": "verb",
+      "score": 756.7
+    },
+    {
+      "rank": 99,
+      "word": "wieder",
+      "pos": "adv",
+      "score": 755.0
+    },
+    {
+      "rank": 100,
+      "word": "Kind",
+      "pos": "noun",
+      "score": 702.4
+    },
+    {
+      "rank": 101,
+      "word": "lassen",
+      "pos": "verb",
+      "score": 698.0
+    },
+    {
+      "rank": 102,
+      "word": "Weg",
+      "pos": "noun",
+      "score": 684.6
+    },
+    {
+      "rank": 103,
+      "word": "dürfen",
+      "pos": "verb",
+      "score": 676.1
+    },
+    {
+      "rank": 104,
+      "word": "deutsch",
+      "pos": "adj",
+      "score": 673.8
+    },
+    {
+      "rank": 105,
+      "word": "malen",
+      "pos": "verb",
+      "score": 671.2
+    },
+    {
+      "rank": 106,
+      "word": "Muss",
+      "pos": "noun",
+      "score": 660.0
+    },
+    {
+      "rank": 107,
+      "word": "Mal",
+      "pos": "noun",
+      "score": 654.1
+    },
+    {
+      "rank": 108,
+      "word": "Neues",
+      "pos": "noun",
+      "score": 647.5
+    },
+    {
+      "rank": 109,
+      "word": "spielen",
+      "pos": "verb",
+      "score": 640.7
+    },
+    {
+      "rank": 110,
+      "word": "mal",
+      "pos": "adv",
+      "score": 636.7
+    },
+    {
+      "rank": 111,
+      "word": "dabei",
+      "pos": "adv",
+      "score": 631.0
+    },
+    {
+      "rank": 112,
+      "word": "mögen",
+      "pos": "verb",
+      "score": 628.6
+    },
+    {
+      "rank": 113,
+      "word": "dort",
+      "pos": "adv",
+      "score": 603.0
+    },
+    {
+      "rank": 114,
+      "word": "sondern",
+      "pos": "verb",
+      "score": 596.1
+    },
+    {
+      "rank": 115,
+      "word": "zeigen",
+      "pos": "verb",
+      "score": 589.0
+    },
+    {
+      "rank": 116,
+      "word": "erste",
+      "pos": "adj",
+      "score": 587.2
+    },
+    {
+      "rank": 117,
+      "word": "erst",
+      "pos": "adv",
+      "score": 575.0
+    },
+    {
+      "rank": 118,
+      "word": "einfach",
+      "pos": "adj",
+      "score": 570.5
+    },
+    {
+      "rank": 119,
+      "word": "bleiben",
+      "pos": "verb",
+      "score": 567.9
+    },
+    {
+      "rank": 120,
+      "word": "gut",
+      "pos": "adv",
+      "score": 562.7
+    },
+    {
+      "rank": 121,
+      "word": "warum",
+      "pos": "adv",
+      "score": 562.0
+    },
+    {
+      "rank": 122,
+      "word": "Stadt",
+      "pos": "noun",
+      "score": 550.0
+    },
+    {
+      "rank": 123,
+      "word": "stellen",
+      "pos": "verb",
+      "score": 547.6
+    },
+    {
+      "rank": 124,
+      "word": "Uhr",
+      "pos": "noun",
+      "score": 545.4
+    },
+    {
+      "rank": 125,
+      "word": "vielleicht",
+      "pos": "adv",
+      "score": 544.0
+    },
+    {
+      "rank": 126,
+      "word": "leben",
+      "pos": "verb",
+      "score": 532.2
+    },
+    {
+      "rank": 127,
+      "word": "hoch",
+      "pos": "adj",
+      "score": 531.7
+    },
+    {
+      "rank": 128,
+      "word": "Erster",
+      "pos": "noun",
+      "score": 531.0
+    },
+    {
+      "rank": 129,
+      "word": "Gut",
+      "pos": "noun",
+      "score": 530.5
+    },
+    {
+      "rank": 130,
+      "word": "klein",
+      "pos": "adj",
+      "score": 529.8
+    },
+    {
+      "rank": 131,
+      "word": "Drei",
+      "pos": "noun",
+      "score": 527.2
+    },
+    {
+      "rank": 132,
+      "word": "bekommen",
+      "pos": "verb",
+      "score": 523.9
+    },
+    {
+      "rank": 133,
+      "word": "liegen",
+      "pos": "verb",
+      "score": 523.5
+    },
+    {
+      "rank": 134,
+      "word": "eigen",
+      "pos": "adj",
+      "score": 519.5
+    },
+    {
+      "rank": 135,
+      "word": "fahren",
+      "pos": "verb",
+      "score": 519.2
+    },
+    {
+      "rank": 136,
+      "word": "dazu",
+      "pos": "adv",
+      "score": 513.0
+    },
+    {
+      "rank": 137,
+      "word": "Leute",
+      "pos": "noun",
+      "score": 505.5
+    },
+    {
+      "rank": 138,
+      "word": "bringen",
+      "pos": "verb",
+      "score": 503.3
+    },
+    {
+      "rank": 139,
+      "word": "denken",
+      "pos": "verb",
+      "score": 501.9
+    },
+    {
+      "rank": 140,
+      "word": "arbeiten",
+      "pos": "verb",
+      "score": 496.3
+    },
+    {
+      "rank": 141,
+      "word": "fragen",
+      "pos": "verb",
+      "score": 496.0
+    },
+    {
+      "rank": 142,
+      "word": "währen",
+      "pos": "verb",
+      "score": 491.3
+    },
+    {
+      "rank": 143,
+      "word": "Würde",
+      "pos": "noun",
+      "score": 490.5
+    },
+    {
+      "rank": 144,
+      "word": "gross",
+      "pos": "adj",
+      "score": 489.6
+    },
+    {
+      "rank": 145,
+      "word": "groß",
+      "pos": "adj",
+      "score": 489.6
+    },
+    {
+      "rank": 146,
+      "word": "wichtig",
+      "pos": "adj",
+      "score": 480.6
+    },
+    {
+      "rank": 147,
+      "word": "dafür",
+      "pos": "adv",
+      "score": 479.5
+    },
+    {
+      "rank": 148,
+      "word": "ganz",
+      "pos": "adv",
+      "score": 477.8
+    },
+    {
+      "rank": 149,
+      "word": "Deutscher",
+      "pos": "noun",
+      "score": 473.5
+    },
+    {
+      "rank": 150,
+      "word": "tun",
+      "pos": "verb",
+      "score": 473.0
+    },
+    {
+      "rank": 151,
+      "word": "halten",
+      "pos": "verb",
+      "score": 469.2
+    },
+    {
+      "rank": 152,
+      "word": "Welt",
+      "pos": "noun",
+      "score": 468.5
+    },
+    {
+      "rank": 153,
+      "word": "bereits",
+      "pos": "adv",
+      "score": 468.0
+    },
+    {
+      "rank": 154,
+      "word": "nie",
+      "pos": "adv",
+      "score": 468.0
+    },
+    {
+      "rank": 155,
+      "word": "weilen",
+      "pos": "verb",
+      "score": 462.9
+    },
+    {
+      "rank": 156,
+      "word": "Weile",
+      "pos": "noun",
+      "score": 460.6
+    },
+    {
+      "rank": 157,
+      "word": "einmal",
+      "pos": "adv",
+      "score": 457.0
+    },
+    {
+      "rank": 158,
+      "word": "brauchen",
+      "pos": "verb",
+      "score": 456.8
+    },
+    {
+      "rank": 159,
+      "word": "Ware",
+      "pos": "noun",
+      "score": 454.6
+    },
+    {
+      "rank": 160,
+      "word": "Seite",
+      "pos": "noun",
+      "score": 447.0
+    },
+    {
+      "rank": 161,
+      "word": "einfach",
+      "pos": "adv",
+      "score": 445.5
+    },
+    {
+      "rank": 162,
+      "word": "Tag",
+      "pos": "noun",
+      "score": 445.2
+    },
+    {
+      "rank": 163,
+      "word": "wenig",
+      "pos": "adj",
+      "score": 443.1
+    },
+    {
+      "rank": 164,
+      "word": "sprechen",
+      "pos": "verb",
+      "score": 442.6
+    },
+    {
+      "rank": 165,
+      "word": "Leben",
+      "pos": "noun",
+      "score": 437.9
+    },
+    {
+      "rank": 166,
+      "word": "Etwas",
+      "pos": "noun",
+      "score": 435.5
+    },
+    {
+      "rank": 167,
+      "word": "lang",
+      "pos": "adj",
+      "score": 434.7
+    },
+    {
+      "rank": 168,
+      "word": "mehren",
+      "pos": "verb",
+      "score": 431.0
+    },
+    {
+      "rank": 169,
+      "word": "Mehr",
+      "pos": "noun",
+      "score": 428.0
+    },
+    {
+      "rank": 170,
+      "word": "mehr",
+      "pos": "adv",
+      "score": 428.0
+    },
+    {
+      "rank": 171,
+      "word": "stark",
+      "pos": "adj",
+      "score": 426.3
+    },
+    {
+      "rank": 172,
+      "word": "Woche",
+      "pos": "noun",
+      "score": 422.0
+    },
+    {
+      "rank": 173,
+      "word": "etwa",
+      "pos": "adv",
+      "score": 417.0
+    },
+    {
+      "rank": 174,
+      "word": "Problem",
+      "pos": "noun",
+      "score": 416.8
+    },
+    {
+      "rank": 175,
+      "word": "Haus",
+      "pos": "noun",
+      "score": 416.0
+    },
+    {
+      "rank": 176,
+      "word": "Geld",
+      "pos": "noun",
+      "score": 409.1
+    },
+    {
+      "rank": 177,
+      "word": "Soll",
+      "pos": "noun",
+      "score": 408.9
+    },
+    {
+      "rank": 178,
+      "word": "hören",
+      "pos": "verb",
+      "score": 407.8
+    },
+    {
+      "rank": 179,
+      "word": "kennen",
+      "pos": "verb",
+      "score": 407.0
+    },
+    {
+      "rank": 180,
+      "word": "heissen",
+      "pos": "verb",
+      "score": 406.9
+    },
+    {
+      "rank": 181,
+      "word": "I",
+      "pos": "noun",
+      "score": 406.3
+    },
+    {
+      "rank": 182,
+      "word": "Fall",
+      "pos": "noun",
+      "score": 403.4
+    },
+    {
+      "rank": 183,
+      "word": "amtshandeln",
+      "pos": "verb",
+      "score": 402.8
+    },
+    {
+      "rank": 184,
+      "word": "laufen",
+      "pos": "verb",
+      "score": 402.0
+    },
+    {
+      "rank": 185,
+      "word": "Land",
+      "pos": "noun",
+      "score": 400.6
+    },
+    {
+      "rank": 186,
+      "word": "Selbst",
+      "pos": "noun",
+      "score": 397.0
+    },
+    {
+      "rank": 187,
+      "word": "selbst",
+      "pos": "adv",
+      "score": 397.0
+    },
+    {
+      "rank": 188,
+      "word": "richtig",
+      "pos": "adj",
+      "score": 390.7
+    },
+    {
+      "rank": 189,
+      "word": "darauf",
+      "pos": "adv",
+      "score": 387.0
+    },
+    {
+      "rank": 190,
+      "word": "setzen",
+      "pos": "verb",
+      "score": 386.8
+    },
+    {
+      "rank": 191,
+      "word": "davon",
+      "pos": "adv",
+      "score": 380.0
+    },
+    {
+      "rank": 192,
+      "word": "ander",
+      "pos": "adj",
+      "score": 376.7
+    },
+    {
+      "rank": 193,
+      "word": "tagen",
+      "pos": "verb",
+      "score": 376.5
+    },
+    {
+      "rank": 194,
+      "word": "Anderer",
+      "pos": "noun",
+      "score": 375.0
+    },
+    {
+      "rank": 195,
+      "word": "Anderes",
+      "pos": "noun",
+      "score": 375.0
+    },
+    {
+      "rank": 196,
+      "word": "verstehen",
+      "pos": "verb",
+      "score": 372.1
+    },
+    {
+      "rank": 197,
+      "word": "Spiel",
+      "pos": "noun",
+      "score": 371.9
+    },
+    {
+      "rank": 198,
+      "word": "wissen",
+      "pos": "verb",
+      "score": 368.2
+    },
+    {
+      "rank": 199,
+      "word": "Person",
+      "pos": "noun",
+      "score": 365.0
+    },
+    {
+      "rank": 200,
+      "word": "gern",
+      "pos": "adv",
+      "score": 363.5
+    },
+    {
+      "rank": 201,
+      "word": "alt",
+      "pos": "adj",
+      "score": 363.4
+    },
+    {
+      "rank": 202,
+      "word": "jedoch",
+      "pos": "adv",
+      "score": 363.0
+    },
+    {
+      "rank": 203,
+      "word": "Freund",
+      "pos": "noun",
+      "score": 362.0
+    },
+    {
+      "rank": 204,
+      "word": "Macht",
+      "pos": "noun",
+      "score": 359.4
+    },
+    {
+      "rank": 205,
+      "word": "lass",
+      "pos": "adj",
+      "score": 356.5
+    },
+    {
+      "rank": 206,
+      "word": "glauben",
+      "pos": "verb",
+      "score": 354.8
+    },
+    {
+      "rank": 207,
+      "word": "danken",
+      "pos": "verb",
+      "score": 349.0
+    },
+    {
+      "rank": 208,
+      "word": "fallen",
+      "pos": "verb",
+      "score": 343.0
+    },
+    {
+      "rank": 209,
+      "word": "möglich",
+      "pos": "adj",
+      "score": 337.4
+    },
+    {
+      "rank": 210,
+      "word": "einig",
+      "pos": "adj",
+      "score": 336.0
+    },
+    {
+      "rank": 211,
+      "word": "Frage",
+      "pos": "noun",
+      "score": 333.5
+    },
+    {
+      "rank": 212,
+      "word": "Andere",
+      "pos": "noun",
+      "score": 333.0
+    },
+    {
+      "rank": 213,
+      "word": "Grund",
+      "pos": "noun",
+      "score": 332.7
+    },
+    {
+      "rank": 214,
+      "word": "Nein",
+      "pos": "noun",
+      "score": 331.0
+    },
+    {
+      "rank": 215,
+      "word": "sogar",
+      "pos": "adv",
+      "score": 331.0
+    },
+    {
+      "rank": 216,
+      "word": "zwar",
+      "pos": "adv",
+      "score": 331.0
+    },
+    {
+      "rank": 217,
+      "word": "Wort",
+      "pos": "noun",
+      "score": 330.3
+    },
+    {
+      "rank": 218,
+      "word": "letzte",
+      "pos": "adj",
+      "score": 330.1
+    },
+    {
+      "rank": 219,
+      "word": "Geschichte",
+      "pos": "noun",
+      "score": 326.7
+    },
+    {
+      "rank": 220,
+      "word": "teilen",
+      "pos": "verb",
+      "score": 325.9
+    },
+    {
+      "rank": 221,
+      "word": "allerdings",
+      "pos": "adv",
+      "score": 324.0
+    },
+    {
+      "rank": 222,
+      "word": "Dank",
+      "pos": "noun",
+      "score": 323.7
+    },
+    {
+      "rank": 223,
+      "word": "folgen",
+      "pos": "verb",
+      "score": 320.8
+    },
+    {
+      "rank": 224,
+      "word": "Thema",
+      "pos": "noun",
+      "score": 318.8
+    },
+    {
+      "rank": 225,
+      "word": "oft",
+      "pos": "adv",
+      "score": 318.2
+    },
+    {
+      "rank": 226,
+      "word": "enden",
+      "pos": "verb",
+      "score": 316.9
+    },
+    {
+      "rank": 227,
+      "word": "Monat",
+      "pos": "noun",
+      "score": 316.5
+    },
+    {
+      "rank": 228,
+      "word": "Familie",
+      "pos": "noun",
+      "score": 315.9
+    },
+    {
+      "rank": 229,
+      "word": "versuchen",
+      "pos": "verb",
+      "score": 314.5
+    },
+    {
+      "rank": 230,
+      "word": "A",
+      "pos": "noun",
+      "score": 313.9
+    },
+    {
+      "rank": 231,
+      "word": "a",
+      "pos": "noun",
+      "score": 313.9
+    },
+    {
+      "rank": 232,
+      "word": "Arbeit",
+      "pos": "noun",
+      "score": 311.5
+    },
+    {
+      "rank": 233,
+      "word": "helfen",
+      "pos": "verb",
+      "score": 308.3
+    },
+    {
+      "rank": 234,
+      "word": "wirklich",
+      "pos": "adj",
+      "score": 306.8
+    },
+    {
+      "rank": 235,
+      "word": "Minute",
+      "pos": "noun",
+      "score": 306.7
+    },
+    {
+      "rank": 236,
+      "word": "schwer",
+      "pos": "adj",
+      "score": 303.4
+    },
+    {
+      "rank": 237,
+      "word": "darüber",
+      "pos": "adv",
+      "score": 303.2
+    },
+    {
+      "rank": 238,
+      "word": "Teil",
+      "pos": "noun",
+      "score": 302.7
+    },
+    {
+      "rank": 239,
+      "word": "schreiben",
+      "pos": "verb",
+      "score": 302.2
+    },
+    {
+      "rank": 240,
+      "word": "genau",
+      "pos": "adj",
+      "score": 299.6
+    },
+    {
+      "rank": 241,
+      "word": "Ganzes",
+      "pos": "noun",
+      "score": 299.0
+    },
+    {
+      "rank": 242,
+      "word": "Hand",
+      "pos": "noun",
+      "score": 297.7
+    },
+    {
+      "rank": 243,
+      "word": "Sache",
+      "pos": "noun",
+      "score": 297.0
+    },
+    {
+      "rank": 244,
+      "word": "verschieden",
+      "pos": "adj",
+      "score": 296.6
+    },
+    {
+      "rank": 245,
+      "word": "Bild",
+      "pos": "noun",
+      "score": 295.4
+    },
+    {
+      "rank": 246,
+      "word": "Kleiner",
+      "pos": "noun",
+      "score": 293.2
+    },
+    {
+      "rank": 247,
+      "word": "Letzter",
+      "pos": "noun",
+      "score": 287.4
+    },
+    {
+      "rank": 248,
+      "word": "beginnen",
+      "pos": "verb",
+      "score": 284.3
+    },
+    {
+      "rank": 249,
+      "word": "spät",
+      "pos": "adj",
+      "score": 282.8
+    },
+    {
+      "rank": 250,
+      "word": "besonders",
+      "pos": "adv",
+      "score": 282.0
+    },
+    {
+      "rank": 251,
+      "word": "weiter",
+      "pos": "adv",
+      "score": 281.0
+    },
+    {
+      "rank": 252,
+      "word": "wirklich",
+      "pos": "adv",
+      "score": 281.0
+    },
+    {
+      "rank": 253,
+      "word": "bestehen",
+      "pos": "verb",
+      "score": 279.6
+    },
+    {
+      "rank": 254,
+      "word": "suchen",
+      "pos": "verb",
+      "score": 279.4
+    },
+    {
+      "rank": 255,
+      "word": "Name",
+      "pos": "noun",
+      "score": 279.0
+    },
+    {
+      "rank": 256,
+      "word": "Vier",
+      "pos": "noun",
+      "score": 276.5
+    },
+    {
+      "rank": 257,
+      "word": "führen",
+      "pos": "verb",
+      "score": 276.0
+    },
+    {
+      "rank": 258,
+      "word": "bald",
+      "pos": "adv",
+      "score": 273.7
+    },
+    {
+      "rank": 259,
+      "word": "daran",
+      "pos": "adv",
+      "score": 273.6
+    },
+    {
+      "rank": 260,
+      "word": "Wohl",
+      "pos": "noun",
+      "score": 272.4
+    },
+    {
+      "rank": 261,
+      "word": "wohl",
+      "pos": "adv",
+      "score": 270.2
+    },
+    {
+      "rank": 262,
+      "word": "nah",
+      "pos": "adj",
+      "score": 269.9
+    },
+    {
+      "rank": 263,
+      "word": "Sage",
+      "pos": "noun",
+      "score": 269.6
+    },
+    {
+      "rank": 264,
+      "word": "sonst",
+      "pos": "adv",
+      "score": 269.0
+    },
+    {
+      "rank": 265,
+      "word": "Männin",
+      "pos": "noun",
+      "score": 268.5
+    },
+    {
+      "rank": 266,
+      "word": "kaufen",
+      "pos": "verb",
+      "score": 268.4
+    },
+    {
+      "rank": 267,
+      "word": "Beispiel",
+      "pos": "noun",
+      "score": 268.2
+    },
+    {
+      "rank": 268,
+      "word": "politisch",
+      "pos": "adj",
+      "score": 267.6
+    },
+    {
+      "rank": 269,
+      "word": "erreichen",
+      "pos": "verb",
+      "score": 267.3
+    },
+    {
+      "rank": 270,
+      "word": "stimmen",
+      "pos": "verb",
+      "score": 266.7
+    },
+    {
+      "rank": 271,
+      "word": "Euro",
+      "pos": "noun",
+      "score": 265.6
+    },
+    {
+      "rank": 272,
+      "word": "Auto",
+      "pos": "noun",
+      "score": 264.6
+    },
+    {
+      "rank": 273,
+      "word": "U",
+      "pos": "noun",
+      "score": 262.0
+    },
+    {
+      "rank": 274,
+      "word": "u",
+      "pos": "noun",
+      "score": 262.0
+    },
+    {
+      "rank": 275,
+      "word": "heuen",
+      "pos": "verb",
+      "score": 259.3
+    },
+    {
+      "rank": 276,
+      "word": "bilden",
+      "pos": "verb",
+      "score": 259.1
+    },
+    {
+      "rank": 277,
+      "word": "natürlich",
+      "pos": "adj",
+      "score": 259.0
+    },
+    {
+      "rank": 278,
+      "word": "nennen",
+      "pos": "verb",
+      "score": 259.0
+    },
+    {
+      "rank": 279,
+      "word": "Gruppe",
+      "pos": "noun",
+      "score": 258.1
+    },
+    {
+      "rank": 280,
+      "word": "heute",
+      "pos": "adv",
+      "score": 258.1
+    },
+    {
+      "rank": 281,
+      "word": "lesen",
+      "pos": "verb",
+      "score": 257.2
+    },
+    {
+      "rank": 282,
+      "word": "einzig",
+      "pos": "adj",
+      "score": 257.0
+    },
+    {
+      "rank": 283,
+      "word": "einigen",
+      "pos": "verb",
+      "score": 256.3
+    },
+    {
+      "rank": 284,
+      "word": "kurz",
+      "pos": "adj",
+      "score": 255.0
+    },
+    {
+      "rank": 285,
+      "word": "klar",
+      "pos": "adj",
+      "score": 253.8
+    },
+    {
+      "rank": 286,
+      "word": "gehören",
+      "pos": "verb",
+      "score": 253.4
+    },
+    {
+      "rank": 287,
+      "word": "Heute",
+      "pos": "noun",
+      "score": 253.0
+    },
+    {
+      "rank": 288,
+      "word": "Ende",
+      "pos": "noun",
+      "score": 251.9
+    },
+    {
+      "rank": 289,
+      "word": "treffen",
+      "pos": "verb",
+      "score": 251.9
+    },
+    {
+      "rank": 290,
+      "word": "Gott",
+      "pos": "noun",
+      "score": 248.1
+    },
+    {
+      "rank": 291,
+      "word": "schön",
+      "pos": "adj",
+      "score": 245.1
+    },
+    {
+      "rank": 292,
+      "word": "Polizei",
+      "pos": "noun",
+      "score": 245.0
+    },
+    {
+      "rank": 293,
+      "word": "deshalb",
+      "pos": "adv",
+      "score": 245.0
+    },
+    {
+      "rank": 294,
+      "word": "Nacht",
+      "pos": "noun",
+      "score": 243.6
+    },
+    {
+      "rank": 295,
+      "word": "online",
+      "pos": "adj",
+      "score": 240.0
+    },
+    {
+      "rank": 296,
+      "word": "legen",
+      "pos": "verb",
+      "score": 239.8
+    },
+    {
+      "rank": 297,
+      "word": "Abend",
+      "pos": "noun",
+      "score": 239.5
+    },
+    {
+      "rank": 298,
+      "word": "ziehen",
+      "pos": "verb",
+      "score": 239.4
+    },
+    {
+      "rank": 299,
+      "word": "handeln",
+      "pos": "verb",
+      "score": 239.1
+    },
+    {
+      "rank": 300,
+      "word": "eigentlich",
+      "pos": "adj",
+      "score": 238.5
+    },
+    {
+      "rank": 301,
+      "word": "okay",
+      "pos": "adj",
+      "score": 238.3
+    },
+    {
+      "rank": 302,
+      "word": "schaffen",
+      "pos": "verb",
+      "score": 235.7
+    },
+    {
+      "rank": 303,
+      "word": "aktuell",
+      "pos": "adj",
+      "score": 234.2
+    },
+    {
+      "rank": 304,
+      "word": "daher",
+      "pos": "adv",
+      "score": 234.0
+    },
+    {
+      "rank": 305,
+      "word": "kaum",
+      "pos": "adv",
+      "score": 234.0
+    },
+    {
+      "rank": 306,
+      "word": "gerade",
+      "pos": "adj",
+      "score": 233.8
+    },
+    {
+      "rank": 307,
+      "word": "bitten",
+      "pos": "verb",
+      "score": 233.4
+    },
+    {
+      "rank": 308,
+      "word": "Herr",
+      "pos": "noun",
+      "score": 233.2
+    },
+    {
+      "rank": 309,
+      "word": "gerade",
+      "pos": "adv",
+      "score": 230.7
+    },
+    {
+      "rank": 310,
+      "word": "echt",
+      "pos": "adj",
+      "score": 229.1
+    },
+    {
+      "rank": 311,
+      "word": "lernen",
+      "pos": "verb",
+      "score": 228.2
+    },
+    {
+      "rank": 312,
+      "word": "lieb",
+      "pos": "adj",
+      "score": 227.8
+    },
+    {
+      "rank": 313,
+      "word": "D",
+      "pos": "noun",
+      "score": 226.4
+    },
+    {
+      "rank": 314,
+      "word": "d",
+      "pos": "noun",
+      "score": 226.4
+    },
+    {
+      "rank": 315,
+      "word": "scheinen",
+      "pos": "verb",
+      "score": 225.0
+    },
+    {
+      "rank": 316,
+      "word": "reden",
+      "pos": "verb",
+      "score": 224.6
+    },
+    {
+      "rank": 317,
+      "word": "genau",
+      "pos": "adv",
+      "score": 223.5
+    },
+    {
+      "rank": 318,
+      "word": "schnell",
+      "pos": "adj",
+      "score": 221.7
+    },
+    {
+      "rank": 319,
+      "word": "Staat",
+      "pos": "noun",
+      "score": 221.3
+    },
+    {
+      "rank": 320,
+      "word": "fühlen",
+      "pos": "verb",
+      "score": 219.4
+    },
+    {
+      "rank": 321,
+      "word": "überhaupt",
+      "pos": "adv",
+      "score": 219.0
+    },
+    {
+      "rank": 322,
+      "word": "muessen",
+      "pos": "verb",
+      "score": 218.4
+    },
+    {
+      "rank": 323,
+      "word": "Idee",
+      "pos": "noun",
+      "score": 218.3
+    },
+    {
+      "rank": 324,
+      "word": "Halt",
+      "pos": "noun",
+      "score": 218.2
+    },
+    {
+      "rank": 325,
+      "word": "Bereich",
+      "pos": "noun",
+      "score": 215.5
+    },
+    {
+      "rank": 326,
+      "word": "freuen",
+      "pos": "verb",
+      "score": 215.5
+    },
+    {
+      "rank": 327,
+      "word": "Kopf",
+      "pos": "noun",
+      "score": 215.0
+    },
+    {
+      "rank": 328,
+      "word": "Anfang",
+      "pos": "noun",
+      "score": 214.7
+    },
+    {
+      "rank": 329,
+      "word": "anders",
+      "pos": "adv",
+      "score": 214.0
+    },
+    {
+      "rank": 330,
+      "word": "langen",
+      "pos": "verb",
+      "score": 214.0
+    },
+    {
+      "rank": 331,
+      "word": "öffentlich",
+      "pos": "adj",
+      "score": 211.8
+    },
+    {
+      "rank": 332,
+      "word": "Team",
+      "pos": "noun",
+      "score": 210.7
+    },
+    {
+      "rank": 333,
+      "word": "zweite",
+      "pos": "adj",
+      "score": 210.0
+    },
+    {
+      "rank": 334,
+      "word": "voll",
+      "pos": "adj",
+      "score": 209.8
+    },
+    {
+      "rank": 335,
+      "word": "jung",
+      "pos": "adj",
+      "score": 209.1
+    },
+    {
+      "rank": 336,
+      "word": "Musik",
+      "pos": "noun",
+      "score": 209.0
+    },
+    {
+      "rank": 337,
+      "word": "ebenfalls",
+      "pos": "adv",
+      "score": 209.0
+    },
+    {
+      "rank": 338,
+      "word": "hinter",
+      "pos": "adv",
+      "score": 209.0
+    },
+    {
+      "rank": 339,
+      "word": "natürlich",
+      "pos": "adv",
+      "score": 208.5
+    },
+    {
+      "rank": 340,
+      "word": "M",
+      "pos": "noun",
+      "score": 208.3
+    },
+    {
+      "rank": 341,
+      "word": "m",
+      "pos": "noun",
+      "score": 208.3
+    },
+    {
+      "rank": 342,
+      "word": "Vater",
+      "pos": "noun",
+      "score": 207.4
+    },
+    {
+      "rank": 343,
+      "word": "falsch",
+      "pos": "adj",
+      "score": 207.2
+    },
+    {
+      "rank": 344,
+      "word": "landen",
+      "pos": "verb",
+      "score": 205.8
+    },
+    {
+      "rank": 345,
+      "word": "Million",
+      "pos": "noun",
+      "score": 204.9
+    },
+    {
+      "rank": 346,
+      "word": "Video",
+      "pos": "noun",
+      "score": 204.2
+    },
+    {
+      "rank": 347,
+      "word": "gewinnen",
+      "pos": "verb",
+      "score": 204.0
+    },
+    {
+      "rank": 348,
+      "word": "sofort",
+      "pos": "adv",
+      "score": 204.0
+    },
+    {
+      "rank": 349,
+      "word": "Guter",
+      "pos": "noun",
+      "score": 203.9
+    },
+    {
+      "rank": 350,
+      "word": "Gutes",
+      "pos": "noun",
+      "score": 203.9
+    },
+    {
+      "rank": 351,
+      "word": "Mutter",
+      "pos": "noun",
+      "score": 203.7
+    },
+    {
+      "rank": 352,
+      "word": "Gesellschaft",
+      "pos": "noun",
+      "score": 203.6
+    },
+    {
+      "rank": 353,
+      "word": "Gros",
+      "pos": "noun",
+      "score": 203.6
+    },
+    {
+      "rank": 354,
+      "word": "erhalten",
+      "pos": "verb",
+      "score": 203.3
+    },
+    {
+      "rank": 355,
+      "word": "tragen",
+      "pos": "verb",
+      "score": 203.2
+    },
+    {
+      "rank": 356,
+      "word": "Stelle",
+      "pos": "noun",
+      "score": 203.0
+    },
+    {
+      "rank": 357,
+      "word": "folgend",
+      "pos": "adj",
+      "score": 201.9
+    },
+    {
+      "rank": 358,
+      "word": "Sohn",
+      "pos": "noun",
+      "score": 201.5
+    },
+    {
+      "rank": 359,
+      "word": "schlecht",
+      "pos": "adj",
+      "score": 201.5
+    },
+    {
+      "rank": 360,
+      "word": "Partei",
+      "pos": "noun",
+      "score": 201.1
+    },
+    {
+      "rank": 361,
+      "word": "Gross",
+      "pos": "noun",
+      "score": 200.3
+    },
+    {
+      "rank": 362,
+      "word": "danach",
+      "pos": "adv",
+      "score": 200.0
+    },
+    {
+      "rank": 363,
+      "word": "Gerade",
+      "pos": "noun",
+      "score": 199.4
+    },
+    {
+      "rank": 364,
+      "word": "verlieren",
+      "pos": "verb",
+      "score": 199.2
+    },
+    {
+      "rank": 365,
+      "word": "Gute",
+      "pos": "noun",
+      "score": 197.5
+    },
+    {
+      "rank": 366,
+      "word": "arten",
+      "pos": "verb",
+      "score": 197.5
+    },
+    {
+      "rank": 367,
+      "word": "Mitglied",
+      "pos": "noun",
+      "score": 197.2
+    },
+    {
+      "rank": 368,
+      "word": "hoffen",
+      "pos": "verb",
+      "score": 196.6
+    },
+    {
+      "rank": 369,
+      "word": "dritte",
+      "pos": "adj",
+      "score": 196.1
+    },
+    {
+      "rank": 370,
+      "word": "hasten",
+      "pos": "verb",
+      "score": 196.0
+    },
+    {
+      "rank": 371,
+      "word": "Fünf",
+      "pos": "noun",
+      "score": 195.0
+    },
+    {
+      "rank": 372,
+      "word": "damals",
+      "pos": "adv",
+      "score": 195.0
+    },
+    {
+      "rank": 373,
+      "word": "Paar",
+      "pos": "noun",
+      "score": 194.2
+    },
+    {
+      "rank": 374,
+      "word": "paaren",
+      "pos": "verb",
+      "score": 193.9
+    },
+    {
+      "rank": 375,
+      "word": "sichern",
+      "pos": "verb",
+      "score": 192.7
+    },
+    {
+      "rank": 376,
+      "word": "eigentlich",
+      "pos": "adv",
+      "score": 192.5
+    },
+    {
+      "rank": 377,
+      "word": "Foto",
+      "pos": "noun",
+      "score": 192.5
+    },
+    {
+      "rank": 378,
+      "word": "sterben",
+      "pos": "verb",
+      "score": 191.9
+    },
+    {
+      "rank": 379,
+      "word": "international",
+      "pos": "adj",
+      "score": 191.4
+    },
+    {
+      "rank": 380,
+      "word": "tunen",
+      "pos": "verb",
+      "score": 191.1
+    },
+    {
+      "rank": 381,
+      "word": "Artikel",
+      "pos": "noun",
+      "score": 190.8
+    },
+    {
+      "rank": 382,
+      "word": "Wahl",
+      "pos": "noun",
+      "score": 190.5
+    },
+    {
+      "rank": 383,
+      "word": "Platz",
+      "pos": "noun",
+      "score": 190.4
+    },
+    {
+      "rank": 384,
+      "word": "gleich",
+      "pos": "adj",
+      "score": 190.2
+    },
+    {
+      "rank": 385,
+      "word": "richtig",
+      "pos": "adv",
+      "score": 190.0
+    },
+    {
+      "rank": 386,
+      "word": "erfolgen",
+      "pos": "verb",
+      "score": 190.0
+    },
+    {
+      "rank": 387,
+      "word": "gleichen",
+      "pos": "verb",
+      "score": 189.8
+    },
+    {
+      "rank": 388,
+      "word": "Ergebnis",
+      "pos": "noun",
+      "score": 189.8
+    },
+    {
+      "rank": 389,
+      "word": "nächster",
+      "pos": "adj",
+      "score": 189.8
+    },
+    {
+      "rank": 390,
+      "word": "Zweiter",
+      "pos": "noun",
+      "score": 189.6
+    },
+    {
+      "rank": 391,
+      "word": "Wissen",
+      "pos": "noun",
+      "score": 189.0
+    },
+    {
+      "rank": 392,
+      "word": "gelten",
+      "pos": "verb",
+      "score": 188.8
+    },
+    {
+      "rank": 393,
+      "word": "Bayer",
+      "pos": "noun",
+      "score": 188.7
+    },
+    {
+      "rank": 394,
+      "word": "Art",
+      "pos": "noun",
+      "score": 187.7
+    },
+    {
+      "rank": 395,
+      "word": "System",
+      "pos": "noun",
+      "score": 187.5
+    },
+    {
+      "rank": 396,
+      "word": "Hast",
+      "pos": "noun",
+      "score": 187.3
+    },
+    {
+      "rank": 397,
+      "word": "Wolle",
+      "pos": "noun",
+      "score": 186.8
+    },
+    {
+      "rank": 398,
+      "word": "Richtung",
+      "pos": "noun",
+      "score": 186.2
+    },
+    {
+      "rank": 399,
+      "word": "Möglichkeit",
+      "pos": "noun",
+      "score": 186.1
+    },
+    {
+      "rank": 400,
+      "word": "Zurück",
+      "pos": "noun",
+      "score": 186.0
+    },
+    {
+      "rank": 401,
+      "word": "oben",
+      "pos": "adv",
+      "score": 186.0
+    },
+    {
+      "rank": 402,
+      "word": "zurück",
+      "pos": "adv",
+      "score": 186.0
+    },
+    {
+      "rank": 403,
+      "word": "schauen",
+      "pos": "verb",
+      "score": 186.0
+    },
+    {
+      "rank": 404,
+      "word": "Buch",
+      "pos": "noun",
+      "score": 185.5
+    },
+    {
+      "rank": 405,
+      "word": "bessern",
+      "pos": "verb",
+      "score": 184.9
+    },
+    {
+      "rank": 406,
+      "word": "erzählen",
+      "pos": "verb",
+      "score": 184.8
+    },
+    {
+      "rank": 407,
+      "word": "erklären",
+      "pos": "verb",
+      "score": 184.4
+    },
+    {
+      "rank": 408,
+      "word": "Regierung",
+      "pos": "noun",
+      "score": 183.8
+    },
+    {
+      "rank": 409,
+      "word": "weiss",
+      "pos": "adj",
+      "score": 183.7
+    },
+    {
+      "rank": 410,
+      "word": "Bitte",
+      "pos": "noun",
+      "score": 183.2
+    },
+    {
+      "rank": 411,
+      "word": "Eltern",
+      "pos": "noun",
+      "score": 182.0
+    },
+    {
+      "rank": 412,
+      "word": "bisher",
+      "pos": "adv",
+      "score": 182.0
+    },
+    {
+      "rank": 413,
+      "word": "klar",
+      "pos": "adv",
+      "score": 181.5
+    },
+    {
+      "rank": 414,
+      "word": "Hilfe",
+      "pos": "noun",
+      "score": 179.6
+    },
+    {
+      "rank": 415,
+      "word": "zahlen",
+      "pos": "verb",
+      "score": 179.5
+    },
+    {
+      "rank": 416,
+      "word": "her",
+      "pos": "adv",
+      "score": 178.0
+    },
+    {
+      "rank": 417,
+      "word": "trotzdem",
+      "pos": "adv",
+      "score": 178.0
+    },
+    {
+      "rank": 418,
+      "word": "zusammen",
+      "pos": "adj",
+      "score": 177.5
+    },
+    {
+      "rank": 419,
+      "word": "zusammen",
+      "pos": "adv",
+      "score": 177.5
+    },
+    {
+      "rank": 420,
+      "word": "wählen",
+      "pos": "verb",
+      "score": 176.8
+    },
+    {
+      "rank": 421,
+      "word": "stunden",
+      "pos": "verb",
+      "score": 175.5
+    },
+    {
+      "rank": 422,
+      "word": "allgemein",
+      "pos": "adj",
+      "score": 175.2
+    },
+    {
+      "rank": 423,
+      "word": "Stunde",
+      "pos": "noun",
+      "score": 175.2
+    },
+    {
+      "rank": 424,
+      "word": "Internet",
+      "pos": "noun",
+      "score": 175.1
+    },
+    {
+      "rank": 425,
+      "word": "sozial",
+      "pos": "adj",
+      "score": 174.9
+    },
+    {
+      "rank": 426,
+      "word": "Recht",
+      "pos": "noun",
+      "score": 174.6
+    },
+    {
+      "rank": 427,
+      "word": "Denke",
+      "pos": "noun",
+      "score": 174.0
+    },
+    {
+      "rank": 428,
+      "word": "Niemand",
+      "pos": "noun",
+      "score": 174.0
+    },
+    {
+      "rank": 429,
+      "word": "Politik",
+      "pos": "noun",
+      "score": 174.0
+    },
+    {
+      "rank": 430,
+      "word": "zunächst",
+      "pos": "adv",
+      "score": 174.0
+    },
+    {
+      "rank": 431,
+      "word": "bedeuten",
+      "pos": "verb",
+      "score": 173.8
+    },
+    {
+      "rank": 432,
+      "word": "besondere",
+      "pos": "adj",
+      "score": 173.7
+    },
+    {
+      "rank": 433,
+      "word": "garen",
+      "pos": "verb",
+      "score": 173.5
+    },
+    {
+      "rank": 434,
+      "word": "direkt",
+      "pos": "adj",
+      "score": 173.1
+    },
+    {
+      "rank": 435,
+      "word": "darum",
+      "pos": "adv",
+      "score": 172.5
+    },
+    {
+      "rank": 436,
+      "word": "lange",
+      "pos": "adv",
+      "score": 172.5
+    },
+    {
+      "rank": 437,
+      "word": "holen",
+      "pos": "verb",
+      "score": 171.5
+    },
+    {
+      "rank": 438,
+      "word": "wollen",
+      "pos": "adj",
+      "score": 171.0
+    },
+    {
+      "rank": 439,
+      "word": "Alter",
+      "pos": "noun",
+      "score": 170.8
+    },
+    {
+      "rank": 440,
+      "word": "Glaube",
+      "pos": "noun",
+      "score": 170.7
+    },
+    {
+      "rank": 441,
+      "word": "schliesslich",
+      "pos": "adv",
+      "score": 170.0
+    },
+    {
+      "rank": 442,
+      "word": "Kirche",
+      "pos": "noun",
+      "score": 169.8
+    },
+    {
+      "rank": 443,
+      "word": "ähnlich",
+      "pos": "adj",
+      "score": 169.8
+    },
+    {
+      "rank": 444,
+      "word": "reichen",
+      "pos": "verb",
+      "score": 169.7
+    },
+    {
+      "rank": 445,
+      "word": "lieben",
+      "pos": "verb",
+      "score": 169.1
+    },
+    {
+      "rank": 446,
+      "word": "leicht",
+      "pos": "adj",
+      "score": 169.1
+    },
+    {
+      "rank": 447,
+      "word": "sicher",
+      "pos": "adj",
+      "score": 168.8
+    },
+    {
+      "rank": 448,
+      "word": "Entwicklung",
+      "pos": "noun",
+      "score": 168.4
+    },
+    {
+      "rank": 449,
+      "word": "tot",
+      "pos": "adj",
+      "score": 168.0
+    },
+    {
+      "rank": 450,
+      "word": "Mädchen",
+      "pos": "noun",
+      "score": 167.5
+    },
+    {
+      "rank": 451,
+      "word": "Stück",
+      "pos": "noun",
+      "score": 167.5
+    },
+    {
+      "rank": 452,
+      "word": "Prozent",
+      "pos": "noun",
+      "score": 167.2
+    },
+    {
+      "rank": 453,
+      "word": "bitte",
+      "pos": "adv",
+      "score": 167.0
+    },
+    {
+      "rank": 454,
+      "word": "erkennen",
+      "pos": "verb",
+      "score": 166.5
+    },
+    {
+      "rank": 455,
+      "word": "Altes",
+      "pos": "noun",
+      "score": 165.8
+    },
+    {
+      "rank": 456,
+      "word": "kriegen",
+      "pos": "verb",
+      "score": 165.4
+    },
+    {
+      "rank": 457,
+      "word": "europäisch",
+      "pos": "adj",
+      "score": 165.3
+    },
+    {
+      "rank": 458,
+      "word": "passen",
+      "pos": "verb",
+      "score": 165.1
+    },
+    {
+      "rank": 459,
+      "word": "fällen",
+      "pos": "verb",
+      "score": 163.3
+    },
+    {
+      "rank": 460,
+      "word": "Moment",
+      "pos": "noun",
+      "score": 162.8
+    },
+    {
+      "rank": 461,
+      "word": "Folge",
+      "pos": "noun",
+      "score": 162.5
+    },
+    {
+      "rank": 462,
+      "word": "schönen",
+      "pos": "verb",
+      "score": 162.2
+    },
+    {
+      "rank": 463,
+      "word": "entstehen",
+      "pos": "verb",
+      "score": 162.2
+    },
+    {
+      "rank": 464,
+      "word": "gemeinsam",
+      "pos": "adj",
+      "score": 162.1
+    },
+    {
+      "rank": 465,
+      "word": "Lieber",
+      "pos": "noun",
+      "score": 162.0
+    },
+    {
+      "rank": 466,
+      "word": "Zukunft",
+      "pos": "noun",
+      "score": 162.0
+    },
+    {
+      "rank": 467,
+      "word": "erinnern",
+      "pos": "verb",
+      "score": 160.8
+    },
+    {
+      "rank": 468,
+      "word": "platzen",
+      "pos": "verb",
+      "score": 160.7
+    },
+    {
+      "rank": 469,
+      "word": "anderer",
+      "pos": "adj",
+      "score": 160.0
+    },
+    {
+      "rank": 470,
+      "word": "Angst",
+      "pos": "noun",
+      "score": 159.5
+    },
+    {
+      "rank": 471,
+      "word": "bieten",
+      "pos": "verb",
+      "score": 159.4
+    },
+    {
+      "rank": 472,
+      "word": "Erfahrung",
+      "pos": "noun",
+      "score": 159.4
+    },
+    {
+      "rank": 473,
+      "word": "All",
+      "pos": "noun",
+      "score": 159.0
+    },
+    {
+      "rank": 474,
+      "word": "starten",
+      "pos": "verb",
+      "score": 158.8
+    },
+    {
+      "rank": 475,
+      "word": "früh",
+      "pos": "adj",
+      "score": 158.5
+    },
+    {
+      "rank": 476,
+      "word": "Lage",
+      "pos": "noun",
+      "score": 158.3
+    },
+    {
+      "rank": 477,
+      "word": "später",
+      "pos": "adv",
+      "score": 158.0
+    },
+    {
+      "rank": 478,
+      "word": "treten",
+      "pos": "verb",
+      "score": 157.1
+    },
+    {
+      "rank": 479,
+      "word": "Weiss",
+      "pos": "noun",
+      "score": 157.1
+    },
+    {
+      "rank": 480,
+      "word": "Projekt",
+      "pos": "noun",
+      "score": 156.7
+    },
+    {
+      "rank": 481,
+      "word": "Gefühl",
+      "pos": "noun",
+      "score": 156.1
+    },
+    {
+      "rank": 482,
+      "word": "weg",
+      "pos": "adj",
+      "score": 156.0
+    },
+    {
+      "rank": 483,
+      "word": "weg",
+      "pos": "adv",
+      "score": 156.0
+    },
+    {
+      "rank": 484,
+      "word": "Meinung",
+      "pos": "noun",
+      "score": 155.8
+    },
+    {
+      "rank": 485,
+      "word": "frei",
+      "pos": "adj",
+      "score": 155.5
+    },
+    {
+      "rank": 486,
+      "word": "Mitte",
+      "pos": "noun",
+      "score": 155.4
+    },
+    {
+      "rank": 487,
+      "word": "manchmal",
+      "pos": "adv",
+      "score": 155.0
+    },
+    {
+      "rank": 488,
+      "word": "raus",
+      "pos": "adv",
+      "score": 155.0
+    },
+    {
+      "rank": 489,
+      "word": "Wohnung",
+      "pos": "noun",
+      "score": 154.7
+    },
+    {
+      "rank": 490,
+      "word": "gerne",
+      "pos": "adv",
+      "score": 154.5
+    },
+    {
+      "rank": 491,
+      "word": "eben",
+      "pos": "adj",
+      "score": 154.2
+    },
+    {
+      "rank": 492,
+      "word": "Morgen",
+      "pos": "noun",
+      "score": 153.9
+    },
+    {
+      "rank": 493,
+      "word": "ändern",
+      "pos": "verb",
+      "score": 153.3
+    },
+    {
+      "rank": 494,
+      "word": "Interesse",
+      "pos": "noun",
+      "score": 153.0
+    },
+    {
+      "rank": 495,
+      "word": "Chance",
+      "pos": "noun",
+      "score": 153.0
+    },
+    {
+      "rank": 496,
+      "word": "schulen",
+      "pos": "verb",
+      "score": 153.0
+    },
+    {
+      "rank": 497,
+      "word": "B",
+      "pos": "noun",
+      "score": 151.8
+    },
+    {
+      "rank": 498,
+      "word": "b",
+      "pos": "noun",
+      "score": 151.8
+    },
+    {
+      "rank": 499,
+      "word": "Mai",
+      "pos": "noun",
+      "score": 151.5
+    },
+    {
+      "rank": 500,
+      "word": "sorgen",
+      "pos": "verb",
+      "score": 151.3
+    },
+    {
+      "rank": 501,
+      "word": "berichten",
+      "pos": "verb",
+      "score": 151.1
+    },
+    {
+      "rank": 502,
+      "word": "wirken",
+      "pos": "verb",
+      "score": 150.3
+    },
+    {
+      "rank": 503,
+      "word": "Job",
+      "pos": "noun",
+      "score": 149.5
+    },
+    {
+      "rank": 504,
+      "word": "sitzen",
+      "pos": "verb",
+      "score": 149.5
+    },
+    {
+      "rank": 505,
+      "word": "Junge",
+      "pos": "noun",
+      "score": 148.7
+    },
+    {
+      "rank": 506,
+      "word": "bekannt",
+      "pos": "adj",
+      "score": 148.4
+    },
+    {
+      "rank": 507,
+      "word": "nutzen",
+      "pos": "verb",
+      "score": 148.1
+    },
+    {
+      "rank": 508,
+      "word": "Zug",
+      "pos": "noun",
+      "score": 148.0
+    },
+    {
+      "rank": 509,
+      "word": "September",
+      "pos": "noun",
+      "score": 148.0
+    },
+    {
+      "rank": 510,
+      "word": "dadurch",
+      "pos": "adv",
+      "score": 148.0
+    },
+    {
+      "rank": 511,
+      "word": "wann",
+      "pos": "adv",
+      "score": 148.0
+    },
+    {
+      "rank": 512,
+      "word": "wieso",
+      "pos": "adv",
+      "score": 148.0
+    },
+    {
+      "rank": 513,
+      "word": "Gemeinde",
+      "pos": "noun",
+      "score": 147.7
+    },
+    {
+      "rank": 514,
+      "word": "Beitrag",
+      "pos": "noun",
+      "score": 147.7
+    },
+    {
+      "rank": 515,
+      "word": "unterstützen",
+      "pos": "verb",
+      "score": 147.3
+    },
+    {
+      "rank": 516,
+      "word": "Unternehmen",
+      "pos": "noun",
+      "score": 146.9
+    },
+    {
+      "rank": 517,
+      "word": "Entscheidung",
+      "pos": "noun",
+      "score": 146.8
+    },
+    {
+      "rank": 518,
+      "word": "erwarten",
+      "pos": "verb",
+      "score": 146.4
+    },
+    {
+      "rank": 519,
+      "word": "gar",
+      "pos": "adj",
+      "score": 146.3
+    },
+    {
+      "rank": 520,
+      "word": "Einsatz",
+      "pos": "noun",
+      "score": 146.1
+    },
+    {
+      "rank": 521,
+      "word": "übernehmen",
+      "pos": "verb",
+      "score": 146.0
+    },
+    {
+      "rank": 522,
+      "word": "gar",
+      "pos": "adv",
+      "score": 145.7
+    },
+    {
+      "rank": 523,
+      "word": "erscheinen",
+      "pos": "verb",
+      "score": 145.4
+    },
+    {
+      "rank": 524,
+      "word": "Angebot",
+      "pos": "noun",
+      "score": 145.2
+    },
+    {
+      "rank": 525,
+      "word": "fehlen",
+      "pos": "verb",
+      "score": 145.0
+    },
+    {
+      "rank": 526,
+      "word": "innerhalb",
+      "pos": "adv",
+      "score": 145.0
+    },
+    {
+      "rank": 527,
+      "word": "insgesamt",
+      "pos": "adv",
+      "score": 145.0
+    },
+    {
+      "rank": 528,
+      "word": "zudem",
+      "pos": "adv",
+      "score": 145.0
+    },
+    {
+      "rank": 529,
+      "word": "gesamt",
+      "pos": "adj",
+      "score": 144.6
+    },
+    {
+      "rank": 530,
+      "word": "erfolgreich",
+      "pos": "adj",
+      "score": 144.2
+    },
+    {
+      "rank": 531,
+      "word": "irgendwie",
+      "pos": "adv",
+      "score": 142.6
+    },
+    {
+      "rank": 532,
+      "word": "offen",
+      "pos": "adj",
+      "score": 142.1
+    },
+    {
+      "rank": 533,
+      "word": "verkaufen",
+      "pos": "verb",
+      "score": 141.8
+    },
+    {
+      "rank": 534,
+      "word": "deutlich",
+      "pos": "adj",
+      "score": 141.6
+    },
+    {
+      "rank": 535,
+      "word": "bestimmen",
+      "pos": "verb",
+      "score": 141.1
+    },
+    {
+      "rank": 536,
+      "word": "Schule",
+      "pos": "noun",
+      "score": 141.1
+    },
+    {
+      "rank": 537,
+      "word": "Ach",
+      "pos": "noun",
+      "score": 141.0
+    },
+    {
+      "rank": 538,
+      "word": "meist",
+      "pos": "adv",
+      "score": 141.0
+    },
+    {
+      "rank": 539,
+      "word": "Ort",
+      "pos": "noun",
+      "score": 141.0
+    },
+    {
+      "rank": 540,
+      "word": "zahlreich",
+      "pos": "adj",
+      "score": 140.7
+    },
+    {
+      "rank": 541,
+      "word": "Weiß",
+      "pos": "noun",
+      "score": 140.5
+    },
+    {
+      "rank": 542,
+      "word": "weiß",
+      "pos": "adj",
+      "score": 140.5
+    },
+    {
+      "rank": 543,
+      "word": "befinden",
+      "pos": "verb",
+      "score": 140.3
+    },
+    {
+      "rank": 544,
+      "word": "allein",
+      "pos": "adj",
+      "score": 139.9
+    },
+    {
+      "rank": 545,
+      "word": "allein",
+      "pos": "adv",
+      "score": 139.9
+    },
+    {
+      "rank": 546,
+      "word": "schlagen",
+      "pos": "verb",
+      "score": 139.8
+    },
+    {
+      "rank": 547,
+      "word": "Gesetz",
+      "pos": "noun",
+      "score": 139.6
+    },
+    {
+      "rank": 548,
+      "word": "Jahrhundert",
+      "pos": "noun",
+      "score": 139.4
+    },
+    {
+      "rank": 549,
+      "word": "Tier",
+      "pos": "noun",
+      "score": 139.4
+    },
+    {
+      "rank": 550,
+      "word": "bauen",
+      "pos": "verb",
+      "score": 139.3
+    }
+  ]
+}

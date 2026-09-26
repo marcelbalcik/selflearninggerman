@@ -9,9 +9,12 @@
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "cli": "tsx bin/cli.ts"
   },
   "devDependencies": {
+    "@types/node": "^22.20.4",
+    "tsx": "^4.23.15",
     "vitest": "^5.0.2"
   }
 }

@@ -12,3 +12,5 @@ coverage/
 *.sqlite-shm
 __pycache__/
 .venv/
+pipeline/work/
+apps/web/public/audio/*.mp3

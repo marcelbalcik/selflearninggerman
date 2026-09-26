@@ -148,8 +148,16 @@ export const COOP = {
 
 export const PIPELINE = {
   CORE_LEMMA_TARGET: 2000,
-  /** Lemma count for the M1 trial run. */
-  TRIAL_LEMMA_COUNT: 200,
+  /** Lemma count for the M1 trial run (Marcel: the 500 most frequent words). */
+  TRIAL_LEMMA_COUNT: 500,
+  /** Parts of speech in the vocabulary deck; function words are taught as grammar skills. */
+  DECK_POS: ['noun', 'verb', 'adj', 'adv'],
+  /** CEFR hint from frequency rank (no free official list): rank < limit → level. */
+  CEFR_BANDS: [
+    { maxRank: 500, level: 'A1' },
+    { maxRank: 1200, level: 'A2' },
+    { maxRank: 2500, level: 'B1' },
+  ],
   SENTENCES_PER_TARGET: 3,
   MAX_REGENERATIONS: 2,
   /** A suffix gender rule is shown only at this accuracy and sample size (spec §4.4). */
@@ -163,6 +171,10 @@ export const PIPELINE = {
   SENTENCE_MAX_TOKENS: 14,
   /** A frame proposed from corpus counts needs this many parsed example sentences. */
   FRAME_MIN_CORPUS_EXAMPLES: 5,
+  /** A case enters a proposed frame when this share of the verb's corpus uses has it. */
+  FRAME_MIN_SHARE: 0.2,
+  /** Commons API politeness: pause between batched licence queries. */
+  COMMONS_REQUEST_INTERVAL_MS: 1_000,
 } as const;
 
 export const FEEDBACK = {
