@@ -23,3 +23,8 @@ export class FakeClock implements Clock {
     this.t += ms;
   }
 }
+
+/** The wall clock shifted by a fixed offset (development and end-to-end tests only). */
+export function offsetClock(offsetMs: number): Clock {
+  return { now: () => new Date(Date.now() + offsetMs) };
+}

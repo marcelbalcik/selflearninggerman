@@ -233,17 +233,32 @@ describe('reporting voids attempts and rebuilds cards (spec §8.4)', () => {
 });
 
 describe('placement (both users start at A2.1)', () => {
-  it('introduces the block of each passed sample, once', async () => {
+  it('grades typed meanings and introduces the block of each passed sample, once', async () => {
     const env = await testEnv(START);
     const sample = (await get(env, 'marcel', '/api/placement')).body.sample as {
       lemmaId: number;
     }[];
     expect(sample.length).toBeGreaterThan(50);
-    const results = sample.map((s, i) => ({ lemmaId: s.lemmaId, correct: i % 2 === 0 }));
-    const res = await post(env, 'marcel', '/api/placement', { results });
+    const gloss = (id: number) =>
+      (
+        JSON.parse(
+          (
+            env.db.prepare('SELECT glosses_accepted FROM lemma WHERE id = ?').get(id) as {
+              glosses_accepted: string;
+            }
+          ).glosses_accepted,
+        ) as string[]
+      )[0] ?? '';
+    const answers = sample.map((s, i) => ({
+      lemmaId: s.lemmaId,
+      answer: i % 2 === 0 ? gloss(s.lemmaId) : 'no idea',
+    }));
+    const res = await post(env, 'marcel', '/api/placement', { answers });
+    expect(res.body.passed).toBe(Math.ceil(sample.length / 2));
     expect(res.body.introduced).toBeGreaterThan(0);
-    const again = await post(env, 'marcel', '/api/placement', { results });
+    const again = await post(env, 'marcel', '/api/placement', { answers });
     expect(again.body.introduced).toBe(0);
+    expect((await get(env, 'marcel', '/api/me')).body.placementDone).toBe(true);
     const today = (await get(env, 'marcel', '/api/today')).body;
     expect(today.newToday).toBe(0);
   });

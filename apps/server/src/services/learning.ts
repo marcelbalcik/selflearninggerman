@@ -2,7 +2,7 @@
  * Reports with voiding (spec §8.4), placement (docs/DECISIONS.md: both users
  * start at A2.1), lemma detail (Wort screen) and today's numbers (Heute).
  */
-import { PLACEMENT, SESSION, dayKey, dayStart, recall } from '@wortduell/core';
+import { PLACEMENT, SESSION, dayKey, dayStart, gradeGloss, recall } from '@wortduell/core';
 import type { FacetKey, StoredCard } from '@wortduell/core';
 import { json } from '../db';
 import type { Db } from '../db';
@@ -89,21 +89,34 @@ export class Learning {
   }
 
   /**
-   * Placement results: a passed sample introduces its whole block with one
-   * Good review per card; a failed sample leaves the block in the normal
-   * new-word queue. Allowed once per user.
+   * Placement answers (typed English meanings, graded here): a passed sample
+   * introduces its whole block with one Good review per card; a failed sample
+   * leaves the block in the normal new-word queue. Allowed once per user.
    */
   placement(
     userId: number,
-    results: { lemmaId: number; correct: boolean }[],
+    answers: { lemmaId: number; answer: string }[],
     now: Date,
-  ): { introduced: number } {
+  ): {
+    introduced: number;
+    passed: number;
+    results: { lemmaId: number; correct: boolean; expected: string }[];
+  } {
     const done = this.db
       .prepare<[number], { placement_done_at: string | null }>(
         'SELECT placement_done_at FROM user WHERE id = ?',
       )
       .get(userId);
-    if (done?.placement_done_at) return { introduced: 0 };
+    if (done?.placement_done_at) return { introduced: 0, passed: 0, results: [] };
+    const results = answers.map((a) => {
+      const lemma = this.repo.lemma(a.lemmaId);
+      const g = gradeGloss(lemma?.glossesAccepted ?? [], a.answer);
+      return {
+        lemmaId: a.lemmaId,
+        correct: lemma !== null && g.correct,
+        expected: lemma?.gloss ?? '',
+      };
+    });
     const passed = new Set(results.filter((r) => r.correct).map((r) => r.lemmaId));
     let introduced = 0;
     this.db.transaction(() => {
@@ -125,7 +138,14 @@ export class Learning {
         .prepare('UPDATE user SET placement_done_at = ? WHERE id = ?')
         .run(now.toISOString(), userId);
     })();
-    return { introduced };
+    return { introduced, passed: passed.size, results };
+  }
+
+  /** Skip placement: start from the first core word. */
+  skipPlacement(userId: number, now: Date): void {
+    this.db
+      .prepare('UPDATE user SET placement_done_at = ? WHERE id = ? AND placement_done_at IS NULL')
+      .run(now.toISOString(), userId);
   }
 
   /** Wort screen: forms, example sentences and a stability bar per facet. */
@@ -174,6 +194,8 @@ export class Learning {
     return {
       day,
       dueCount: plan.dueCount,
+      /** Exercises the due cards make up today (one per word). */
+      dueItems: plan.items.length,
       backlog: plan.backlog,
       reviewsToday: reviews,
       newToday,

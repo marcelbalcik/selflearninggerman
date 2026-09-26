@@ -4,12 +4,14 @@
  *   CONTENT_PATH        content.sqlite to import (default ./content/content.sqlite)
  *   PORT, HOST          listen address (default 3000, 127.0.0.1)
  *   COOKIE_SECURE       "false" only for local development without HTTPS
+ *   WEB_DIST            built web app to serve (default ../web/dist)
+ *   CLOCK_OFFSET_MS     development/testing only: shift the server clock
  *   USER1_NAME, USER1_PASSWORD_HASH, USER2_NAME, USER2_PASSWORD_HASH
  */
 import { mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { systemClock } from '@wortduell/core';
+import { offsetClock, systemClock } from '@wortduell/core';
 import { buildApp } from './app';
 import { seedUsers, usersFromEnv } from './auth';
 import { importContent } from './content';
@@ -30,9 +32,14 @@ seedUsers(db, users);
 
 const app = buildApp({
   db,
-  clock: systemClock,
+  clock: process.env.CLOCK_OFFSET_MS
+    ? offsetClock(Number(process.env.CLOCK_OFFSET_MS))
+    : systemClock,
   secureCookies: process.env.COOKIE_SECURE !== 'false',
   logger: true,
+  webDist: resolve(process.env.WEB_DIST ?? join(here, '..', '..', 'web', 'dist')),
 });
 app.log.info({ content: imported }, 'content');
+if (process.env.CLOCK_OFFSET_MS)
+  app.log.warn({ offsetMs: process.env.CLOCK_OFFSET_MS }, 'clock is shifted (testing only)');
 await app.listen({ port: Number(process.env.PORT ?? 3000), host: process.env.HOST ?? '127.0.0.1' });

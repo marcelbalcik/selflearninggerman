@@ -18,23 +18,36 @@ decisions taken on top of it are in [docs/DECISIONS.md](docs/DECISIONS.md).
 ```
 packages/core   pure TypeScript: config, determiners, declension, normalisation,
                 grading, error classification, ratings (no IO)
-apps/web        Vite + React PWA            (M3)
+apps/web        Vite + React PWA: login, placement, Heute, session runner with
+                red-pen feedback, Wort screen, report button (M3)
 apps/server     Fastify + SQLite: auth, content import, FSRS cards, session queue,
                 attempts, reports with voiding, placement (M2)
 pipeline/       Python content pipeline: Wiktionary, Tatoeba,
                 spaCy, OdeNet; no paid APIs (M1)
 ```
 
-## Running the server
+## Running it
 
 ```bash
+pnpm install
 pnpm --filter @wortduell/server hash-password      # prints an argon2 hash
 cp apps/server/.env.example apps/server/.env       # fill in names and hashes
-cd apps/server && node --env-file=.env --import tsx src/main.ts
+pnpm start                                         # builds the web app, serves both on :3000
 ```
 
 The server imports `apps/server/content/content.sqlite` on startup when its
-content version changed; user data is never touched.
+content version changed; user data is never touched. Pronunciation audio is
+not in git: run the pipeline (`pipeline/README.md`) or play without sound.
+
+**Trying it on a phone in the same Wi-Fi:** set `HOST=0.0.0.0` and
+`COOKIE_SECURE=false` in `apps/server/.env`, run `pnpm start`, and open
+`http://<your computer's IP>:3000` on the phone. (Installing as an app needs
+HTTPS, which comes with the Caddy deployment in M6.)
+
+**End-to-end test on an emulated phone:** `pnpm e2e` starts the server with a
+fresh database and plays placement plus two full sessions in Chromium
+(`CHROMIUM=/path/to/chrome` if it is not at `/opt/pw-browsers/chromium`).
+Screenshots land in `apps/web/e2e/screenshots/`; see `docs/screenshots/m3/`.
 
 ## Development
 

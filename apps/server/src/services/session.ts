@@ -53,7 +53,15 @@ export type SessionItem = ExerciseItem | IntroItem;
 export type Prompt =
   | { type: 'kasus_luecke'; tokens: string[]; gapIndex: number; cue: string; en: string | null }
   | { type: 'fehlersuche'; tokens: string[] }
-  | { type: 'bedeutung'; de: string; tokens: string[]; highlightIndex: number; word: string };
+  | {
+      type: 'bedeutung';
+      de: string;
+      tokens: string[];
+      highlightIndex: number;
+      word: string;
+      /** "Tipp": first letter of the expected meaning. */
+      hint: string;
+    };
 
 export interface LemmaCard {
   id: number;
@@ -131,6 +139,7 @@ export class Sessions {
       tokens: s.gap.tokens,
       highlightIndex: s.gap.highlight_index ?? 0,
       word: lemma.text,
+      hint: (s.accepted[0] ?? '').charAt(0),
     };
   }
 

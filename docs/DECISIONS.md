@@ -224,3 +224,32 @@ Marcel delegated the review of the M1 report to Claude. The decisions live in
   - pronoun gaps in `kasus_luecke` (the pipeline generates none yet)
   - duel and exam contexts (M5)
   - disputes (M4)
+
+## M3 web (2026-09-26)
+
+- **Stack.**
+  - Vite 8, React 19 and vite-plugin-pwa (generateSW).
+  - The app shell and Latin font subsets are precached (about 450 KB). The API
+    is never cached (online-only v1). Audio is cached on first play.
+  - The server serves the built app (`WEB_DIST`), so one process is enough.
+- **Look (spec §10).**
+  - Squared paper (5 mm grid).
+  - The learner's answers are in Königsblau `#1d3fa6` (Literata italic).
+  - Correction red `#c20e2b` marks only the wrong or missing characters.
+  - The interface text is graphite `#33363b` in Fira Sans. Fonts are
+    self-hosted via Fontsource, not Google.
+  - No gender colours, no decorative motion. The reward reveal (M5) will be the
+    only animation.
+- **Exercises in the runner:** `kasus_luecke`, `fehlersuche` and `bedeutung`,
+  which are the types M1 content provides. `wer_tut_was`, `umformen` and
+  `en_de_chunk` arrive with their content in M4.
+- **Hint.** "Tipp" shows the first letter of the expected English meaning in
+  `bedeutung` and counts as Hard. `kasus_luecke` has no hint, because the cue
+  already names the noun.
+- **Heute counts** due exercises (one per word), not due cards.
+- **`CLOCK_OFFSET_MS`** shifts the server clock, for development and the
+  end-to-end test only. The server logs a warning when it is set.
+- **Acceptance.** `pnpm e2e` plays placement plus a day-1 and a day-3 session on
+  an emulated Pixel 7 (touch, 412 px wide) against the real server. It covers
+  all three exercise types, one deliberate mistake with red marks, and the Wort
+  overlay. Marcel's check on a real phone is still open.

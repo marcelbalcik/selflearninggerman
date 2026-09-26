@@ -14,7 +14,10 @@
     "test": "pnpm -r test",
     "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
     "core:cli": "pnpm --silent --filter @wortduell/core cli",
-    "core:decline": "pnpm --silent --filter @wortduell/core cli decline"
+    "core:decline": "pnpm --silent --filter @wortduell/core cli decline",
+    "build": "pnpm --filter @wortduell/web build",
+    "start": "pnpm build && pnpm --filter @wortduell/server start",
+    "e2e": "pnpm build && pnpm --filter @wortduell/web e2e"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

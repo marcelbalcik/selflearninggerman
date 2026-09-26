@@ -1,0 +1,433 @@
+/*
+ * Schulheft (spec §10): squared paper, the learner's answers in royal-blue
+ * fountain-pen ink, corrections in red on exactly the wrong characters,
+ * graphite for the interface. No gender colours anywhere.
+ */
+:root {
+  --paper: #fdfdfb;
+  --grid: rgb(64 110 180 / 0.13);
+  --graphite: #33363b;
+  --graphite-soft: #5b6068;
+  --rule: #c9d3e2;
+  --ink: #1d3fa6; /* Königsblau, 8.6:1 on paper */
+  --ink-soft: rgb(29 63 166 / 0.08);
+  --red: #c20e2b; /* Korrekturrot, 6.0:1 on paper */
+  --card: rgb(255 255 255 / 0.86);
+  --radius: 10px;
+  --tap: 48px;
+  --font-ui: 'Fira Sans', system-ui, sans-serif;
+  --font-de: 'Literata', Georgia, serif;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--graphite);
+  background-color: var(--paper);
+  /* 5 mm squares, like a German Rechenheft */
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 20px 20px;
+  -webkit-text-size-adjust: 100%;
+}
+
+#root {
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 16px 16px calc(84px + env(safe-area-inset-bottom));
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0 0 0.5em;
+}
+
+h1 {
+  font-size: 1.6rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+}
+
+p {
+  margin: 0 0 0.75em;
+}
+
+.muted {
+  color: var(--graphite-soft);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+/* German text: sentences, words, forms */
+.de {
+  font-family: var(--font-de);
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+.word-title {
+  font-family: var(--font-de);
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.article {
+  font-weight: 400;
+}
+
+/* The learner's own writing */
+.ink {
+  font-family: var(--font-de);
+  font-style: italic;
+  color: var(--ink);
+}
+
+.mark-wrong {
+  color: var(--red);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+.mark-missing {
+  color: var(--red);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 0.85em;
+  vertical-align: super;
+}
+
+.correction {
+  font-family: var(--font-de);
+  color: var(--red);
+}
+
+/* Buttons and inputs */
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--tap);
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--graphite);
+  background: var(--paper);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--graphite);
+  color: var(--paper);
+}
+
+.btn-quiet {
+  border-color: var(--rule);
+  font-weight: 400;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.btn-row > .btn {
+  flex: 1 1 auto;
+}
+
+.link {
+  background: none;
+  border: none;
+  padding: 8px 0;
+  min-height: var(--tap);
+  color: var(--graphite);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.answer-input {
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--graphite-soft);
+  border-radius: var(--radius);
+  background: #fff;
+  font-family: var(--font-de);
+  font-style: italic;
+  font-size: 1.25rem;
+  color: var(--ink);
+}
+
+.answer-input:focus {
+  border-color: var(--ink);
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field input {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 10px 12px;
+  border: 1.5px solid var(--graphite-soft);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+/* Umlaut key row above the keyboard (spec §6) */
+.umlauts {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.umlauts button {
+  flex: 1;
+  min-height: var(--tap);
+  border: 1.5px solid var(--rule);
+  border-radius: var(--radius);
+  background: #fff;
+  font-family: var(--font-de);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+/* Sentence with a gap */
+.gap {
+  display: inline-block;
+  min-width: 5.5em;
+  border-bottom: 2px solid var(--graphite);
+  margin: 0 0.15em;
+}
+
+.cue {
+  font-size: 0.95rem;
+  color: var(--graphite-soft);
+}
+
+/* Fehlersuche: tappable words */
+.tokens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.token {
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1.5px solid var(--rule);
+  border-radius: 8px;
+  background: #fff;
+  font-family: var(--font-de);
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+
+.token[aria-pressed='true'] {
+  border-color: var(--ink);
+  color: var(--ink);
+  background: var(--ink-soft);
+}
+
+.highlight {
+  font-weight: 700;
+  border-bottom: 2px solid var(--graphite);
+}
+
+/* Feedback panel */
+.feedback h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tick {
+  color: var(--graphite);
+}
+
+.feedback .label {
+  font-size: 0.85rem;
+  color: var(--graphite-soft);
+  margin: 12px 0 2px;
+}
+
+.note {
+  font-size: 0.95rem;
+  color: var(--graphite-soft);
+  margin: 4px 0;
+}
+
+/* Declension strip and tables */
+.decl {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-de);
+  margin: 8px 0;
+}
+
+.decl th,
+.decl td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.decl th {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--graphite-soft);
+}
+
+.bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--rule);
+  overflow: hidden;
+}
+
+.bar > span {
+  display: block;
+  height: 100%;
+  background: var(--graphite);
+}
+
+.stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.stat strong {
+  font-size: 1.8rem;
+}
+
+.progress {
+  height: 4px;
+  background: var(--rule);
+  border-radius: 2px;
+  margin-bottom: 16px;
+}
+
+.progress > span {
+  display: block;
+  height: 100%;
+  background: var(--graphite);
+  border-radius: 2px;
+}
+
+/* Bottom navigation */
+nav.tabs {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+  background: var(--paper);
+  border-top: 1px solid var(--rule);
+}
+
+nav.tabs a {
+  flex: 0 1 11rem;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--graphite);
+  text-decoration: none;
+  border-radius: var(--radius);
+}
+
+nav.tabs a[aria-current='page'] {
+  font-weight: 700;
+  background: var(--ink-soft);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--paper);
+  overflow: auto;
+  padding: 16px;
+  z-index: 10;
+}
+
+.overlay-inner {
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* No decorative motion: the reward reveal (M5) is the app's single animation (spec §10). */

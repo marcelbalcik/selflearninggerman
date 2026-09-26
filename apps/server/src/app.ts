@@ -1,4 +1,6 @@
+import { existsSync } from 'node:fs';
 import cookie from '@fastify/cookie';
+import fastifyStatic from '@fastify/static';
 import type { Clock, Gender } from '@wortduell/core';
 import Fastify from 'fastify';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
@@ -17,6 +19,8 @@ export interface AppOptions {
   /** Secure cookies need HTTPS; off only for local development and tests. */
   secureCookies?: boolean;
   logger?: boolean;
+  /** Directory of the built web app to serve (apps/web/dist). */
+  webDist?: string;
 }
 
 declare module 'fastify' {
@@ -97,8 +101,33 @@ export function buildApp(opts: AppOptions): FastifyInstance {
 
   app.get('/api/me', (req, reply) => {
     const user = auth(req, reply);
-    return user ? req.user : undefined;
+    if (!user) return;
+    const row = db
+      .prepare<[number], { placement_done_at: string | null }>(
+        'SELECT placement_done_at FROM user WHERE id = ?',
+      )
+      .get(user.id);
+    return { ...req.user, placementDone: typeof row?.placement_done_at === 'string' };
   });
+
+  app.put<{ Body: { uiLang: 'de' | 'en' } }>(
+    '/api/me',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['uiLang'],
+          properties: { uiLang: { enum: ['de', 'en'] } },
+        },
+      },
+    },
+    (req, reply) => {
+      const user = auth(req, reply);
+      if (!user) return;
+      db.prepare('UPDATE user SET ui_lang = ? WHERE id = ?').run(req.body.uiLang, user.id);
+      return { ok: true };
+    },
+  );
 
   app.get('/api/today', (req, reply) => {
     const user = auth(req, reply);
@@ -196,14 +225,52 @@ export function buildApp(opts: AppOptions): FastifyInstance {
     return user ? { sample: learning.placementSample(user.id) } : undefined;
   });
 
-  app.post<{ Body: { results: { lemmaId: number; correct: boolean }[] } }>(
+  app.post<{ Body: { answers: { lemmaId: number; answer: string }[] } }>(
     '/api/placement',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['answers'],
+          properties: {
+            answers: {
+              type: 'array',
+              maxItems: 1000,
+              items: {
+                type: 'object',
+                required: ['lemmaId', 'answer'],
+                properties: {
+                  lemmaId: { type: 'number' },
+                  answer: { type: 'string', maxLength: 200 },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     (req, reply) => {
       const user = auth(req, reply);
       if (!user) return;
-      return learning.placement(user.id, req.body.results, clock.now());
+      return learning.placement(user.id, req.body.answers, clock.now());
     },
   );
+
+  app.post('/api/placement/skip', (req, reply) => {
+    const user = auth(req, reply);
+    if (!user) return;
+    learning.skipPlacement(user.id, clock.now());
+    return { ok: true };
+  });
+
+  if (opts.webDist && existsSync(opts.webDist)) {
+    // The built PWA and its audio, with a fallback to index.html for app routes.
+    void app.register(fastifyStatic, { root: opts.webDist, wildcard: false });
+    app.setNotFoundHandler((req, reply) => {
+      if (req.method === 'GET' && !req.url.startsWith('/api/')) return reply.sendFile('index.html');
+      return reply.code(404).send({ error: 'not found' });
+    });
+  }
 
   return app;
 }
