@@ -284,8 +284,11 @@ export class Rounds {
 
   private resultRow(kind: RoundKind, roundId: number, userId: number) {
     return this.db
-      .prepare<[number, number], { started_at: string; finished_at: string | null }>(
-        `SELECT started_at, finished_at FROM ${this.resultTable(kind)} WHERE ${kind}_id = ? AND user_id = ?`,
+      .prepare<
+        [number, number],
+        { started_at: string; finished_at: string | null; forfeit: number }
+      >(
+        `SELECT started_at, finished_at, forfeit FROM ${this.resultTable(kind)} WHERE ${kind}_id = ? AND user_id = ?`,
       )
       .get(roundId, userId);
   }
@@ -305,7 +308,7 @@ export class Rounds {
     for (const i of counted) expectedSum += round.items[i]?.r[String(userId)] ?? 0;
     return {
       userId,
-      played: row !== undefined,
+      played: row !== undefined && row.forfeit === 0,
       finished: typeof row?.finished_at === 'string',
       correct,
       total: counted.size,

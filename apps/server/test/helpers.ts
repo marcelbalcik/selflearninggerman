@@ -1,7 +1,7 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { hash } from '@node-rs/argon2';
-import { FakeClock } from '@wortduell/core';
+import { FakeClock, dayStart } from '@wortduell/core';
 import Database from 'better-sqlite3';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../src/app';
@@ -24,6 +24,8 @@ export interface TestEnv {
   db: Db;
   clock: FakeClock;
   cookie: (name: string) => Promise<string>;
+  /** Drop a cached login (after the session TTL expired). */
+  forget: (name: string) => void;
 }
 
 let cachedHash: string | null = null;
@@ -60,7 +62,7 @@ export async function testEnv(
     cookies.set(name, value);
     return value;
   };
-  return { app, db, clock, cookie };
+  return { app, db, clock, cookie, forget: (name) => cookies.delete(name) };
 }
 
 export interface SentenceOracle {
@@ -85,6 +87,11 @@ export function rightAnswer(db: Db, sentenceId: number): { answer: string; tappe
     return { answer: String(gap.correct ?? ''), tappedIndex: gap.error_index ?? 0 };
   if (type === 'diktat') return { answer: s.de };
   return { answer: accepted[0] ?? '' };
+}
+
+/** 08:00 Berlin time on a learning day, for any date (DST-safe). */
+export function morning(day: string): string {
+  return new Date(dayStart(day).getTime() + 5 * 3_600_000).toISOString();
 }
 
 export function berlinMorning(day: string): string {
