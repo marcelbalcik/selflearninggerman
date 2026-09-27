@@ -459,6 +459,87 @@ Marcel: no audio, and no personal word lists for now.
 - **Personal tracks and EPUB/CSV import** are out of scope (SPEC §15).
   `lemma.track` stays `core` everywhere. `dictionary.sqlite` still feeds the
   chore catalog's words.
-- **M6 is now** Web Push (duel reminder at 19:00, voucher deadlines) plus
-  deployment (Docker Compose, Caddy, LanguageTool, backups, operations
-  notes).
+- **M6** was then replaced by Pages mode (next section).
+
+## Pages mode: no server (2026-09-27)
+
+Marcel: run on GitHub Pages alone; one shared password, a "who are you"
+screen, no reminders, no LanguageTool; the two users trust each other.
+
+- **The server became an engine.** `apps/server` moved to `packages/engine`.
+  The services and their SQL are unchanged. Fastify, logins, argon2,
+  sessions and LanguageTool are gone, and the routes became an in-process
+  router (`engine.call(user, method, path, body, now)`). The engine runs on
+  sql.js in the browser and on better-sqlite3 in the tests, behind one small
+  `Db` interface. A write is one transaction: all of it, or nothing.
+- **Shared state is an action log** (`packages/engine/src/log.ts`).
+  - Every write is an action `{id, user, ts, method, path, body}`.
+  - Both logs are replayed in one fixed order: time, then author. An
+    author's times strictly increase (writes in the same millisecond are
+    nudged by 1 ms).
+  - Actions later than everything applied, and later than the last read
+    (whose settlement tick may already have settled a day), are applied in
+    place. Anything earlier rebuilds from the newest valid checkpoint.
+  - A checkpoint is the database before a day's first action. It records how
+    many actions it contains, so an earlier action arriving late makes it
+    stale automatically. Three are kept.
+  - The base database (content, no user data) is built at build time; a new
+    content version means a full replay.
+- **Everything a write does must be the same on both phones:**
+  - Rows the app refers to later (attempts, disputes, kompositions, reports,
+    redemptions, rewards, chores, vouchers, reward vouchers) get ids from the
+    action (`time × 4 + author`, × 1000 + n). Rows created by the settlement
+    get ids from the day boundary.
+  - The reward draw's seed comes from the redemption, not from crypto.
+  - The competition starts on the day of the later placement (from the data,
+    not from when a phone first noticed).
+  - Duel items use only facets both users have had for over a day, and never
+    `meaning_prod` (it unlocks with recent reviews). The spec's R band
+    preference is dropped. `vs_expected` computes R at the start of the day
+    from the review log, at settlement. Duel and exam ids come from their
+    day or month.
+  - A duel answer names the sentence it answers; if a late sync changed the
+    items, the replayed answer is refused instead of grading another item.
+  - "Queue cleared" (active day) is an explicit action, sent when Heute finds
+    nothing due.
+  - Snapshots, settlements, duel and exam rows carry boundary times, never
+    the moment a phone happened to compute them.
+- **Sync** (`apps/web/src/runtime/github.ts`) runs through a private data
+  repository:
+  - Files are `log/<person>/<day>.json`, and only their author writes them.
+    The same person on two devices merges on a sha conflict and retries.
+  - Pull: one git-trees call, then the blobs whose sha changed.
+  - Push: debounced 3 s after a write.
+  - Polling: every minute while the app is visible, plus on focus and when
+    the phone comes back online.
+  - Requests go straight to api.github.com with a fine-grained token that
+    only has Contents read/write on the data repository.
+- **Password.** The token is published in `wortduell.config.json` encrypted
+  with AES-GCM, using a key from the shared password (PBKDF2-SHA256, 600,000
+  iterations). A wrong password fails the GCM check. The setup script
+  (`pnpm --filter @wortduell/web setup-sync`) checks the token and refuses
+  passwords under 12 characters. The decrypted token and "who am I" are kept
+  in the phone's localStorage.
+- **What was dropped:** logins, push reminders, LanguageTool, and
+  server-side authority. Both users see each other's raw data, but the
+  screens still hide the other duel result until both have finished.
+- **Storage on the phone:** IndexedDB holds the base database (9.4 MB), both
+  logs, the checkpoints and the sync state. The service worker caches the
+  app, SQLite's WebAssembly and the base database, so the app works offline.
+- **Speed.** Replaying about 1,000 actions takes 1.3 s on sql.js in Node. A
+  day's rebuild after a late sync takes well under a second; a full replay
+  after a content update takes longer.
+- **Acceptance.**
+  - `packages/engine/test/sync.test.ts` covers two phones:
+    - once with the partner playing in the evening and offline for three
+      days;
+    - once with both playing at the same time, which caused 11 rebuilds.
+  - In both runs the two databases end identical to each other and to a
+    fresh replay. The sql.js replay matches too.
+  - `apps/web/e2e/app.e2e.ts` runs the built site, a fake GitHub and two
+    emulated phones with fixed clocks: wrong then right password, "Wer bist
+    du?", placement, a session, the duel on both phones, the result after
+    sync, and the settled result the next day. Both phones agree.
+  - The M2 and M5 simulations still pass on the engine. Their users now
+    start with a shared block of words, the way placement would, because
+    duel items need day-old words.

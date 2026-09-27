@@ -19,6 +19,7 @@ export interface Today {
   reviewsToday: number;
   newToday: number;
   newRemaining: number;
+  clearedToday: boolean;
 }
 
 export type Row = Record<Case, string>;
@@ -110,26 +111,16 @@ export interface KompositionTask {
   requiredCase: 'dat' | null;
 }
 
-export interface LtMatch {
-  offset: number;
-  length: number;
-  message: string;
-  replacements: string[];
-  ruleId: string;
-}
-
 export interface TargetCheck {
   lemmaId: number;
   found: boolean;
   span: [number, number] | null;
   dative: boolean;
-  ltIssue: string | null;
 }
 
 export interface KompositionResult {
   id: number;
   checks: TargetCheck[];
-  languageTool: LtMatch[] | null;
 }
 
 export interface ReviewData {
@@ -158,7 +149,6 @@ export interface ReviewData {
     text: string;
     targets: string[];
     checks: TargetCheck[];
-    languageTool: LtMatch[] | null;
     createdAt: string;
   }[];
 }

@@ -1,17 +1,29 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { ApiError, api } from '../api';
+import { api } from '../api';
+import { runtime } from '../runtime/runtime';
+import type { SyncState } from '../runtime/runtime';
 import { AnswerInput, WordDetail } from '../components/parts';
 import { useT } from '../i18n';
 import type { Home, Me, PlacementItem, RoundSummary, Today as TodayData } from '../types';
 import { ScoreLine } from './Competition';
 import { ChoreCatalog, RewardCatalog, SharedSettings } from './Mehr';
 
-export function Login({ onLogin }: { onLogin: () => void }): ReactNode {
+export function Loading(): ReactNode {
   const t = useT();
-  const [name, setName] = useState('');
+  return (
+    <div className="card">
+      <h1>{t('appName')}</h1>
+      <p className="muted">{t('loadingData')}</p>
+    </div>
+  );
+}
+
+/** The shared password unlocks the sync token on this phone (asked once). */
+export function Unlock(): ReactNode {
+  const t = useT();
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
   return (
     <form
@@ -19,29 +31,14 @@ export function Login({ onLogin }: { onLogin: () => void }): ReactNode {
       onSubmit={(e) => {
         e.preventDefault();
         setBusy(true);
-        setError(null);
-        api
-          .login(name.trim(), password)
-          .then(onLogin, (err: unknown) =>
-            setError(
-              err instanceof ApiError && err.status === 429
-                ? t('tooManyAttempts')
-                : t('loginFailed'),
-            ),
-          )
+        setError(false);
+        void runtime
+          .unlock(password)
+          .then((ok) => setError(!ok))
           .finally(() => setBusy(false));
       }}
     >
       <h1>{t('appName')}</h1>
-      <div className="field">
-        <label htmlFor="name">{t('name')}</label>
-        <input
-          id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          autoComplete="username"
-        />
-      </div>
       <div className="field">
         <label htmlFor="password">{t('password')}</label>
         <input
@@ -54,13 +51,35 @@ export function Login({ onLogin }: { onLogin: () => void }): ReactNode {
       </div>
       {error && (
         <p role="alert" className="correction">
-          {error}
+          {t('passwordWrong')}
         </p>
       )}
-      <button type="submit" className="btn btn-primary btn-block" disabled={busy}>
-        {t('login')}
+      <button type="submit" className="btn btn-primary btn-block" disabled={busy || !password}>
+        {t('unlock')}
       </button>
     </form>
+  );
+}
+
+/** "Wer bist du?": which of the two uses this phone (remembered). */
+export function WhoAreYou({ users }: { users: string[] }): ReactNode {
+  const t = useT();
+  return (
+    <div className="card">
+      <h1>{t('whoAreYou')}</h1>
+      <div className="btn-row" style={{ flexDirection: 'column' }}>
+        {users.map((name, i) => (
+          <button
+            key={name}
+            type="button"
+            className="btn btn-primary btn-block"
+            onClick={() => runtime.choose(i + 1)}
+          >
+            {name}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -138,6 +157,8 @@ export function Today({
     api.today().then(
       (d) => {
         setData(d);
+        // An empty queue counts toward an active day (spec §8.3); recorded once a day.
+        if (d.dueItems === 0 && !d.clearedToday) void api.cleared().catch(() => undefined);
         // The home data needs the settlement that /api/today just ran.
         api.home().then(setHome, () => setHome(null));
       },
@@ -333,12 +354,39 @@ export function Placement({ onDone }: { onDone: () => void }): ReactNode {
   );
 }
 
+function SyncStatus({ sync }: { sync: SyncState }): ReactNode {
+  const t = useT();
+  if (!sync.enabled) return <p className="muted">{t('syncLocal')}</p>;
+  return (
+    <div>
+      <p className={sync.error ? 'correction' : 'muted'}>
+        {sync.error
+          ? t('syncError', { error: sync.error })
+          : sync.lastSync
+            ? t('syncLast', { time: new Date(sync.lastSync).toLocaleTimeString() })
+            : t('syncNever')}
+        {sync.pending > 0 && ` · ${t('syncPending', { n: sync.pending })}`}
+      </p>
+      <button
+        type="button"
+        className="btn btn-block"
+        disabled={sync.busy}
+        onClick={() => void runtime.syncNow()}
+      >
+        {t('syncNow')}
+      </button>
+    </div>
+  );
+}
+
 export function Settings({
   me,
+  sync,
   onLang,
   onLogout,
 }: {
   me: Me;
+  sync: SyncState;
   onLang: (lang: 'de' | 'en') => void;
   onLogout: () => void;
 }): ReactNode {
@@ -371,8 +419,10 @@ export function Settings({
         <p>
           <a href="#/pruefen">{t('toReview')} →</a>
         </p>
+        <h2>{t('syncTitle')}</h2>
+        <SyncStatus sync={sync} />
         <button type="button" className="btn btn-quiet btn-block" onClick={onLogout}>
-          {t('logout')}
+          {t('switchPerson')}
         </button>
       </div>
       <SharedSettings me={me} />

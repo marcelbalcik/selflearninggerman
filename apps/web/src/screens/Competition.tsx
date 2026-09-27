@@ -66,10 +66,13 @@ export function ScoreLine({ r, mode }: { r: RoundTotals; mode?: string }): React
 export function RoundScreen({
   kind,
   me,
+  version = 0,
   onDone,
 }: {
   kind: 'duel' | 'exam';
   me: Me;
+  /** Bumped when the other phone's actions arrive (shows their result). */
+  version?: number;
   onDone: () => void;
 }): ReactNode {
   const t = useT();
@@ -80,6 +83,11 @@ export function RoundScreen({
     api.round(kind).then(setView, () => setFailed(true));
   }, [kind]);
   useEffect(load, [load]);
+  // A finished round may now show the other result; a running one keeps its place.
+  const finished = view?.status === 'finished' || view?.status === 'closed';
+  useEffect(() => {
+    if (finished) load();
+  }, [version]);
 
   if (failed) return <p>{t('error')}</p>;
   if (!view) return <p className="muted">{t('loading')}</p>;

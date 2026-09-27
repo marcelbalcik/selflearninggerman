@@ -6,7 +6,6 @@ import { useT } from '../i18n';
 import type { MessageKey } from '../i18n';
 import { joinTokens } from '../text';
 import type { Prompt, ReviewData } from '../types';
-import { LtList, LtText } from './Komposition';
 
 const MARK_TYPES = ['gender', 'case', 'frame', 'ending', 'other'] as const;
 type MarkType = (typeof MARK_TYPES)[number];
@@ -80,12 +79,7 @@ function KompositionReview({
       <p className="muted">
         {k.by} · {k.targets.join(', ')}
       </p>
-      {k.languageTool ? (
-        <LtText text={k.text} matches={k.languageTool} />
-      ) : (
-        <p className="de ink">{k.text}</p>
-      )}
-      {k.languageTool && k.languageTool.length > 0 && <LtList matches={k.languageTool} />}
+      <p className="de ink">{k.text}</p>
       {marks.length > 0 && (
         <ul>
           {marks.map((m, i) => (

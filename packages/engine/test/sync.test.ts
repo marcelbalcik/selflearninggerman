@@ -10,6 +10,8 @@ import Database from 'better-sqlite3';
 import type { Db } from '../src/db';
 import { Store } from '../src/log';
 import type { DbHost } from '../src/log';
+import initSqlJs from 'sql.js';
+import { sqlJsHost } from '../src/sqljs';
 import { USERS, baseDb, morning, rightAnswer, rng } from './helpers';
 
 const host: DbHost = {
@@ -125,70 +127,89 @@ describe('two phones, late and out-of-order sync (Pages mode)', () => {
     ['partner plays in the evening', 11],
     ['both play at the same time', 0.05],
   ] as const)
-    it(`converge to the same database as a single replay (${label})`, { timeout: 240_000 }, () => {
-      const baseBytes = new Uint8Array(baseDb().serialize());
-      const first = '2027-01-04';
-      const a = phone(1, morning(first), baseBytes);
-      const b = phone(2, new Date(Date.parse(morning(first)) + 600_000).toISOString(), baseBytes);
-      const ra = rng(3);
-      const rb = rng(5);
+    it(
+      `converge to the same database as a single replay (${label})`,
+      { timeout: 240_000 },
+      async () => {
+        const baseBytes = new Uint8Array(baseDb().serialize());
+        const first = '2027-01-04';
+        const a = phone(1, morning(first), baseBytes);
+        const b = phone(2, new Date(Date.parse(morning(first)) + 600_000).toISOString(), baseBytes);
+        const ra = rng(3);
+        const rb = rng(5);
 
-      // Both start with the same block of words (placement's effect), then skip placement.
-      const block = (
-        a.store.db
-          .prepare("SELECT id FROM lemma WHERE pos = 'noun' ORDER BY freq_rank LIMIT 60")
-          .all() as { id: number }[]
-      ).map((r) => r.id);
-      for (const p of [a, b]) {
-        for (const id of block) {
-          p.clock.advance(1000);
-          p.store.write(p.user, 'POST', `/api/lemmas/${id}/intro`, {});
+        // Both start with the same block of words (placement's effect), then skip placement.
+        const block = (
+          a.store.db
+            .prepare("SELECT id FROM lemma WHERE pos = 'noun' ORDER BY freq_rank LIMIT 60")
+            .all() as { id: number }[]
+        ).map((r) => r.id);
+        for (const p of [a, b]) {
+          for (const id of block) {
+            p.clock.advance(1000);
+            p.store.write(p.user, 'POST', `/api/lemmas/${id}/intro`, {});
+          }
+          p.store.write(p.user, 'POST', '/api/placement/skip', {});
         }
-        p.store.write(p.user, 'POST', '/api/placement/skip', {});
-      }
-      sync(a, b);
-      sync(b, a);
+        sync(a, b);
+        sync(b, a);
 
-      let rebuilds = 0;
-      const DAYS = 12;
-      for (let i = 1; i <= DAYS; i++) {
-        const date = addDays(first, i);
-        // Marcel plays in the morning, the partner in the evening.
-        a.clock.set(morning(date));
-        b.clock.set(new Date(Date.parse(morning(date)) + partnerOffsetH * 3_600_000).toISOString());
-        // The partner's phone is offline on days 4–6: nothing arrives until day 7.
-        const partnerOnline = i < 4 || i > 6;
-        if (partnerOnline) rebuilds += Number(sync(b, a));
-        day(a, date, ra, 0.85);
-        if (partnerOnline) rebuilds += Number(sync(a, b));
-        day(b, date, rb, 0.7);
-        if (partnerOnline) {
-          rebuilds += Number(sync(b, a));
-          rebuilds += Number(sync(a, b));
+        let rebuilds = 0;
+        const DAYS = 12;
+        for (let i = 1; i <= DAYS; i++) {
+          const date = addDays(first, i);
+          // Marcel plays in the morning, the partner in the evening.
+          a.clock.set(morning(date));
+          b.clock.set(
+            new Date(Date.parse(morning(date)) + partnerOffsetH * 3_600_000).toISOString(),
+          );
+          // The partner's phone is offline on days 4–6: nothing arrives until day 7.
+          const partnerOnline = i < 4 || i > 6;
+          if (partnerOnline) rebuilds += Number(sync(b, a));
+          day(a, date, ra, 0.85);
+          if (partnerOnline) rebuilds += Number(sync(a, b));
+          day(b, date, rb, 0.7);
+          if (partnerOnline) {
+            rebuilds += Number(sync(b, a));
+            rebuilds += Number(sync(a, b));
+          }
         }
-      }
-      // Everyone online again; both look at the app the next morning.
-      const end = morning(addDays(first, DAYS + 1));
-      sync(a, b);
-      sync(b, a);
-      for (const p of [a, b]) {
-        p.clock.set(end);
-        p.store.read(p.user, '/api/home');
-      }
-      expect(rebuilds).toBeGreaterThan(0);
-      const da = dump(a.store.db);
-      expect(dump(b.store.db)).toBe(da);
+        // Everyone online again; both look at the app the next morning.
+        const end = morning(addDays(first, DAYS + 1));
+        sync(a, b);
+        sync(b, a);
+        for (const p of [a, b]) {
+          p.clock.set(end);
+          p.store.read(p.user, '/api/home');
+        }
+        expect(rebuilds).toBeGreaterThan(0);
+        const da = dump(a.store.db);
+        expect(dump(b.store.db)).toBe(da);
 
-      // A third device replaying both logs from scratch reaches the same state.
-      const c = phone(1, end, baseBytes);
-      c.store.receive([...a.store.all()]);
-      c.store.read(1, '/api/home');
-      expect(dump(c.store.db)).toBe(da);
+        // The browser's SQLite (sql.js) replays both logs to the same state.
+        if (partnerOffsetH === 11) {
+          const SQL = await initSqlJs();
+          const clock = new FakeClock(end);
+          const web = new Store({ host: sqlJsHost(SQL), base: baseBytes, users: USERS, clock });
+          const t0 = performance.now();
+          web.receive([...a.store.all()]);
+          web.read(1, '/api/home');
+          const ms = performance.now() - t0;
+          console.log(`sql.js replay of ${a.store.all().length} actions: ${Math.round(ms)} ms`);
+          expect(dump(web.db)).toBe(da);
+        }
 
-      // Sanity: the competition actually happened.
-      const results = a.store.db
-        .prepare("SELECT COUNT(*) AS n FROM period_result WHERE kind = 'day'")
-        .get() as { n: number };
-      expect(results.n).toBeGreaterThan(5);
-    });
+        // A third device replaying both logs from scratch reaches the same state.
+        const c = phone(1, end, baseBytes);
+        c.store.receive([...a.store.all()]);
+        c.store.read(1, '/api/home');
+        expect(dump(c.store.db)).toBe(da);
+
+        // Sanity: the competition actually happened.
+        const results = a.store.db
+          .prepare("SELECT COUNT(*) AS n FROM period_result WHERE kind = 'day'")
+          .get() as { n: number };
+        expect(results.n).toBeGreaterThan(5);
+      },
+    );
 });

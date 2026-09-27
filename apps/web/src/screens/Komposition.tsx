@@ -2,44 +2,7 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { api } from '../api';
 import { useT } from '../i18n';
-import type { KompositionResult, KompositionTask, LtMatch } from '../types';
-
-/** The text with LanguageTool's findings underlined in correction red. */
-export function LtText({ text, matches }: { text: string; matches: LtMatch[] }): ReactNode {
-  const parts: ReactNode[] = [];
-  let at = 0;
-  const sorted = [...matches].sort((a, b) => a.offset - b.offset);
-  for (const [i, m] of sorted.entries()) {
-    if (m.offset < at) continue;
-    parts.push(text.slice(at, m.offset));
-    parts.push(
-      <span key={i} className="mark-wrong" title={m.message}>
-        {text.slice(m.offset, m.offset + m.length)}
-      </span>,
-    );
-    at = m.offset + m.length;
-  }
-  parts.push(text.slice(at));
-  return <p className="de ink">{parts}</p>;
-}
-
-export function LtList({ matches }: { matches: LtMatch[] }): ReactNode {
-  return (
-    <ul>
-      {matches.map((m, i) => (
-        <li key={i}>
-          {m.message}
-          {m.replacements.length > 0 && (
-            <>
-              {' → '}
-              <span className="correction">{m.replacements.slice(0, 3).join(', ')}</span>
-            </>
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-}
+import type { KompositionResult, KompositionTask } from '../types';
 
 /** Spec §6.8: two sentences with three target words, checked, then partner-reviewed. */
 export function KompositionTaskView({
@@ -120,11 +83,7 @@ export function KompositionTaskView({
         </>
       ) : (
         <div className="feedback">
-          {result.languageTool ? (
-            <LtText text={text.trim()} matches={result.languageTool} />
-          ) : (
-            <p className="de ink">{text.trim()}</p>
-          )}
+          <p className="de ink">{text.trim()}</p>
           <ul>
             {result.checks.map((c) => {
               const l = nameOf(c.lemmaId);
@@ -136,7 +95,6 @@ export function KompositionTaskView({
                   ) : (
                     <span className="correction">{t('kompositionMissing')}</span>
                   )}
-                  {c.ltIssue && <span className="correction"> · {c.ltIssue}</span>}
                 </li>
               );
             })}
@@ -147,12 +105,6 @@ export function KompositionTaskView({
             ) : (
               <p className="correction">{t('kompositionDativeMissing')}</p>
             ))}
-          <h2>{t('kompositionLt')}</h2>
-          {result.languageTool && result.languageTool.length > 0 ? (
-            <LtList matches={result.languageTool} />
-          ) : (
-            <p className="muted">{result.languageTool ? t('correct') : t('kompositionNoLt')}</p>
-          )}
           <p className="note">{t('kompositionPartner')}</p>
           <button type="button" className="btn btn-primary btn-block" onClick={onDone}>
             {t('next')}

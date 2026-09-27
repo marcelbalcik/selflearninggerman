@@ -34,24 +34,21 @@ A private web app (installable PWA) for exactly two users, Marcel and his wife, 
 ## 2. Stack
 
 - Monorepo with pnpm workspaces and TypeScript `strict` mode.
-  - `apps/web`: Vite + React + TypeScript PWA (`vite-plugin-pwa`), mobile-first.
-  - `apps/server`: Node 20+, Fastify (or Hono), `better-sqlite3`, Drizzle (or plain SQL migrations), `node-cron`.
-  - `packages/core`: pure TypeScript with no IO. Contains article tables, the declension engine, verb helpers, answer normalisation, grading, error classification, the FSRS wrapper and competition scoring. Both server and web import it.
+  - `apps/web`: Vite + React + TypeScript PWA (`vite-plugin-pwa`), mobile-first, published on **GitHub Pages**. It runs the engine on SQLite compiled to WebAssembly (sql.js).
+  - `packages/engine`: the app's logic and SQL (learning, duel, settlement, vouchers, rewards, settings), an in-process router and the action log. Runs in the browser and in Node tests. *(Until 2026-09-27 this was `apps/server`, a Fastify server; see DECISIONS "Pages mode".)*
+  - `packages/core`: pure TypeScript with no IO. Contains article tables, the declension engine, verb helpers, answer normalisation, grading, error classification, the FSRS wrapper and competition scoring.
   - `pipeline/`: Python 3.11+ content pipeline that produces `content.sqlite` and `dictionary.sqlite`.
-- **The server is authoritative** for grading, FSRS updates and all competition scoring. The web client may pre-grade for instant feedback, but the server result wins.
+- **No server.** Each phone computes everything from both people's action logs, which are synced through a private GitHub repository; replaying the same logs gives the same results on both phones. The two users trust each other (honour system).
 - **Free tooling only, no LLM API.**
   - Pipeline: spaCy (`de_core_news_md` or larger) for parsing corpus sentences; Tatoeba and Wiktionary examples as the sentence source; OdeNet (Open German WordNet) and Wiktionary categories for semantic fields.
-  - Runtime: a self-hosted LanguageTool server (open source) for `komposition` feedback, reached at `LANGUAGETOOL_URL`.
-- **Deployment.** Docker Compose on a small server (a free tier or a home server is fine), with `server`, `languagetool` and `caddy` (automatic HTTPS) containers. LanguageTool needs about 1–2 GB RAM.
-  - Nightly SQLite `.backup` to a dated file, keeping 30 days. An optional offsite copy is fine.
-- **Why not PocketBase:** grading, FSRS and scoring must run server-side and share code with the client. One language across the stack is simpler.
+- **Deployment.** GitHub Pages (GitHub Actions workflow). The data repository's git history is the backup.
 
 ---
 
 ## 3. Users, auth, language
 
-- Two users are seeded from env (`USER1_NAME`, `USER1_PASSWORD_HASH`, `USER2_...`). There is no registration.
-- Sessions use httpOnly, Secure, SameSite=Lax cookies. Passwords are hashed with argon2 or bcrypt. Login is rate-limited.
+- The two names come from the site config. There is no registration.
+- One shared password unlocks the sync token (published only encrypted); then the app asks "Wer bist du?" and remembers the answer on that phone.
 - UI strings live in an i18n file with German (default) and English. Each user has a language toggle.
 - The gloss language is English for v1. Keep it pluggable in case the second user needs a different gloss language (see open questions, §16).
 
@@ -241,7 +238,7 @@ Skills are updated by the same attempts that update lexical facets. Skills are *
 | `diktat` | typed from speech | no |
 | `en_de_chunk` | closed | yes |
 | `fehlersuche` | tap + closed correction | yes |
-| `komposition` | open, LanguageTool + partner feedback | no |
+| `komposition` | open, target check + partner feedback | no |
 | `bedeutung` | open (English) | no |
 
 1. **`kasus_luecke`.** A sentence with a gap covering determiner + noun (or a pronoun).
@@ -263,10 +260,9 @@ Skills are updated by the same attempts that update lexical facets. Skills are *
 7. **`fehlersuche`.** A sentence containing exactly one error (wrong article, wrong case ending, or wrong separable-verb position). The user taps the wrong word, then types the correction.
 8. **`komposition`.** Write 2 sentences using 3 given due lemmas (optionally with a required case, e.g. "one of them in the dative").
    - **Deterministic check:** each target lemma appears in some valid form from its form table, and a noun's determiner agrees with the form used.
-   - **LanguageTool feedback:** the self-hosted server checks the text; its matches are shown with their suggestions.
    - **Partner review:** the text appears on the other user's Prüfen screen. They can mark a span as wrong, pick an error type (gender, case, frame, ending, other) and type a correction.
    - **Ratings:**
-     - At submission: a target lemma in a valid form with no LanguageTool match on it → Good. A target that is missing or not a valid form, or with a LanguageTool match on it → Again on the facet mapped from the match (gender, case, ending), else on `meaning_prod`.
+     - At submission: a target lemma in a valid form → Good; missing → Again on its meaning facet; no dative when one was asked → Again on the dative case skill. (No grammar checker: LanguageTool needs a server.)
      - A partner mark on a target word later adds Again on the facet mapped from its error type.
      - Errors outside the target words are shown to the user but do not touch FSRS.
 9. **`bedeutung`** (DE→EN, exercises `meaning_recv`). The German word in a sentence; the user types the English meaning. Matched against the Wiktionary glosses and their English WordNet synonyms (US/UK spelling, a leading "to"/"the"/"a" ignored). Disputable. Not duel-eligible.
@@ -385,7 +381,7 @@ A user has an **active day** when they played the duel **and** either cleared th
 
 Settlement rules:
 
-- All settlement runs server-side in cron jobs at the day boundary.
+- Settlement runs on the phone, whichever opens the app first after the day boundary; both phones compute the same result from the same action logs.
 - Every settlement job is **idempotent**: results are keyed by period, and re-running a job changes nothing.
 - Settled results are immutable, except through the report-voiding path (§8.4).
 
@@ -393,9 +389,9 @@ Settlement rules:
 
 **Items**
 
-- At 03:00 the server generates **10 items, identical for both users**.
+- Each day has **10 items, identical for both users**, computed the same way on both phones.
 - Items come only from lemmas both users have introduced, core track only, using duel-eligible exercise types only.
-- Prefer items where both users' predicted recall (R, default parameters) lies in [0.6, 0.95].
+- Items use only facets both users have had for more than a day, so both phones pick the same items while the last hours are still syncing. *(The preference for R in [0.6, 0.95] was dropped for that reason; `vs_expected` uses R at the start of the day.)*
 - A lemma may not reappear in a duel within 7 days.
 
 **Play**
@@ -734,7 +730,6 @@ redemption(id, voucher_ids JSON, total_eur, band_eur, change_voucher_id NULL,
            status['pending'|'drawn'|'planned'|'done'|'undone'], planned_for, note, created_at)
 setting(key, value, pending_value, proposed_by, approved_by, effective_from)
 report(id, user_id, sentence_id, reason, status, created_at)
-push_subscription(user_id, endpoint, keys JSON)
 ```
 
 ---
@@ -758,9 +753,9 @@ push_subscription(user_id, endpoint, keys JSON)
 - **M5: Competition.**
   - Build: duel, snapshots, weekly and monthly settlement, stars, vouchers, joint-goal tiers, reward vouchers (issue, combine, change, redeem, reveal, reroll, undo), dual-approval settings and the ledger.
   - Acceptance: a simulation of two synthetic users over 90 days passes. It must include both DST switches (last Sunday of March and of October), forfeits, draws, report voiding with re-settlement, idempotent re-runs of every settlement job, and voucher combination with change (including the band-fallback case and undo).
-- **M6: Remaining features.**
-  - Build: Web Push (duel reminder at 19:00 if not yet played; voucher deadlines).
-  - Deployment: Docker Compose + Caddy + LanguageTool, backups, and a README with operations notes.
+- **M6: Pages mode** (replaces the server deployment, 2026-09-27).
+  - Build: the engine in the browser (sql.js), the action log with sync through a private GitHub repository, shared password + "Wer bist du?", the Pages workflow and set-up script.
+  - Acceptance: two phones acting independently and syncing late and out of order end with identical data; an end-to-end test with two emulated phones and a fake GitHub passes.
 
 ---
 
@@ -770,6 +765,7 @@ push_subscription(user_id, endpoint, keys JSON)
 - Speech recognition.
 - Recorded pronunciation audio (removed 2026-09-27; `diktat` uses the device's speech synthesis).
 - Personal tracks and EPUB/CSV word import (removed 2026-09-27).
+- A server of any kind (2026-09-27): no push reminders, no LanguageTool, no server-side authority over scores.
 - Adjective-declension exercises (adjectives get meaning facets only).
 - Genitive training.
 
@@ -779,7 +775,7 @@ push_subscription(user_id, endpoint, keys JSON)
 
 > Answered on 2026-09-26, except question 1. See docs/DECISIONS.md. Summary: both users start at A2.1 via placement; English glosses; 3 wins per S chore; duel starts `raw`.
 
-1. Hosting target (VPS provider or home server) and domain name.
+1. ~~Hosting target~~ GitHub Pages plus a private data repository (2026-09-27).
 2. The second user's current German level, which sets her starting point in the core deck and whether her UI starts in English.
 3. Whether English glosses work for both users, or the second user needs another gloss language.
 4. Whether daily duel wins should produce chores directly (`STARS_PER_S_VOUCHER = 1`) or via stars (default 3).

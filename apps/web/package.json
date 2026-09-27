@@ -9,23 +9,28 @@
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "e2e": "tsx e2e/session.e2e.ts && tsx e2e/competition.e2e.ts"
+    "e2e": "tsx e2e/app.e2e.ts",
+    "prebuild": "pnpm --filter @wortduell/engine build-base",
+    "predev": "pnpm --filter @wortduell/engine build-base",
+    "setup-sync": "tsx scripts/setup-sync.ts"
   },
   "dependencies": {
     "@fontsource/fira-sans": "^5.3.0",
     "@fontsource/literata": "^5.3.0",
     "@wortduell/core": "workspace:*",
+    "@wortduell/engine": "workspace:*",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "sql.js": "^1.14.2",
     "workbox-window": "^7.4.1"
   },
   "devDependencies": {
-    "@node-rs/argon2": "^2.2.1",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",
     "@types/node": "^22.20.4",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@types/sql.js": "^1.4.11",
     "@vitejs/plugin-react": "^6.1.1",
     "jsdom": "^30.1.1",
     "playwright-core": "^1.63.0",

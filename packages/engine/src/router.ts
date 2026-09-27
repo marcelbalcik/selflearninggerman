@@ -228,7 +228,13 @@ export class Engine {
       db.prepare('UPDATE user SET ui_lang = ? WHERE id = ?').run(lang, c.userId);
       return { ok: true };
     });
-    this.on('GET', '/api/today', (c) => learning.today(c.userId, c.now));
+    this.on('GET', '/api/today', (c) => ({
+      ...learning.today(c.userId, c.now),
+      clearedToday:
+        db
+          .prepare('SELECT 1 FROM day_activity WHERE user_id = ? AND day_key = ?')
+          .get(c.userId, dayKey(c.now)) !== undefined,
+    }));
     /** Heute saw an empty due queue: counts toward an active day (spec §8.3). */
     this.on('POST', '/api/day/cleared', (c) => {
       competition.markCleared(c.userId, c.now);

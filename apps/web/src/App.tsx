@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import type { ReactNode } from 'react';
 import { ApiError, api } from './api';
 import { LangContext, translate } from './i18n';
@@ -7,7 +7,8 @@ import { RoundScreen, WettbewerbScreen } from './screens/Competition';
 import { Pruefen } from './screens/Pruefen';
 import { WochenzielScreen } from './screens/Wochenziel';
 import { Session } from './screens/Session';
-import { Login, Placement, Settings, Today, Word } from './screens/Screens';
+import { Loading, Placement, Settings, Today, Unlock, WhoAreYou, Word } from './screens/Screens';
+import { runtime } from './runtime/runtime';
 import type { Me } from './types';
 
 type Route =
@@ -44,7 +45,11 @@ function go(path: string): void {
   window.location.hash = path;
 }
 
+const subscribe = (fn: () => void) => runtime.subscribe(fn);
+const snapshot = () => runtime.state();
+
 export function App(): ReactNode {
+  const rt = useSyncExternalStore(subscribe, snapshot);
   const [me, setMe] = useState<Me | null | undefined>(undefined);
   const [route, setRoute] = useState<Route>(() => parse(window.location.hash));
   const [failed, setFailed] = useState(false);
@@ -58,11 +63,17 @@ export function App(): ReactNode {
   }, []);
 
   useEffect(() => {
-    loadMe();
+    void runtime.boot();
     const onHash = () => setRoute(parse(window.location.hash));
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
-  }, [loadMe]);
+  }, []);
+
+  // Who this phone belongs to is known once the runtime is ready.
+  useEffect(() => {
+    if (rt.phase === 'ready') loadMe();
+    else setMe(undefined);
+  }, [rt.phase, rt.me, loadMe]);
 
   const lang = me?.uiLang ?? 'de';
   useEffect(() => {
@@ -70,8 +81,27 @@ export function App(): ReactNode {
   }, [lang]);
   const t = (k: Parameters<typeof translate>[1]) => translate(lang, k);
 
+  // Passive screens reload when the other phone's actions arrive; running
+  // exercises never do (they would lose their place).
+  const fresh = `${route.name}:${rt.version}`;
   let screen: ReactNode;
-  if (failed) {
+  if (rt.phase === 'loading') {
+    screen = <Loading />;
+  } else if (rt.phase === 'failed') {
+    screen = (
+      <div className="card">
+        <p>{t('error')}</p>
+        <p className="muted">{rt.error}</p>
+        <button type="button" className="btn" onClick={() => window.location.reload()}>
+          {t('retry')}
+        </button>
+      </div>
+    );
+  } else if (rt.phase === 'locked') {
+    screen = <Unlock />;
+  } else if (rt.phase === 'choose') {
+    screen = <WhoAreYou users={rt.users} />;
+  } else if (failed) {
     screen = (
       <div className="card">
         <p>{t('error')}</p>
@@ -83,7 +113,7 @@ export function App(): ReactNode {
   } else if (me === undefined) {
     screen = <p className="muted">{t('loading')}</p>;
   } else if (me === null) {
-    screen = <Login onLogin={loadMe} />;
+    screen = <WhoAreYou users={rt.users} />;
   } else if (!me.placementDone) {
     screen = <Placement onDone={loadMe} />;
   } else if (route.name === 'session') {
@@ -91,33 +121,37 @@ export function App(): ReactNode {
   } else if (route.name === 'wort') {
     screen = <Word lemmaId={route.id} />;
   } else if (route.name === 'pruefen') {
-    screen = <Pruefen />;
+    screen = <Pruefen key={fresh} />;
   } else if (route.name === 'duell' || route.name === 'pruefung') {
     screen = (
       <RoundScreen
         key={route.name}
         kind={route.name === 'duell' ? 'duel' : 'exam'}
         me={me}
+        version={rt.version}
         onDone={() => go('/heute')}
       />
     );
   } else if (route.name === 'wettbewerb') {
-    screen = <WettbewerbScreen me={me} />;
+    screen = <WettbewerbScreen key={fresh} me={me} />;
   } else if (route.name === 'wochenziel') {
-    screen = <WochenzielScreen me={me} />;
+    screen = <WochenzielScreen key={fresh} me={me} />;
   } else if (route.name === 'aufgaben') {
-    screen = <AufgabenScreen me={me} />;
+    screen = <AufgabenScreen key={fresh} me={me} />;
   } else if (route.name === 'einstellungen') {
     screen = (
       <Settings
+        key={fresh}
         me={me}
+        sync={rt.sync}
         onLang={(uiLang) => void api.setLang(uiLang).then(() => setMe({ ...me, uiLang }))}
-        onLogout={() => void api.logout().then(() => setMe(null))}
+        onLogout={() => runtime.forgetUser()}
       />
     );
   } else {
     screen = (
       <Today
+        key={fresh}
         me={me}
         go={go}
         onStart={(reviewsOnly) => go(reviewsOnly ? '/session/reviews' : '/session')}

@@ -1,3 +1,4 @@
+import { RequestError, runtime } from './runtime/runtime';
 import type {
   Chore,
   Home,
@@ -26,25 +27,25 @@ export class ApiError extends Error {
   }
 }
 
-async function call<T>(method: string, url: string, body?: unknown): Promise<T> {
-  const res = await fetch(url, {
-    method,
-    credentials: 'same-origin',
-    headers: body === undefined ? {} : { 'content-type': 'application/json' },
-    body: body === undefined ? null : JSON.stringify(body),
-  });
-  const data = (await res.json().catch(() => ({}))) as { error?: string };
-  if (!res.ok) throw new ApiError(res.status, data.error ?? res.statusText);
-  return data as T;
+/**
+ * Every call is answered on the phone by the local engine (runtime/runtime.ts);
+ * the paths are the ones the server used to serve.
+ */
+function call<T>(method: string, url: string, body?: unknown): Promise<T> {
+  try {
+    return Promise.resolve(runtime.request<T>(method, url, body));
+  } catch (err) {
+    if (err instanceof RequestError) return Promise.reject(new ApiError(err.status, err.message));
+    return Promise.reject(err instanceof Error ? err : new Error(String(err)));
+  }
 }
 
 export const api = {
-  login: (name: string, password: string) =>
-    call<{ ok: true }>('POST', '/api/login', { name, password }),
-  logout: () => call<{ ok: true }>('POST', '/api/logout', {}),
   me: () => call<Me>('GET', '/api/me'),
   setLang: (uiLang: 'de' | 'en') => call<{ ok: true }>('PUT', '/api/me', { uiLang }),
   today: () => call<Today>('GET', '/api/today'),
+  /** Heute found no due exercises: counts toward an active day. */
+  cleared: () => call<{ ok: true }>('POST', '/api/day/cleared', {}),
   session: (reviewsOnly: boolean) =>
     call<SessionPlan>('GET', reviewsOnly ? '/api/session?mode=reviews' : '/api/session'),
   intro: (lemmaId: number) =>

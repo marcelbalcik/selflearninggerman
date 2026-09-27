@@ -9,8 +9,12 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { registerSW } from 'virtual:pwa-register';
 import { App } from './App';
+import { runtime } from './runtime/runtime';
 
 registerSW({ immediate: true });
+
+// For the end-to-end tests and for looking around in the browser console.
+(window as unknown as { wortduell: typeof runtime }).wortduell = runtime;
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <StrictMode>
