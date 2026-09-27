@@ -9,6 +9,7 @@ import { CHORES, dayKey, displayTable, monthKey, seededRng } from '@wortduell/co
 import type { Declension, Gender, NounInput } from '@wortduell/core';
 import { json } from '../db';
 import type { Db } from '../db';
+import { Ids } from '../ids';
 import { AttemptError } from './attempts';
 import type { Settings } from './settings';
 
@@ -48,6 +49,7 @@ export class Chores {
   constructor(
     private readonly db: Db,
     private readonly settings: Settings,
+    private readonly ids: Ids = new Ids(),
   ) {}
 
   private voucher(id: number): VoucherRow {
@@ -73,10 +75,11 @@ export class Chores {
     if (existing) return existing.id;
     const info = this.db
       .prepare(
-        `INSERT INTO voucher (kind, from_period, winner_id, loser_id, size, status, choose_by, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, 'choose', ?, ?, ?)`,
+        `INSERT INTO voucher (id, kind, from_period, winner_id, loser_id, size, status, choose_by, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, 'choose', ?, ?, ?)`,
       )
       .run(
+        this.ids.next(),
         kind,
         fromPeriod,
         winner,
@@ -348,10 +351,18 @@ export class Chores {
       return Number(
         this.db
           .prepare(
-            'INSERT INTO chore (size, title_de, sentence_de, title_en, noun, verb, active) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO chore (id, size, title_de, sentence_de, title_en, noun, verb, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
           )
-          .run(c.size, c.titleDe, c.sentenceDe, c.titleEn, c.noun, c.verb, c.active ? 1 : 0)
-          .lastInsertRowid,
+          .run(
+            this.ids.next(),
+            c.size,
+            c.titleDe,
+            c.sentenceDe,
+            c.titleEn,
+            c.noun,
+            c.verb,
+            c.active ? 1 : 0,
+          ).lastInsertRowid,
       );
     }
     const info = this.db

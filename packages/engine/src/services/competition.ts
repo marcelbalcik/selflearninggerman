@@ -30,6 +30,7 @@ import {
 import type { DuelMode, Outcome, Rating, StoredCard } from '@wortduell/core';
 import { json } from '../db';
 import type { Db } from '../db';
+import { Ids, boundaryKey } from '../ids';
 import type { Chores } from './chores';
 import type { RoundKind, RoundRow, RoundTotals, Rounds } from './rounds';
 import type { Sessions } from './session';
@@ -57,6 +58,7 @@ export class Competition {
     private readonly chores: Chores,
     private readonly settings: Settings,
     private readonly sessions: Sessions,
+    private readonly ids: Ids = new Ids(),
   ) {}
 
   // Meta ----------------------------------------------------------------------
@@ -89,20 +91,17 @@ export class Competition {
     return this.players()?.find((p) => p.id !== userId) ?? null;
   }
 
+  /** The day the later of the two placements finished (null before both). */
   epoch(now: Date): string | null {
-    const stored = this.meta('epoch_day');
-    if (stored) return stored;
     const pair = this.players();
     if (!pair) return null;
-    const done = this.db
-      .prepare<[], { n: number }>(
-        'SELECT COUNT(*) AS n FROM user WHERE placement_done_at IS NOT NULL',
+    const r = this.db
+      .prepare<[], { n: number; last: string | null }>(
+        'SELECT COUNT(placement_done_at) AS n, MAX(placement_done_at) AS last FROM user',
       )
       .get();
-    if ((done?.n ?? 0) < 2) return null;
-    const day = dayKey(now);
-    this.setMeta('epoch_day', day);
-    return day;
+    if (!r || r.n < 2 || r.last === null || r.last > now.toISOString()) return null;
+    return dayKey(new Date(r.last));
   }
 
   // The job -----------------------------------------------------------------------
@@ -116,7 +115,8 @@ export class Competition {
     const processed = this.meta('processed_through');
     for (let d = processed ? addDays(processed, 1) : epoch; d < today; d = addDays(d, 1)) {
       this.db.transaction(() => {
-        this.closeDay(d, pair, epoch);
+        // Rows created by the settlement get ids from the boundary (src/ids.ts).
+        this.ids.scope(boundaryKey(dayStart(addDays(d, 1))), () => this.closeDay(d, pair, epoch));
         this.setMeta('processed_through', d);
       })();
     }
@@ -124,10 +124,9 @@ export class Competition {
       this.rounds.ensureDuel(
         today,
         pair.map((p) => p.id),
-        this.settings.get('DUEL_MODE', now),
-        now,
+        this.settings.get('DUEL_MODE', dayStart(today)),
       );
-      this.openExam(today, pair, epoch, now);
+      this.openExam(today, pair, epoch);
       this.chores.timers(now);
     })();
   }
@@ -380,9 +379,9 @@ export class Competition {
       voucherId = Number(
         this.db
           .prepare(
-            "INSERT INTO reward_voucher (value_eur, source, week_key, status, created_at) VALUES (?, 'week', ?, 'banked', ?)",
+            "INSERT INTO reward_voucher (id, value_eur, source, week_key, status, created_at) VALUES (?, ?, 'week', ?, 'banked', ?)",
           )
-          .run(tier, key, boundary.toISOString()).lastInsertRowid,
+          .run(this.ids.next(), tier, key, boundary.toISOString()).lastInsertRowid,
       );
     }
     this.db
@@ -399,7 +398,7 @@ export class Competition {
     return { opens: dayStart(first), closes: dayStart(addDays(first, EXAM.WINDOW_DAYS)) };
   }
 
-  private openExam(today: string, pair: [Player, Player], epoch: string, now: Date): void {
+  private openExam(today: string, pair: [Player, Player], epoch: string): void {
     if (Number(today.slice(8)) > EXAM.WINDOW_DAYS) return;
     const month = monthKey(addDays(`${today.slice(0, 7)}-01`, -1));
     if (month < monthKey(epoch)) return;
@@ -409,7 +408,6 @@ export class Competition {
       pair.map((p) => p.id),
       opens,
       closes,
-      now,
     );
   }
 

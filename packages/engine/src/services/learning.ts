@@ -6,6 +6,7 @@ import { PLACEMENT, dayKey, dayStart, gradeGloss, recall } from '@wortduell/core
 import type { FacetKey, StoredCard } from '@wortduell/core';
 import { json } from '../db';
 import type { Db } from '../db';
+import { Ids } from '../ids';
 import type { Lemma, Repo } from '../repo';
 import type { Cards } from './cards';
 import type { LemmaCard, Sessions } from './session';
@@ -16,6 +17,7 @@ export class Learning {
     private readonly repo: Repo,
     private readonly cards: Cards,
     private readonly sessions: Sessions,
+    private readonly ids: Ids = new Ids(),
   ) {}
 
   /**
@@ -32,9 +34,9 @@ export class Learning {
     return this.db.transaction(() => {
       this.db
         .prepare(
-          "INSERT INTO report (user_id, sentence_id, reason, status, created_at) VALUES (?, ?, ?, 'open', ?)",
+          "INSERT INTO report (id, user_id, sentence_id, reason, status, created_at) VALUES (?, ?, ?, ?, 'open', ?)",
         )
-        .run(userId, sentenceId, reason, now.toISOString());
+        .run(this.ids.next(), userId, sentenceId, reason, now.toISOString());
       this.db.prepare("UPDATE sentence SET status = 'reported' WHERE id = ?").run(sentenceId);
       const attempts = this.db
         .prepare<[number], { id: number }>(

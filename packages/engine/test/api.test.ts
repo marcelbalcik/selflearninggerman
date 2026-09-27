@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { StoredCard } from '@wortduell/core';
 import { replayCard } from '@wortduell/core';
-import { importContent } from '../src/content';
-import { CONTENT, rightAnswer, testEnv } from './helpers';
+import { rightAnswer, testEnv } from './helpers';
 import type { TestEnv } from './helpers';
 
 const START = '2026-10-05T06:00:00.000Z';
@@ -21,7 +20,7 @@ async function post(env: TestEnv, user: string, url: string, payload: unknown) {
     method: 'POST',
     url,
     headers: { cookie: await env.cookie(user) },
-    payload: payload as Record<string, unknown>,
+    payload: payload,
   });
   return { status: res.statusCode, body: res.json<Record<string, unknown>>() };
 }
@@ -37,47 +36,17 @@ function nounGapSentence(env: TestEnv, pred: string): { id: number; lemma_id: nu
   return row;
 }
 
-describe('auth (spec §3)', () => {
-  it('rejects anonymous requests and wrong passwords, rate-limits logins', async () => {
-    const env = await testEnv(START);
-    expect((await env.app.inject({ method: 'GET', url: '/api/session' })).statusCode).toBe(401);
-    for (let i = 0; i < 5; i++) {
-      const res = await env.app.inject({
-        method: 'POST',
-        url: '/api/login',
-        payload: { name: 'marcel', password: 'falsch' },
-      });
-      expect(res.statusCode).toBe(401);
-    }
-    const blocked = await env.app.inject({
-      method: 'POST',
-      url: '/api/login',
-      payload: { name: 'marcel', password: 'geheim' },
-    });
-    expect(blocked.statusCode).toBe(429);
-    env.clock.advance(16 * 60 * 1000);
-    expect((await get(env, 'marcel', '/api/me')).body).toMatchObject({ name: 'marcel' });
-  });
-
-  it('sets an httpOnly, SameSite=Lax cookie', async () => {
-    const env = await testEnv(START);
-    const res = await env.app.inject({
-      method: 'POST',
-      url: '/api/login',
-      payload: { name: 'partnerin', password: 'geheim' },
-    });
-    const cookie = String(res.headers['set-cookie']);
-    expect(cookie).toMatch(/HttpOnly/);
-    expect(cookie).toMatch(/SameSite=Lax/);
-  });
-});
-
 describe('content import', () => {
-  it('is skipped when the version is unchanged and never touches user data', async () => {
+  it('copies every content row into the base database', async () => {
     const env = await testEnv(START);
-    expect(importContent(env.db, CONTENT).imported).toBe(false);
     const lemmas = env.db.prepare('SELECT COUNT(*) AS n FROM lemma').get() as { n: number };
     expect(lemmas.n).toBe(2032);
+    const unknown = await env.app.inject({
+      method: 'GET',
+      url: '/api/me',
+      headers: { cookie: 'user=nobody' },
+    });
+    expect(unknown.statusCode).toBe(401);
   });
 });
 

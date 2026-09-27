@@ -13,9 +13,10 @@ import {
   decideExam,
   lemmaFacetKey,
   recall,
+  replayCard,
   seededRng,
 } from '@wortduell/core';
-import type { DuelMode, ExerciseType, LexicalFacet, StoredCard } from '@wortduell/core';
+import type { DuelMode, ExerciseType, LexicalFacet, Rating, StoredCard } from '@wortduell/core';
 import { json } from '../db';
 import type { Db } from '../db';
 import type { Repo } from '../repo';
@@ -155,6 +156,8 @@ export class Rounds {
         `SELECT s.id, s.lemma_id, s.target_facet FROM sentence s JOIN lemma l ON l.id = s.lemma_id
          WHERE s.status = 'ok' AND s.retired = 0 AND l.retired = 0 AND l.track = 'core'
            AND json_extract(s.exercise_types, '$[0]') IN (${types})
+           -- meaning_prod unlocks with reviews; its items would depend on recent syncs.
+           AND s.target_facet != 'meaning_prod'
            AND s.lemma_id IN (SELECT lemma_id FROM lemma_intro WHERE user_id = ?
                               INTERSECT SELECT lemma_id FROM lemma_intro WHERE user_id = ?)
          ORDER BY s.id`,
@@ -173,20 +176,51 @@ export class Rounds {
     return { card: json<StoredCard>(r.fsrs) as StoredCard, introducedAt: r.introduced_at };
   }
 
-  /** Items with both users' predicted recall; null when a user has no unlocked card. */
-  private withRecall(c: Candidate, userIds: number[], now: Date): RoundItem | null {
+  /** An item when both users have the facet's card since before `before`. */
+  private item(c: Candidate, userIds: number[], before: string): RoundItem | null {
     const facetKey = lemmaFacetKey(c.lemma_id, c.target_facet);
-    const r: Record<string, number> = {};
     for (const u of userIds) {
       const card = this.card(u, facetKey);
-      if (!card) return null;
-      r[String(u)] = recall(card.card, now);
+      if (!card || card.introducedAt >= before) return null;
     }
-    return { sentenceId: c.id, lemmaId: c.lemma_id, facetKey, r };
+    return { sentenceId: c.id, lemmaId: c.lemma_id, facetKey, r: {} };
   }
 
-  /** The day's duel, generated once (idempotent). Empty items: no duel today. */
-  ensureDuel(day: string, userIds: number[], mode: string, now: Date): RoundRow {
+  /**
+   * Predicted recall of a user's card at an instant (vs_expected scoring),
+   * rebuilt from the review log when it has changed since.
+   */
+  recallAt(userId: number, facetKey: string, at: Date): number {
+    const row = this.db
+      .prepare<[number, string], { fsrs: string; introduced_at: string }>(
+        'SELECT fsrs, introduced_at FROM facet_card WHERE user_id = ? AND facet_key = ?',
+      )
+      .get(userId, facetKey);
+    if (!row) return 0;
+    const t = at.toISOString();
+    const later = this.db
+      .prepare(
+        'SELECT 1 FROM review_log WHERE user_id = ? AND facet_key = ? AND voided = 0 AND ts > ?',
+      )
+      .get(userId, facetKey, t);
+    if (!later) return recall(json<StoredCard>(row.fsrs) as StoredCard, at);
+    const reviews = this.db
+      .prepare<[number, string, string], { rating: Rating; ts: string }>(
+        'SELECT rating, ts FROM review_log WHERE user_id = ? AND facet_key = ? AND voided = 0 AND ts <= ? ORDER BY ts, id',
+      )
+      .all(userId, facetKey, t)
+      .map((x) => ({ rating: x.rating, at: new Date(x.ts) }));
+    return recall(replayCard(new Date(row.introduced_at), reviews), at);
+  }
+
+  /**
+   * The day's duel, generated once (idempotent). Empty items: no duel today.
+   * It depends only on facets both users have had for more than a day, never
+   * on recent reviews: both phones must pick the same items even while the
+   * last hours of the other phone's actions are still syncing. (The spec's
+   * preference for items with R in [0.6, 0.95] is dropped for that reason.)
+   */
+  ensureDuel(day: string, userIds: number[], mode: string): RoundRow {
     const existing = this.row('duel', day);
     if (existing) return existing;
     const recent = new Set<number>();
@@ -197,25 +231,25 @@ export class Rounds {
       .all(addDays(day, -DUEL.LEMMA_COOLDOWN_DAYS), day)) {
       for (const it of json<RoundItem[]>(d.items) ?? []) recent.add(it.lemmaId);
     }
+    const before = dayStart(addDays(day, -1)).toISOString();
     const rand = seededRng(hashSeed(`duel:${day}`));
     const byLemma = new Map<number, RoundItem>();
     for (const c of shuffle(this.sharedCandidates(userIds, recent), rand)) {
+      if (byLemma.size >= DUEL.ITEMS) break;
       if (byLemma.has(c.lemma_id)) continue;
-      const item = this.withRecall(c, userIds, now);
+      const item = this.item(c, userIds, before);
       if (item) byLemma.set(c.lemma_id, item);
     }
-    const inBand = (it: RoundItem) =>
-      Object.values(it.r).every((x) => x >= DUEL.PREFERRED_R_MIN && x <= DUEL.PREFERRED_R_MAX);
-    const mid = (DUEL.PREFERRED_R_MIN + DUEL.PREFERRED_R_MAX) / 2;
-    const dist = (it: RoundItem) => Math.max(...Object.values(it.r).map((x) => Math.abs(x - mid)));
-    const all = [...byLemma.values()];
-    const items = [
-      ...all.filter(inBand),
-      ...all.filter((it) => !inBand(it)).sort((x, y) => dist(x) - dist(y)),
-    ].slice(0, DUEL.ITEMS);
+    const items = [...byLemma.values()];
     this.db
-      .prepare('INSERT INTO duel (day_key, items, mode, created_at) VALUES (?, ?, ?, ?)')
-      .run(day, JSON.stringify(items), mode, now.toISOString());
+      .prepare('INSERT INTO duel (id, day_key, items, mode, created_at) VALUES (?, ?, ?, ?, ?)')
+      .run(
+        Number(day.replaceAll('-', '')),
+        day,
+        JSON.stringify(items),
+        mode,
+        dayStart(day).toISOString(),
+      );
     return this.row('duel', day) as RoundRow;
   }
 
@@ -224,7 +258,7 @@ export class Rounds {
    * introduced during the month and at least MIN_FACET_AGE_DAYS before the
    * window, topped up with older shared facets.
    */
-  ensureExam(month: string, userIds: number[], opensAt: Date, closesAt: Date, now: Date): RoundRow {
+  ensureExam(month: string, userIds: number[], opensAt: Date, closesAt: Date): RoundRow {
     const existing = this.row('exam', month);
     if (existing) return existing;
     const monthStart = dayStart(`${month}-01`).toISOString();
@@ -240,7 +274,7 @@ export class Rounds {
       const cards = userIds.map((u) => this.card(u, key));
       if (cards.some((x) => x === null)) continue;
       seen.add(key);
-      const item = this.withRecall(c, userIds, opensAt) as RoundItem;
+      const item: RoundItem = { sentenceId: c.id, lemmaId: c.lemma_id, facetKey: key, r: {} };
       const intro = cards.map((x) => x?.introducedAt ?? '');
       if (intro.every((t) => t >= monthStart && t <= latest)) fresh.push(item);
       else if (intro.every((t) => t < monthStart)) older.push(item);
@@ -248,14 +282,15 @@ export class Rounds {
     const items = [...fresh, ...older].slice(0, EXAM.ITEMS);
     this.db
       .prepare(
-        'INSERT INTO exam (month_key, items, opens_at, closes_at, created_at) VALUES (?, ?, ?, ?, ?)',
+        'INSERT INTO exam (id, month_key, items, opens_at, closes_at, created_at) VALUES (?, ?, ?, ?, ?, ?)',
       )
       .run(
+        Number(month.replace('-', '')),
         month,
         JSON.stringify(items),
         opensAt.toISOString(),
         closesAt.toISOString(),
-        now.toISOString(),
+        opensAt.toISOString(),
       );
     return this.row('exam', month) as RoundRow;
   }
@@ -315,7 +350,14 @@ export class Rounds {
       totalMs += a.latency_ms;
     }
     let expectedSum = 0;
-    for (const i of counted) expectedSum += round.items[i]?.r[String(userId)] ?? 0;
+    if (kind === 'duel') {
+      // R at the start of the duel's day, from the review log (vs_expected).
+      const at = dayStart(round.key);
+      for (const i of counted) {
+        const it = round.items[i];
+        if (it) expectedSum += this.recallAt(userId, it.facetKey, at);
+      }
+    }
     return {
       userId,
       played: row !== undefined && row.forfeit === 0,
@@ -366,7 +408,11 @@ export class Rounds {
     kind: RoundKind,
     round: RoundRow,
     userId: number,
-    input: Pick<AttemptInput, 'answer' | 'tappedIndex' | 'latencyMs'> & { index: number },
+    input: Pick<AttemptInput, 'answer' | 'tappedIndex' | 'latencyMs'> & {
+      index: number;
+      /** The item the player saw; a replay skips the answer if the item changed meanwhile. */
+      sentenceId?: number;
+    },
     now: Date,
   ): { index: number; finished: boolean } {
     if (now.toISOString() >= round.closesAt) throw new AttemptError(409, 'round closed');
@@ -374,6 +420,8 @@ export class Rounds {
     if (next === null) throw new AttemptError(409, 'round already finished');
     if (input.index !== next) throw new AttemptError(409, 'answer the items in order');
     const item = round.items[next] as RoundItem;
+    if (input.sentenceId !== undefined && input.sentenceId !== item.sentenceId)
+      throw new AttemptError(409, 'the item changed');
     this.db
       .prepare(
         `INSERT OR IGNORE INTO ${this.resultTable(kind)} (${kind}_id, user_id, started_at) VALUES (?, ?, ?)`,
@@ -430,6 +478,7 @@ export class Rounds {
         outcome: null,
         next: {
           index: next,
+          sentenceId: item.sentenceId,
           exerciseType: sentence.exerciseType,
           lemmaId: lemma.id,
           pos: lemma.pos,

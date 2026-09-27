@@ -1,16 +1,13 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { hash } from '@node-rs/argon2';
 import { FakeClock, dayStart } from '@wortduell/core';
 import Database from 'better-sqlite3';
-import type { FastifyInstance } from 'fastify';
-import { buildApp } from '../src/app';
-import { seedUsers } from '../src/auth';
 import { importContent } from '../src/content';
 import { migrate } from '../src/db';
 import type { Db } from '../src/db';
 import type { Gap } from '../src/repo';
-import type { LanguageTool } from '../src/services/komposition';
+import { Engine } from '../src/router';
+import type { Method } from '../src/router';
 
 export const CONTENT = join(
   dirname(fileURLToPath(import.meta.url)),
@@ -19,50 +16,73 @@ export const CONTENT = join(
   'content.sqlite',
 );
 
+/** What the old HTTP tests used: `app.inject` with a "cookie" naming the user. */
+export interface Injected {
+  statusCode: number;
+  body: string;
+  json: <T = Record<string, unknown>>() => T;
+}
+
 export interface TestEnv {
-  app: FastifyInstance;
-  db: Db;
+  app: {
+    inject: (req: {
+      method: string;
+      url: string;
+      headers?: { cookie?: string };
+      payload?: unknown;
+    }) => Promise<Injected>;
+  };
+  engine: Engine;
+  db: Db & Database.Database;
   clock: FakeClock;
+  /** The user handle the tests pass as a cookie (there are no logins any more). */
   cookie: (name: string) => Promise<string>;
-  /** Drop a cached login (after the session TTL expired). */
   forget: (name: string) => void;
 }
 
-let cachedHash: string | null = null;
+let base: Buffer | null = null;
 
-export async function testEnv(
-  start: string,
-  opts: { languageTool?: LanguageTool } = {},
-): Promise<TestEnv> {
-  const db = new Database(':memory:');
+/** A migrated database with the content imported, built once per test file. */
+export function baseDb(): Database.Database {
+  if (!base) {
+    const db = new Database(':memory:');
+    migrate(db);
+    const content = new Database(CONTENT, { readonly: true });
+    importContent(db, content);
+    content.close();
+    base = db.serialize();
+    db.close();
+  }
+  const db = new Database(base);
   db.pragma('foreign_keys = ON');
-  migrate(db);
-  importContent(db, CONTENT);
-  cachedHash ??= await hash('geheim');
-  seedUsers(db, [
-    { name: 'marcel', passwordHash: cachedHash },
-    { name: 'partnerin', passwordHash: cachedHash },
-  ]);
+  return db;
+}
+
+export const USERS = ['marcel', 'partnerin'];
+
+export function testEnv(start: string): Promise<TestEnv> {
+  const db = baseDb();
   const clock = new FakeClock(start);
-  const app = buildApp({ db, clock, secureCookies: false, languageTool: opts.languageTool });
-  await app.ready();
-  const cookies = new Map<string, string>();
-  const cookie = async (name: string): Promise<string> => {
-    const hit = cookies.get(name);
-    if (hit) return hit;
-    const res = await app.inject({
-      method: 'POST',
-      url: '/api/login',
-      payload: { name, password: 'geheim' },
+  const engine = new Engine(db, clock);
+  engine.seedUsers(USERS);
+  const inject: TestEnv['app']['inject'] = (req) => {
+    const user = USERS.indexOf((req.headers?.cookie ?? '').replace(/^user=/u, '')) + 1;
+    const res = engine.call(user, req.method as Method, req.url, req.payload ?? {});
+    const body = JSON.stringify(res.body ?? null);
+    return Promise.resolve({
+      statusCode: res.status === 200 ? 200 : res.status,
+      body,
+      json: <T>() => JSON.parse(body) as T,
     });
-    const set = res.headers['set-cookie'];
-    const raw = Array.isArray(set) ? set[0] : set;
-    if (!raw) throw new Error(`login failed: ${res.body}`);
-    const value = raw.split(';')[0] as string;
-    cookies.set(name, value);
-    return value;
   };
-  return { app, db, clock, cookie, forget: (name) => cookies.delete(name) };
+  return Promise.resolve({
+    app: { inject },
+    engine,
+    db,
+    clock,
+    cookie: (name) => Promise.resolve(`user=${name}`),
+    forget: () => undefined,
+  });
 }
 
 export interface SentenceOracle {

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { rightAnswer, testEnv } from './helpers';
 import type { TestEnv } from './helpers';
-import type { LtMatch } from '../src/services/komposition';
 
 const START = '2026-10-05T06:00:00.000Z';
 
@@ -16,7 +15,7 @@ async function call(
     method,
     url,
     headers: { cookie: await env.cookie(user) },
-    ...(payload === undefined ? {} : { payload: payload as Record<string, unknown> }),
+    ...(payload === undefined ? {} : { payload: payload }),
   });
   return { status: res.statusCode, body: res.json<Record<string, unknown>>() };
 }
@@ -159,8 +158,7 @@ describe('disputes are decided by the other person', () => {
 
 describe('komposition (spec §6.8)', () => {
   it('checks targets and dative, rates facets, and the partner reviews it', async () => {
-    const lt: LtMatch[] = [];
-    const env = await testEnv(START, { languageTool: () => Promise.resolve(lt) });
+    const env = await testEnv(START);
     const ids = [
       lemmaId(env, 'Mann', 'noun'),
       lemmaId(env, 'helfen', 'verb'),
@@ -173,14 +171,6 @@ describe('komposition (spec §6.8)', () => {
     expect(task.requiredCase).toBe('dat');
 
     const text = 'Ich helfe dem Mann. Das ist gut.';
-    lt.push({
-      offset: text.indexOf('Das'),
-      length: 3,
-      message: 'Test',
-      replacements: ['Dies'],
-      ruleId: 'TEST_RULE',
-      category: 'STYLE',
-    });
     const res = await call(env, 'POST', 'marcel', '/api/komposition', {
       lemmaIds: ids,
       requiredCase: 'dat',
@@ -190,7 +180,6 @@ describe('komposition (spec §6.8)', () => {
     const checks = res.body.checks as { lemmaId: number; found: boolean; dative: boolean }[];
     expect(checks.every((c) => c.found)).toBe(true);
     expect(checks.find((c) => c.lemmaId === ids[0])?.dative).toBe(true);
-    expect(res.body.languageTool).toHaveLength(1);
     expect((res.body.ratings as { rating: string }[]).every((r) => r.rating === 'good')).toBe(true);
     // Once a day.
     expect((await call(env, 'GET', 'marcel', '/api/session')).body.komposition).toBeNull();
@@ -235,7 +224,6 @@ describe('komposition (spec §6.8)', () => {
     });
     const checks = res.body.checks as { lemmaId: number; found: boolean }[];
     expect(checks.find((c) => c.lemmaId === ids[1])?.found).toBe(false);
-    expect(res.body.languageTool).toBeNull();
     const facets = (res.body.ratings as { facet: string; rating: string }[])
       .filter((r) => r.rating === 'again')
       .map((r) => r.facet);

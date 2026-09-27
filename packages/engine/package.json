@@ -1,0 +1,24 @@
+{
+  "name": "@wortduell/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The app's logic and SQL, runnable in the browser (sql.js) and in Node (better-sqlite3, tests).",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@wortduell/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^22",
+    "better-sqlite3": "^13.0.3",
+    "tsx": "^4.23.15",
+    "vitest": "^5"
+  }
+}

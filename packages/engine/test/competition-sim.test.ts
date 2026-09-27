@@ -50,10 +50,10 @@ class Sim {
         method,
         url,
         headers: { cookie: await this.env.cookie(user) },
-        ...(payload === undefined ? {} : { payload: payload as Record<string, unknown> }),
+        ...(payload === undefined ? {} : { payload: payload }),
       });
       if (res.statusCode === 401 && attempt === 0) {
-        this.env.forget(user); // the 30-day login expired
+        this.env.forget(user);
         continue;
       }
       return { status: res.statusCode, body: res.json<T>() };
@@ -145,7 +145,9 @@ class Sim {
         text: `Heute übe ich ${words.join(', ')}. Das ist gut.`,
       });
     }
-    await this.ok(user.name, 'GET', '/api/today'); // marks the cleared queue
+    const today = await this.ok<{ dueItems: number }>(user.name, 'GET', '/api/today');
+    // Heute reports an empty queue as an action (feeds active days).
+    if (today.dueItems === 0) await this.ok(user.name, 'POST', '/api/day/cleared', {});
   }
 
   /** Settlement tables, for idempotency checks. */
@@ -208,9 +210,19 @@ interface Scenario {
 }
 
 async function run(first: string, days: number, sc: Scenario) {
-  const env = await testEnv(morning(first));
+  // Set-up an hour before the first morning (placement and the starting block).
+  const env = await testEnv(new Date(Date.parse(morning(first)) - 3_600_000).toISOString());
   const sim = new Sim(env);
-  for (const u of USERS) await sim.ok(u.name, 'POST', '/api/placement/skip', {});
+  // Placement's effect: both start with the same block of frequent words.
+  const block = env.db
+    .prepare<[], { id: number }>(
+      "SELECT id FROM lemma WHERE pos = 'noun' ORDER BY freq_rank LIMIT 120",
+    )
+    .all();
+  for (const u of USERS) {
+    for (const l of block) await sim.ok(u.name, 'POST', `/api/lemmas/${l.id}/intro`, {});
+    await sim.ok(u.name, 'POST', '/api/placement/skip', {});
+  }
 
   const outcomes = {
     forfeitDays: 0,
@@ -330,10 +342,8 @@ async function run(first: string, days: number, sc: Scenario) {
 
   // --- Invariants -------------------------------------------------------------------
   const db = env.db;
-  const epoch = (
-    db.prepare("SELECT value FROM app_meta WHERE key = 'epoch_day'").get() as { value: string }
-  ).value;
-  expect(epoch).toBe(first);
+  // The competition starts on the day both finished placement (the first morning).
+  expect(env.engine.competition.epoch(env.clock.now())).toBe(first);
   // Every day with duel items has exactly one result.
   const duels = db
     .prepare('SELECT day_key, items, settled_at FROM duel WHERE day_key < ?')

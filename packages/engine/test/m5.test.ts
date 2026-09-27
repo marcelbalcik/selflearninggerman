@@ -1,3 +1,4 @@
+import { addDays } from '@wortduell/core';
 import { describe, expect, it } from 'vitest';
 import { morning, rightAnswer, testEnv } from './helpers';
 import type { TestEnv } from './helpers';
@@ -15,7 +16,7 @@ async function call<T = Record<string, unknown>>(
     method,
     url,
     headers: { cookie: await env.cookie(user) },
-    ...(payload === undefined ? {} : { payload: payload as Record<string, unknown> }),
+    ...(payload === undefined ? {} : { payload: payload }),
   });
   return { status: res.statusCode, body: res.json<T>() };
 }
@@ -69,8 +70,10 @@ describe('dual-approval settings (spec §10)', () => {
 
 describe('duel (spec §9.1)', () => {
   it('identical items, answered in order, results hidden until both finished', async () => {
-    const env = await testEnv(morning(DAY));
+    // Duel items come from words both have known for more than a day.
+    const env = await testEnv(morning(addDays(DAY, -2)));
     await sharedStart(env);
+    env.clock.set(morning(DAY));
     const first = await call<{ status: string; total: number; next: { index: number } }>(
       env,
       'marcel',
@@ -187,7 +190,10 @@ describe('chore vouchers (spec §9.4)', () => {
       deadline: string;
     };
     expect(v.status).toBe('confirmed');
-    expect(v.deadline).toBe(new Date(env.clock.now().getTime() + 48 * 3_600_000).toISOString());
+    // Writes in the same millisecond are nudged apart by 1 ms each.
+    const due = new Date(v.deadline).getTime() - env.clock.now().getTime();
+    expect(due).toBeGreaterThanOrEqual(48 * 3_600_000);
+    expect(due).toBeLessThan(48 * 3_600_000 + 10);
   });
 });
 
@@ -204,7 +210,7 @@ describe('reward vouchers (spec §9.5)', () => {
     );
 
   it('5 + 5 + 3 redeems at 10 € with 3 € change; one reroll needs both; undo ends at planned', async () => {
-    const env = await testEnv(morning(DAY), {});
+    const env = await testEnv(morning(DAY));
     const ids = bank(env, [5, 5, 3]);
     const red = await call<{ id: number }>(env, 'marcel', 'POST', '/api/redemptions', {
       voucherIds: ids,

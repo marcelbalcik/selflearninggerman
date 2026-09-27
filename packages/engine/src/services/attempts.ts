@@ -30,6 +30,7 @@ import type {
   PrepSkill,
 } from '@wortduell/core';
 import type { Db } from '../db';
+import { Ids } from '../ids';
 import { json } from '../db';
 import { nounInput } from '../repo';
 import type { Lemma, Repo, Sentence } from '../repo';
@@ -76,6 +77,7 @@ export class Attempts {
     private readonly db: Db,
     private readonly repo: Repo,
     private readonly cards: Cards,
+    private readonly ids: Ids = new Ids(),
   ) {}
 
   submit(userId: number, input: AttemptInput, now: Date): Feedback {
@@ -199,11 +201,12 @@ export class Attempts {
     const attemptId = this.db.transaction(() => {
       const info = this.db
         .prepare(
-          `INSERT INTO attempt (user_id, sentence_id, exercise_type, answer_raw, correct, error_class,
+          `INSERT INTO attempt (id, user_id, sentence_id, exercise_type, answer_raw, correct, error_class,
              classification, latency_ms, context, ts, pending_followup, duel_id, exam_id, item_index)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         )
         .run(
+          this.ids.next(),
           userId,
           sentence.id,
           sentence.exerciseType,

@@ -16,7 +16,7 @@
     "core:cli": "pnpm --silent --filter @wortduell/core cli",
     "core:decline": "pnpm --silent --filter @wortduell/core cli decline",
     "build": "pnpm --filter @wortduell/web build",
-    "start": "pnpm build && pnpm --filter @wortduell/server start",
+    "dev": "pnpm --filter @wortduell/web dev",
     "e2e": "pnpm build && pnpm --filter @wortduell/web e2e"
   },
   "devDependencies": {

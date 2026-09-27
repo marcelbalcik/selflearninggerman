@@ -174,17 +174,3 @@ export const PIPELINE = {
   /** A case enters a proposed frame when this share of the verb's corpus uses has it. */
   FRAME_MIN_SHARE: 0.2,
 } as const;
-
-export const FEEDBACK = {
-  /** LanguageTool language code for `komposition` checks (self-hosted server, spec change). */
-  LANGUAGETOOL_LANGUAGE: 'de-DE',
-  /** Give up on LanguageTool after this long and show deterministic feedback only. */
-  LANGUAGETOOL_TIMEOUT_MS: 5_000,
-} as const;
-
-export const OPS = {
-  BACKUP_RETENTION_DAYS: 30,
-  LOGIN_MAX_ATTEMPTS: 5,
-  LOGIN_WINDOW_MS: 15 * 60 * 1000,
-  SESSION_TTL_MS: 30 * DAY_MS,
-} as const;

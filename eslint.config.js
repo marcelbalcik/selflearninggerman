@@ -34,7 +34,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['packages/core/src/**/*.ts', 'apps/server/src/**/*.ts'],
+    files: ['packages/core/src/**/*.ts', 'packages/engine/src/**/*.ts'],
     ignores: ['**/clock.ts'],
     rules: noWallClock,
   },

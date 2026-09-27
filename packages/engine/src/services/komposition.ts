@@ -1,12 +1,11 @@
 /**
  * Komposition (spec §6.8, docs/DECISIONS.md): two sentences with three target
  * lemmas. Deterministic check that each target appears in a stored form (and,
- * if asked, a noun in the dative); LanguageTool feedback when a server is
- * configured; the other user reviews the text in Prüfen.
+ * if asked, a noun in the dative); the other user reviews the text in Prüfen.
+ * (No grammar checker: the app runs without a server.)
  */
 import {
   CONTRACTIONS,
-  FEEDBACK,
   SESSION,
   dayKey,
   detCells,
@@ -22,52 +21,7 @@ import { nounInput } from '../repo';
 import type { Lemma, Repo } from '../repo';
 import type { Cards } from './cards';
 import { AttemptError } from './attempts';
-
-export interface LtMatch {
-  offset: number;
-  length: number;
-  message: string;
-  replacements: string[];
-  ruleId: string;
-  category: string;
-}
-
-/** LanguageTool client; null when not configured or unreachable. */
-export type LanguageTool = (text: string) => Promise<LtMatch[] | null>;
-
-export function languageToolClient(url: string | undefined): LanguageTool {
-  return async (text) => {
-    if (!url) return null;
-    try {
-      const res = await fetch(`${url.replace(/\/$/u, '')}/v2/check`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ language: FEEDBACK.LANGUAGETOOL_LANGUAGE, text }).toString(),
-        signal: AbortSignal.timeout(FEEDBACK.LANGUAGETOOL_TIMEOUT_MS),
-      });
-      if (!res.ok) return null;
-      const data = (await res.json()) as {
-        matches: {
-          offset: number;
-          length: number;
-          message: string;
-          replacements: { value: string }[];
-          rule: { id: string; category: { id: string } };
-        }[];
-      };
-      return data.matches.map((m) => ({
-        offset: m.offset,
-        length: m.length,
-        message: m.message,
-        replacements: m.replacements.slice(0, 3).map((r) => r.value),
-        ruleId: m.rule.id,
-        category: m.rule.category.id,
-      }));
-    } catch {
-      return null;
-    }
-  };
-}
+import { Ids } from '../ids';
 
 export interface KompositionTask {
   lemmas: { id: number; text: string; pos: string; article: string | null }[];
@@ -79,7 +33,6 @@ export interface TargetCheck {
   found: boolean;
   span: [number, number] | null;
   dative: boolean;
-  ltIssue: string | null;
 }
 
 const ARTICLE = { m: 'der', f: 'die', n: 'das' } as const;
@@ -89,7 +42,7 @@ export class Komposition {
     private readonly db: Db,
     private readonly repo: Repo,
     private readonly cards: Cards,
-    private readonly languageTool: LanguageTool,
+    private readonly ids: Ids = new Ids(),
   ) {}
 
   doneToday(userId: number, now: Date): boolean {
@@ -165,44 +118,26 @@ export class Komposition {
         found: first !== undefined,
         span: first ? [first.start, first.end] : null,
         dative,
-        ltIssue: null,
       };
     });
   }
 
-  async submit(
+  submit(
     userId: number,
     input: { lemmaIds: number[]; requiredCase: 'dat' | null; text: string },
     now: Date,
-  ): Promise<{
-    id: number;
-    checks: TargetCheck[];
-    languageTool: LtMatch[] | null;
-    ratings: FacetRating[];
-  }> {
+  ): { id: number; checks: TargetCheck[]; ratings: FacetRating[] } {
     if (this.doneToday(userId, now)) throw new AttemptError(409, 'komposition already done today');
     const lemmas = input.lemmaIds
       .map((id) => this.repo.lemma(id))
       .filter((l): l is Lemma => l !== null);
     if (lemmas.length !== input.lemmaIds.length) throw new AttemptError(400, 'unknown lemma');
     const checks = this.check(input.text, lemmas, input.requiredCase);
-    const lt = await this.languageTool(input.text);
-    for (const c of checks) {
-      const m = lt?.find((x) => c.span && x.offset < c.span[1] && x.offset + x.length > c.span[0]);
-      if (m) c.ltIssue = m.ruleId;
-    }
     const ratings: FacetRating[] = [];
     for (const [i, l] of lemmas.entries()) {
       const c = checks[i] as TargetCheck;
       const meaning = this.meaningFacet(userId, l.id);
-      if (!c.found) ratings.push({ facet: meaning, rating: 'again' });
-      else if (c.ltIssue) {
-        const facet: FacetKey =
-          l.noun && /AGREEMENT|GENUS|ARTIKEL/iu.test(c.ltIssue)
-            ? lemmaFacetKey(l.id, 'gender')
-            : meaning;
-        ratings.push({ facet, rating: 'again' });
-      } else ratings.push({ facet: meaning, rating: 'good' });
+      ratings.push({ facet: meaning, rating: c.found ? 'good' : 'again' });
     }
     if (input.requiredCase === 'dat') {
       const noun = lemmas.find((l) => l.noun?.gender);
@@ -216,17 +151,18 @@ export class Komposition {
     const id = this.db.transaction(() => {
       const info = this.db
         .prepare(
-          `INSERT INTO komposition (user_id, day_key, lemma_ids, required_case, text, checks, languagetool, created_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO komposition (id, user_id, day_key, lemma_ids, required_case, text, checks, languagetool, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         )
         .run(
+          this.ids.next(),
           userId,
           dayKey(now),
           JSON.stringify(input.lemmaIds),
           input.requiredCase,
           input.text,
           JSON.stringify(checks),
-          lt ? JSON.stringify(lt) : null,
+          null,
           now.toISOString(),
         );
       const kid = Number(info.lastInsertRowid);
@@ -237,7 +173,7 @@ export class Komposition {
       }
       return kid;
     })();
-    return { id, checks, languageTool: lt, ratings };
+    return { id, checks, ratings };
   }
 
   /**

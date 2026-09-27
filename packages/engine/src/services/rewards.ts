@@ -7,9 +7,11 @@
  * and enter the pool once the other approves.
  */
 import { dayKey, defaultBand, drawReward } from '@wortduell/core';
+import { hashSeed } from './rounds';
 import type { RewardCandidate } from '@wortduell/core';
 import { json } from '../db';
 import type { Db } from '../db';
+import { Ids } from '../ids';
 import { AttemptError } from './attempts';
 import type { Settings } from './settings';
 
@@ -67,8 +69,7 @@ export class Rewards {
   constructor(
     private readonly db: Db,
     private readonly settings: Settings,
-    /** Seed source for draws (crypto in production, fixed in tests). */
-    private readonly seed: () => number,
+    private readonly ids: Ids = new Ids(),
   ) {}
 
   private redemption(id: number): RedemptionRow {
@@ -99,18 +100,21 @@ export class Rewards {
     const chosen = band ?? defaultBand(total, bands);
     if (chosen === null || !bands.includes(chosen) || chosen > total)
       throw new AttemptError(400, 'no band fits these vouchers');
+    const redemptionId = this.ids.next();
     return this.db.transaction(() => {
       const id = Number(
         this.db
           .prepare(
-            `INSERT INTO redemption (voucher_ids, total_eur, band_eur, rng_seed, started_by, status, created_at, updated_at)
-             VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)`,
+            `INSERT INTO redemption (id, voucher_ids, total_eur, band_eur, rng_seed, started_by, status, created_at, updated_at)
+             VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
           )
           .run(
+            redemptionId,
             JSON.stringify(ids),
             total,
             chosen,
-            this.seed(),
+            // Derived from the action, so both phones draw the same reward.
+            hashSeed(`redemption:${redemptionId ?? now.toISOString()}:${userId}`),
             userId,
             now.toISOString(),
             now.toISOString(),
@@ -172,9 +176,9 @@ export class Rewards {
         changeId = Number(
           this.db
             .prepare(
-              "INSERT INTO reward_voucher (value_eur, source, status, change_of, created_at) VALUES (?, 'change', 'banked', ?, ?)",
+              "INSERT INTO reward_voucher (id, value_eur, source, status, change_of, created_at) VALUES (?, ?, 'change', 'banked', ?, ?)",
             )
-            .run(draw.change, id, now.toISOString()).lastInsertRowid,
+            .run(this.ids.next(), draw.change, id, now.toISOString()).lastInsertRowid,
         );
       }
       const prev = this.db
@@ -324,10 +328,11 @@ export class Rewards {
     if (!bands.includes(r.budgetEur)) throw new AttemptError(400, 'budget must be a reward band');
     const info = this.db
       .prepare(
-        `INSERT INTO reward (budget_eur, kind, title_de, title_en, german_mission_de, season, needs_babysitter,
-           est_cost_note, active, proposed_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)`,
+        `INSERT INTO reward (id, budget_eur, kind, title_de, title_en, german_mission_de, season, needs_babysitter,
+           est_cost_note, active, proposed_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)`,
       )
       .run(
+        this.ids.next(),
         r.budgetEur,
         r.kind,
         r.titleDe,

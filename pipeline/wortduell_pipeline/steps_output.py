@@ -135,7 +135,7 @@ def export() -> dict[str, Any]:
     db.commit()
     db.close()
     # The server imports this committed copy on startup (spec §11 "Server import").
-    server_copy = REPO / "apps" / "server" / "content" / "content.sqlite"
+    server_copy = REPO / "packages" / "engine" / "content" / "content.sqlite"
     server_copy.parent.mkdir(parents=True, exist_ok=True)
     server_copy.write_bytes(path.read_bytes())
 

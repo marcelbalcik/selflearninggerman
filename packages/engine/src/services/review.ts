@@ -11,6 +11,7 @@ import { lemmaFacetKey, sentenceFacets, skillFacetKey } from '@wortduell/core';
 import type { FacetKey } from '@wortduell/core';
 import { json } from '../db';
 import type { Db } from '../db';
+import { Ids } from '../ids';
 import type { Repo } from '../repo';
 import { AttemptError } from './attempts';
 import type { Cards } from './cards';
@@ -22,6 +23,7 @@ export class Review {
     private readonly repo: Repo,
     private readonly cards: Cards,
     private readonly sessions: Sessions,
+    private readonly ids: Ids = new Ids(),
   ) {}
 
   dispute(userId: number, attemptId: number, note: string, now: Date): { id: number } {
@@ -38,9 +40,9 @@ export class Review {
     if (open) throw new AttemptError(409, 'already disputed');
     const info = this.db
       .prepare(
-        "INSERT INTO dispute (attempt_id, user_id, note, status, created_at) VALUES (?, ?, ?, 'open', ?)",
+        "INSERT INTO dispute (id, attempt_id, user_id, note, status, created_at) VALUES (?, ?, ?, ?, 'open', ?)",
       )
-      .run(attemptId, userId, note, now.toISOString());
+      .run(this.ids.next(), attemptId, userId, note, now.toISOString());
     return { id: Number(info.lastInsertRowid) };
   }
 
@@ -272,7 +274,6 @@ export class Review {
           (id) => this.repo.lemma(id)?.text ?? String(id),
         ),
         checks: json(k.checks),
-        languageTool: json(k.languagetool),
         createdAt: k.created_at,
       }));
     return { disputes, myDisputes, reports, frames, lemmas, kompositions };

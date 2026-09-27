@@ -182,21 +182,12 @@ describe('30-day simulation (M2 acceptance)', () => {
 
     // After a full day off, reviews are due again and the backlog flag is consistent.
     env.clock.set(berlinMorning(addDays(FIRST_DAY, DAYS + 1)));
-    // The 30-day login session has expired by now (OPS.SESSION_TTL_MS).
-    const expired = await env.app.inject({
-      method: 'GET',
-      url: '/api/today',
-      headers: { cookie: await env.cookie('marcel') },
-    });
-    expect(expired.statusCode).toBe(401);
-    const login = await env.app.inject({
-      method: 'POST',
-      url: '/api/login',
-      payload: { name: 'marcel', password: 'geheim' },
-    });
-    const fresh = String(login.headers['set-cookie']).split(';')[0] as string;
     const today = (
-      await env.app.inject({ method: 'GET', url: '/api/today', headers: { cookie: fresh } })
+      await env.app.inject({
+        method: 'GET',
+        url: '/api/today',
+        headers: { cookie: await env.cookie('marcel') },
+      })
     ).json<{ dueCount: number; backlog: boolean }>();
     expect(today.dueCount).toBeGreaterThan(0);
     expect(today.backlog).toBe(today.dueCount > SESSION.BACKLOG_THRESHOLD);
