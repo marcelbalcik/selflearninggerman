@@ -3,9 +3,9 @@ name: Pages
 # Builds the app (with the base word database) and publishes it on GitHub
 # Pages. The learning data never goes here: it lives in the private data
 # repository the app syncs with (see README "Setting it up").
+# Publishes from the repository's default branch, whatever it is called.
 on:
   push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -19,6 +19,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
