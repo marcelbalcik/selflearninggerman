@@ -21,6 +21,11 @@ import { idb } from './idb';
 
 export interface AppConfig {
   users: string[];
+  /**
+   * Raise it to start over: every phone discards its progress and syncs into
+   * a fresh folder of the data repository (the old logs are kept, unused).
+   */
+  generation?: number;
   sync?: SyncConfig & { token: Sealed };
 }
 
@@ -77,7 +82,8 @@ const lsSet = (k: string, v: string | null): void => {
 };
 
 const dayOf = (a: Action) => a.ts.slice(0, 10);
-const pathOf = (user: number, day: string) => `log/${user}/${day}.json`;
+/** Log folder of a generation: `log/` for the first, `g2/log/` and so on after a restart. */
+const folderOf = (generation: number) => (generation > 1 ? `g${generation}/log/` : 'log/');
 
 function union(a: Action[], b: Action[]): Action[] {
   const seen = new Map<string, Action>();
@@ -141,6 +147,7 @@ class Runtime {
       const space = JSON.stringify([
         this.config.sync ? `${this.config.sync.owner}/${this.config.sync.repo}` : 'local',
         this.config.users,
+        this.config.generation ?? 1,
       ]);
       if (lsGet(LS_SPACE) !== space) {
         for (const prefix of ['log:', 'cp', 'dirty', 'shas']) {
@@ -283,7 +290,9 @@ class Runtime {
       let changed = false;
       for (const f of await gh.list()) {
         if (this.shas.get(f.path) === f.sha) continue;
-        const m = /^log\/(\d)\/(\d{4}-\d{2}-\d{2})\.json$/u.exec(f.path);
+        const folder = folderOf(this.config.generation ?? 1);
+        if (!f.path.startsWith(folder)) continue; // another generation
+        const m = /^(\d)\/(\d{4}-\d{2}-\d{2})\.json$/u.exec(f.path.slice(folder.length));
         if (!m) continue;
         const remote = JSON.parse(await gh.read(f.sha)) as Action[];
         const key = `log:${m[1]}:${m[2]}`;
@@ -298,7 +307,7 @@ class Runtime {
       for (const day of [...this.dirty]) {
         if (!me) break;
         const user = Number(me);
-        const path = pathOf(user, day);
+        const path = `${folderOf(this.config.generation ?? 1)}${user}/${day}.json`;
         const key = `log:${user}:${day}`;
         let local = (await idb.get<Action[]>(key)) ?? [];
         try {

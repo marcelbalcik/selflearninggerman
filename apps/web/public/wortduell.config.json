@@ -3,6 +3,7 @@
     "Marcel",
     "Melisa"
   ],
+  "generation": 2,
   "sync": {
     "owner": "marcelbalcik",
     "repo": "wortduell-data",
