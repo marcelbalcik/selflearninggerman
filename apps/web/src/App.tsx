@@ -4,6 +4,7 @@ import { ApiError, api } from './api';
 import { LangContext, translate } from './i18n';
 import { AufgabenScreen } from './screens/Aufgaben';
 import { RoundScreen, WettbewerbScreen } from './screens/Competition';
+import { Einrichten } from './screens/Einrichten';
 import { Pruefen } from './screens/Pruefen';
 import { WochenzielScreen } from './screens/Wochenziel';
 import { Session } from './screens/Session';
@@ -21,7 +22,8 @@ type Route =
   | { name: 'pruefung' }
   | { name: 'wettbewerb' }
   | { name: 'wochenziel' }
-  | { name: 'aufgaben' };
+  | { name: 'aufgaben' }
+  | { name: 'einrichten' };
 
 /** Tiny hash router: #/heute, #/session, #/wort/123, #/pruefen, #/einstellungen. */
 function parse(hash: string): Route {
@@ -30,6 +32,7 @@ function parse(hash: string): Route {
   if (name === 'wort' && arg) return { name: 'wort', id: Number(arg) };
   if (name === 'einstellungen') return { name: 'einstellungen' };
   if (name === 'pruefen') return { name: 'pruefen' };
+  if (name === 'einrichten') return { name: 'einrichten' };
   if (
     name === 'duell' ||
     name === 'pruefung' ||
@@ -85,7 +88,10 @@ export function App(): ReactNode {
   // exercises never do (they would lose their place).
   const fresh = `${route.name}:${rt.version}`;
   let screen: ReactNode;
-  if (rt.phase === 'loading') {
+  if (route.name === 'einrichten') {
+    // One-time setup works before anything is configured.
+    screen = <Einrichten />;
+  } else if (rt.phase === 'loading') {
     screen = <Loading />;
   } else if (rt.phase === 'failed') {
     screen = (
@@ -100,7 +106,7 @@ export function App(): ReactNode {
   } else if (rt.phase === 'locked') {
     screen = <Unlock />;
   } else if (rt.phase === 'choose') {
-    screen = <WhoAreYou users={rt.users} />;
+    screen = <WhoAreYou users={rt.users} configured={rt.sync.enabled} />;
   } else if (failed) {
     screen = (
       <div className="card">
@@ -113,7 +119,7 @@ export function App(): ReactNode {
   } else if (me === undefined) {
     screen = <p className="muted">{t('loading')}</p>;
   } else if (me === null) {
-    screen = <WhoAreYou users={rt.users} />;
+    screen = <WhoAreYou users={rt.users} configured={rt.sync.enabled} />;
   } else if (!me.placementDone) {
     screen = <Placement onDone={loadMe} />;
   } else if (route.name === 'session') {
@@ -166,7 +172,8 @@ export function App(): ReactNode {
         me.placementDone &&
         route.name !== 'session' &&
         route.name !== 'duell' &&
-        route.name !== 'pruefung' && (
+        route.name !== 'pruefung' &&
+        route.name !== 'einrichten' && (
           <nav className="tabs" aria-label="Navigation">
             {(
               [

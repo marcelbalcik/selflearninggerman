@@ -53,21 +53,21 @@ pipeline/        Python content pipeline: Wiktionary, Tatoeba, spaCy, OdeNet
 
    Keep the token to yourself; never paste it into a chat or an issue.
 
-3. **Config.** On your computer, in this repository:
-
-   ```bash
-   pnpm install
-   pnpm --filter @wortduell/web setup-sync
-   ```
-
-   It asks for your two names, the data repository, the token and a shared
-   password (use a long sentence: the encrypted token is public and could be
-   guessed at offline). It checks the token and writes
-   `apps/web/public/wortduell.config.json`. Commit and push that file.
-
-4. **Pages.** In this repository: Settings → Pages → Source: _GitHub Actions_.
+3. **Pages.** In this repository: Settings → Pages → Source: _GitHub Actions_.
    The `Pages` workflow publishes the app on every push to `main`, at
    `https://<your-account>.github.io/<this-repository>/`.
+4. **Config, in the browser.** Open that address with `#/einrichten` at the
+   end (the first screen also links to it). Enter your two names, the data
+   repository, the token and a shared password (a long sentence: the
+   encrypted token is public and could be guessed at offline). The page checks
+   the token and encrypts it right there, then shows the config file. On
+   GitHub, use _Add file → Create new file_ in this repository, name it
+   `apps/web/public/wortduell.config.json`, paste the text and commit. After the
+   rebuild (a minute or two) the app syncs.
+
+   _Alternatively, with Node 22 and pnpm installed:_
+   `pnpm install && pnpm --filter @wortduell/web setup-sync` writes the same file.
+
 5. **Phones.** Open the address, enter the password, choose your name, and add
    the page to the home screen (it installs as an app).
 

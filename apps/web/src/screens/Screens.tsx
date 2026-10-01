@@ -62,10 +62,21 @@ export function Unlock(): ReactNode {
 }
 
 /** "Wer bist du?": which of the two uses this phone (remembered). */
-export function WhoAreYou({ users }: { users: string[] }): ReactNode {
+export function WhoAreYou({
+  users,
+  configured,
+}: {
+  users: string[];
+  configured: boolean;
+}): ReactNode {
   const t = useT();
   return (
     <div className="card">
+      {!configured && (
+        <p className="note">
+          {t('notConfigured')} <a href="#/einrichten">{t('setUp')}</a>
+        </p>
+      )}
       <h1>{t('whoAreYou')}</h1>
       <div className="btn-row" style={{ flexDirection: 'column' }}>
         {users.map((name, i) => (
