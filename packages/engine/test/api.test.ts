@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { StoredCard } from '@wortduell/core';
-import { replayCard } from '@wortduell/core';
-import { rightAnswer, testEnv } from './helpers';
+import { meaningLabel, replayCard } from '@wortduell/core';
+import { meaningChoice } from '../src/choices';
+import { Repo } from '../src/repo';
+import type { Lemma } from '../src/repo';
+import { meaningOf, rightAnswer, testEnv } from './helpers';
 import type { TestEnv } from './helpers';
 
 const START = '2026-10-05T06:00:00.000Z';
@@ -202,26 +205,21 @@ describe('reporting voids attempts and rebuilds cards (spec §8.4)', () => {
 });
 
 describe('placement (both users start at A2.1)', () => {
-  it('grades typed meanings and introduces the block of each passed sample, once', async () => {
+  it('grades chosen meanings and introduces the block of each passed sample, once', async () => {
     const env = await testEnv(START);
     const sample = (await get(env, 'marcel', '/api/placement')).body.sample as {
       lemmaId: number;
+      options: string[];
     }[];
     expect(sample.length).toBeGreaterThan(50);
-    const gloss = (id: number) =>
-      (
-        JSON.parse(
-          (
-            env.db.prepare('SELECT glosses_accepted FROM lemma WHERE id = ?').get(id) as {
-              glosses_accepted: string;
-            }
-          ).glosses_accepted,
-        ) as string[]
-      )[0] ?? '';
-    const answers = sample.map((s, i) => ({
-      lemmaId: s.lemmaId,
-      answer: i % 2 === 0 ? gloss(s.lemmaId) : 'no idea',
-    }));
+    const answers = sample.map((s, i) => {
+      const right = meaningOf(env.db, s.lemmaId);
+      expect(s.options).toContain(right);
+      return {
+        lemmaId: s.lemmaId,
+        answer: i % 2 === 0 ? right : (s.options.find((o) => o !== right) ?? ''),
+      };
+    });
     const res = await post(env, 'marcel', '/api/placement', { answers });
     expect(res.body.passed).toBe(Math.ceil(sample.length / 2));
     expect(res.body.introduced).toBeGreaterThan(0);
@@ -230,5 +228,53 @@ describe('placement (both users start at A2.1)', () => {
     expect((await get(env, 'marcel', '/api/me')).body.placementDone).toBe(true);
     const today = (await get(env, 'marcel', '/api/today')).body;
     expect(today.newToday).toBe(0);
+  });
+});
+
+describe('meaning questions (multiple choice)', () => {
+  it('offers four different meanings, and only the word’s own is right', async () => {
+    const env = await testEnv(START);
+    const sein = env.db
+      .prepare("SELECT id FROM lemma WHERE text = 'sein' AND pos = 'verb'")
+      .get() as { id: number };
+    await post(env, 'marcel', `/api/lemmas/${sein.id}/intro`, {});
+    const sentence = env.db
+      .prepare(
+        `SELECT id FROM sentence WHERE lemma_id = ? AND exercise_types = '["bedeutung"]' AND status = 'ok' ORDER BY id LIMIT 1`,
+      )
+      .get(sein.id) as { id: number };
+    const plan = (await get(env, 'marcel', '/api/session')).body as {
+      items: { sentenceId?: number; prompt?: { type: string; options?: string[] } }[];
+    };
+    const repo = new Repo(env.db);
+    const lemma = repo.lemma(sein.id) as Lemma;
+    expect(meaningLabel(lemma.meanings)).toBe('to be');
+    const { options, answer } = meaningChoice(repo, lemma, sentence.id);
+    expect(new Set(options).size).toBe(4);
+    expect(options).toContain('to be');
+    expect(answer).toBe('to be');
+    // Distractors share no word with the answer.
+    expect(options.filter((o) => o !== answer).some((o) => /\bbe\b/u.test(o))).toBe(false);
+    // The session shows the same options the grader rebuilds.
+    const shown = plan.items.find((i) => i.sentenceId === sentence.id);
+    if (shown) expect(shown.prompt?.options).toEqual(options);
+
+    const wrong = options.find((o) => o !== answer) as string;
+    const bad = (
+      await post(env, 'marcel', '/api/attempts', {
+        sentenceId: sentence.id,
+        answer: wrong,
+        latencyMs: 2000,
+      })
+    ).body as { correct: boolean; expected: string };
+    expect(bad).toMatchObject({ correct: false, expected: 'to be' });
+    const good = (
+      await post(env, 'marcel', '/api/attempts', {
+        sentenceId: sentence.id,
+        answer: 'to be',
+        latencyMs: 2000,
+      })
+    ).body as { correct: boolean };
+    expect(good.correct).toBe(true);
   });
 });

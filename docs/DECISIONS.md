@@ -555,3 +555,28 @@ they are.
   `g<generation>/log/` in the data repository. Older generations' files are
   ignored, so no access to the private data repository is needed.
 - Set to 2 on 2026-10-01.
+
+## Clearer questions (2026-10-01)
+
+Marcel: the questions were a mess. They asked for exact dictionary
+definitions (`sein`), and an English prompt could read as if an English word
+was wanted.
+
+- **Short meanings.** `core/meanings.ts` derives up to three short meanings
+  per word from the Wiktionary glosses and drops grammar notes ("as a
+  copulative verb", "used for emphasis"), prose definitions and the like:
+  `sein` is "to be". They are used on the new-word card, as answer options
+  and as the prompt of single-word German production.
+- **Meaning (DE → EN) is multiple choice.** The German sentence with the word
+  marked, "Was bedeutet »bleiben« hier?" and four options: the word's own
+  meanings and three from other core words of the same part of speech and
+  similar frequency, sharing no word with the answer. The options are
+  deterministic per sentence, so grading rebuilds them. After answering, the
+  sentence's English translation is shown. Nothing English is typed any more.
+  Placement asks the same way.
+- **German production (EN → DE) says so.** "Wie sagt man das auf Deutsch?",
+  the English in quotes and italics, the answer field labelled "auf Deutsch",
+  and a hint with the first letter of the German word (rated Hard when used)
+  plus "Weiß ich nicht".
+- Answers typed before this change still grade as before when the logs are
+  replayed.

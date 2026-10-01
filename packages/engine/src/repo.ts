@@ -8,6 +8,7 @@ import type {
   NounInput,
   SkillId,
 } from '@wortduell/core';
+import { shortMeanings } from '@wortduell/core';
 import { json } from './db';
 import type { Db } from './db';
 
@@ -18,6 +19,8 @@ export interface Lemma {
   senseKey: string;
   gloss: string;
   glossesAccepted: string[];
+  /** Short English meanings for display and multiple choice (core/meanings). */
+  meanings: string[];
   freqRank: number | null;
   semanticField: string | null;
   theme: string | null;
@@ -159,12 +162,16 @@ interface SentenceRow {
 export class Repo {
   private lemmas = new Map<number, Lemma>();
   private sentencesByLemma = new Map<number, Sentence[]>();
+  private deck: Lemma[] | null = null;
+  private pool: MeaningEntry[] | null = null;
 
   constructor(private readonly db: Db) {}
 
   reset(): void {
     this.lemmas.clear();
     this.sentencesByLemma.clear();
+    this.deck = null;
+    this.pool = null;
   }
 
   lemma(id: number): Lemma | null {
@@ -179,6 +186,7 @@ export class Repo {
       senseKey: row.sense_key,
       gloss: row.gloss_en,
       glossesAccepted: json<string[]>(row.glosses_accepted) ?? [],
+      meanings: shortMeanings(row.pos, row.gloss_en, json<string[]>(row.glosses_accepted) ?? []),
       freqRank: row.freq_rank,
       semanticField: row.semantic_field,
       theme: row.theme,
@@ -284,14 +292,39 @@ export class Repo {
 
   /** Core-deck lemmas in frequency order. */
   coreDeck(): Lemma[] {
-    return this.db
+    this.deck ??= this.db
       .prepare<[], { id: number }>(
         "SELECT id FROM lemma WHERE track = 'core' AND status = 'ok' AND retired = 0 ORDER BY freq_rank, id",
       )
       .all()
       .map((r) => this.lemma(r.id))
       .filter((l): l is Lemma => l !== null);
+    return this.deck;
   }
+
+  /** Core words with their short meanings, by part of speech in frequency order. */
+  meaningPool(): MeaningEntry[] {
+    this.pool ??= this.db
+      .prepare<[], Pick<LemmaRow, 'id' | 'pos' | 'freq_rank' | 'gloss_en' | 'glosses_accepted'>>(
+        "SELECT id, pos, freq_rank, gloss_en, glosses_accepted FROM lemma WHERE track = 'core' AND status = 'ok' AND retired = 0 ORDER BY freq_rank, id",
+      )
+      .all()
+      .map((r) => ({
+        id: r.id,
+        pos: r.pos,
+        freqRank: r.freq_rank ?? 0,
+        meanings: shortMeanings(r.pos, r.gloss_en, json<string[]>(r.glosses_accepted) ?? []),
+      }));
+    return this.pool;
+  }
+}
+
+/** What multiple choice needs of a core word (choices.ts), without loading the whole lemma. */
+export interface MeaningEntry {
+  id: number;
+  pos: Lemma['pos'];
+  freqRank: number;
+  meanings: string[];
 }
 
 function toSentence(r: SentenceRow): Sentence {

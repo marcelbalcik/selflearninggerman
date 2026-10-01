@@ -31,6 +31,7 @@ import type {
 } from '@wortduell/core';
 import type { Db } from '../db';
 import { Ids } from '../ids';
+import { meaningChoice } from '../choices';
 import { json } from '../db';
 import { nounInput } from '../repo';
 import type { Lemma, Repo, Sentence } from '../repo';
@@ -161,9 +162,13 @@ export class Attempts {
         ? implicated.map((facet) => ({ facet, rating: successRating(speed, false) }))
         : [{ facet: lemmaFacetKey(lemma.id, sentence.targetFacet), rating: 'again' }];
     } else if (sentence.exerciseType === 'bedeutung') {
-      const g = gradeGloss(sentence.accepted, input.answer);
+      // A tapped option; typed meanings (older logs) are still graded as typed.
+      const choice = meaningChoice(this.repo, lemma, sentence.id);
+      const g = choice.options.includes(input.answer)
+        ? { correct: input.answer === choice.answer, expected: choice.answer, typoTolerated: false }
+        : gradeGloss(sentence.accepted, input.answer);
       correct = g.correct;
-      expected = g.expected;
+      expected = g.correct ? g.expected : choice.answer;
       typo = g.typoTolerated;
       errorClass = correct ? null : 'wrong_meaning';
       ratings = [
@@ -236,7 +241,9 @@ export class Attempts {
       secondary: grade?.secondary ?? [],
       notes: [...(grade?.notes ?? []), ...(typo && !grade ? ['typo_tolerated'] : [])],
       marks:
-        sentence.exerciseType === 'wer_tut_was' ? [] : markAnswer(expected, input.answer.trim()),
+        sentence.exerciseType === 'wer_tut_was' || sentence.exerciseType === 'bedeutung'
+          ? []
+          : markAnswer(expected, input.answer.trim()),
       followUp: grade?.followUp ?? null,
       ratings: pending ? [] : ratings,
       forms: lemma.noun ? displayTable(nounInput(lemma)) : null,
