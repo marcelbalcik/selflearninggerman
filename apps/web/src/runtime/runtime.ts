@@ -55,6 +55,8 @@ export class RequestError extends Error {
 
 const LS_TOKEN = 'wortduell.token';
 const LS_ME = 'wortduell.me';
+/** Which shared space (data repository and names) this phone's data belongs to. */
+const LS_SPACE = 'wortduell.space';
 const POLL_MS = 60_000;
 const PUSH_DELAY_MS = 3_000;
 
@@ -133,6 +135,21 @@ class Runtime {
       const base = import.meta.env.BASE_URL;
       const cfgRes = await fetch(`${base}wortduell.config.json`, { cache: 'no-store' });
       if (cfgRes.ok) this.config = (await cfgRes.json()) as AppConfig;
+      // Data from another space (e.g. trying the app before sync was set up)
+      // must not end up in the shared logs under a guessed name: start fresh
+      // and ask who this is again.
+      const space = JSON.stringify([
+        this.config.sync ? `${this.config.sync.owner}/${this.config.sync.repo}` : 'local',
+        this.config.users,
+      ]);
+      if (lsGet(LS_SPACE) !== space) {
+        for (const prefix of ['log:', 'cp', 'dirty', 'shas']) {
+          for (const k of await idb.keys(prefix)) await idb.del(k);
+        }
+        lsSet(LS_ME, null);
+        lsSet(LS_TOKEN, null);
+        lsSet(LS_SPACE, space);
+      }
       const meta = (await (await fetch(`${base}data/base.json`, { cache: 'no-store' })).json()) as {
         file: string;
         version: string;
