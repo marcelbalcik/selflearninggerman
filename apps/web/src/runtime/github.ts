@@ -87,7 +87,7 @@ export class GitHub {
     if (r.status === 404 || r.status === 409) return [];
     if (r.status !== 200 || !r.data) throw new GitHubError(r.status, 'listing failed');
     return r.data.tree
-      .filter((t) => t.type === 'blob' && t.path.startsWith('log/'))
+      .filter((t) => t.type === 'blob' && t.path.endsWith('.json'))
       .map((t) => ({ path: t.path, sha: t.sha }));
   }
 

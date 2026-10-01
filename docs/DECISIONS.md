@@ -543,3 +543,15 @@ screen, no reminders, no LanguageTool; the two users trust each other.
   - The M2 and M5 simulations still pass on the engine. Their users now
     start with a shared block of words, the way placement would, because
     duel items need day-old words.
+
+## Starting over (2026-10-01)
+
+Marcel: zero the progress and start over; no flashcards, the reviews stay as
+they are.
+
+- The config has a `generation` (default 1). Raising it resets everything:
+  each phone discards its local data (logs, checkpoints, remembered person,
+  token) because the shared "space" changed, and syncs into
+  `g<generation>/log/` in the data repository. Older generations' files are
+  ignored, so no access to the private data repository is needed.
+- Set to 2 on 2026-10-01.

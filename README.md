@@ -71,6 +71,12 @@ pipeline/        Python content pipeline: Wiktionary, Tatoeba, spaCy, OdeNet
 5. **Phones.** Open the address, enter the password, choose your name, and add
    the page to the home screen (it installs as an app).
 
+**Starting over.** To reset everyone's progress, raise `"generation"` in
+`apps/web/public/wortduell.config.json` (e.g. from 2 to 3) and commit. Every
+phone then discards its local progress, asks for the password and the name
+again, and syncs into a fresh folder (`g3/log/…`) of the data repository; the
+old logs stay there unused.
+
 Without `wortduell.config.json` the app runs on one device only (no sync),
 which is handy for trying it out: `pnpm dev`.
 
