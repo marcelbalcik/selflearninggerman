@@ -262,6 +262,21 @@ label {
   margin: 0 0.15em;
 }
 
+/* English to translate: quoted and italic, so it never reads as the answer language */
+.en-prompt {
+  font-size: 1.2rem;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.en-prompt::before {
+  content: '“';
+}
+
+.en-prompt::after {
+  content: '”';
+}
+
 .cue {
   font-size: 0.95rem;
   color: var(--graphite-soft);

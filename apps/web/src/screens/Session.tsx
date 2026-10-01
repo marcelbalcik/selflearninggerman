@@ -271,29 +271,21 @@ export function Exercise({
             ))}
           </p>
           <p>{t('bedeutungTask', { word: p.word })}</p>
+          <Choices options={p.options} disabled={busy} onPick={(o) => submit(o)} />
+        </>
+      )}
+      {p.type === 'en_de_chunk' && (
+        <>
+          <p>{p.pos === 'noun' ? t('chunkTask') : t('chunkTaskWord')}</p>
+          <p className="en-prompt" lang="en">
+            {p.prompt}
+          </p>
           {hint && <p className="muted">{t('hintShown', { letter: p.hint })}</p>}
           <AnswerInput
             value={answer}
             onChange={setAnswer}
             onSubmit={() => submit()}
-            placeholder={t('bedeutungPlaceholder')}
-            label={t('bedeutungTask', { word: p.word })}
-            umlauts={false}
-            autoFocus
-          />
-        </>
-      )}
-      {p.type === 'en_de_chunk' && (
-        <>
-          <p className="muted">{p.pos === 'noun' ? t('chunkTask') : t('chunkTaskWord')}</p>
-          <p className="de" lang="en">
-            {p.prompt}
-          </p>
-          <AnswerInput
-            value={answer}
-            onChange={setAnswer}
-            onSubmit={() => submit()}
-            placeholder={t('answerPlaceholder')}
+            placeholder={t('chunkPlaceholder')}
             label={p.prompt}
             autoFocus
           />
@@ -384,17 +376,17 @@ export function Exercise({
         </p>
       )}
       <div className="btn-row">
-        {p.type === 'bedeutung' && !hint && !round && (
+        {p.type === 'en_de_chunk' && !hint && !round && (
           <button type="button" className="btn btn-quiet" onClick={() => setHint(true)}>
             {t('hint')}
           </button>
         )}
-        {p.type === 'bedeutung' && !round && (
+        {(p.type === 'bedeutung' || p.type === 'en_de_chunk') && !round && (
           <button type="button" className="btn btn-quiet" onClick={() => submit('')}>
             {t('dontKnow')}
           </button>
         )}
-        {p.type !== 'wer_tut_was' && (
+        {p.type !== 'wer_tut_was' && p.type !== 'bedeutung' && (
           <button
             type="button"
             className="btn btn-primary"
@@ -431,8 +423,8 @@ export function FeedbackPanel({
   const [disputing, setDisputing] = useState(false);
   const [disputeNote, setDisputeNote] = useState('');
   const [disputed, setDisputed] = useState(false);
-  const canDispute =
-    !feedback.correct && item.exerciseType !== 'wer_tut_was' && feedback.answer.trim() !== '';
+  const chosen = item.prompt.type === 'wer_tut_was' || item.prompt.type === 'bedeutung';
+  const canDispute = !feedback.correct && !chosen && feedback.answer.trim() !== '';
   const errorKey = feedback.errorClass ? (`err_${feedback.errorClass}` as MessageKey) : null;
 
   return (
@@ -457,6 +449,8 @@ export function FeedbackPanel({
       <p className="de">
         {item.prompt.type === 'wer_tut_was' ? (
           <span className="ink">{item.prompt.options[Number(feedback.answer)] ?? '—'}</span>
+        ) : chosen ? (
+          <span className="ink">{feedback.answer || '—'}</span>
         ) : feedback.answer ? (
           <Marks marks={feedback.marks} />
         ) : (
@@ -467,6 +461,16 @@ export function FeedbackPanel({
         <>
           <p className="label">{t('correctAnswer')}</p>
           <p className="de">{feedback.expected}</p>
+        </>
+      )}
+      {item.prompt.type === 'bedeutung' && (
+        <>
+          <p className="de">{item.prompt.de}</p>
+          {item.prompt.en && (
+            <p className="muted" lang="en">
+              {item.prompt.en}
+            </p>
+          )}
         </>
       )}
       {errorKey && <p>{t(errorKey)}</p>}
@@ -592,6 +596,34 @@ export function FeedbackPanel({
           <WordDetail lemmaId={item.lemmaId} />
         </Overlay>
       )}
+    </div>
+  );
+}
+
+/** Tappable answers (meaning choice in sessions and placement). */
+export function Choices({
+  options,
+  disabled,
+  onPick,
+}: {
+  options: string[];
+  disabled?: boolean;
+  onPick: (option: string) => void;
+}): ReactNode {
+  return (
+    <div className="btn-row" style={{ flexDirection: 'column' }}>
+      {options.map((o) => (
+        <button
+          key={o}
+          type="button"
+          className="btn"
+          lang="en"
+          disabled={disabled}
+          onClick={() => onPick(o)}
+        >
+          {o}
+        </button>
+      ))}
     </div>
   );
 }

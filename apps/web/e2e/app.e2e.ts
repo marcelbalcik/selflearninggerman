@@ -21,6 +21,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 import type { BrowserContext, Page } from 'playwright-core';
+import { meaningLabel, shortMeanings } from '@wortduell/core';
 import { seal } from '../src/runtime/crypto';
 import { fakeGitHub, staticServer } from './harness';
 
@@ -69,16 +70,12 @@ async function main(): Promise<void> {
       },
     };
   };
-  const glossOf = (lemmaId: number) =>
-    (
-      JSON.parse(
-        (
-          content.prepare('SELECT glosses_accepted AS g FROM lemma WHERE id = ?').get(lemmaId) as {
-            g: string;
-          }
-        ).g,
-      ) as string[]
-    )[0] ?? '';
+  const meaningOf = (lemmaId: number) => {
+    const r = content
+      .prepare('SELECT pos, gloss_en AS g, glosses_accepted AS a FROM lemma WHERE id = ?')
+      .get(lemmaId) as { pos: string; g: string; a: string };
+    return meaningLabel(shortMeanings(r.pos, r.g, JSON.parse(r.a) as string[]));
+  };
 
   const config = {
     users: ['Marcel', 'Anna'],
@@ -151,8 +148,9 @@ async function main(): Promise<void> {
       ).sample;
       for (let i = 0; i < 12; i++) {
         await p.page.getByText(`${i + 1} von`).waitFor();
-        await p.page.locator('#answer').fill(glossOf(sample[i]?.lemmaId ?? 0));
-        await p.page.getByRole('button', { name: 'Weiter' }).tap();
+        await p.page
+          .getByRole('button', { name: meaningOf(sample[i]?.lemmaId ?? 0), exact: true })
+          .tap();
       }
       await p.page.getByRole('button', { name: 'Fertig' }).tap();
       await p.page.getByText(/Wörter übernommen/u).waitFor();
@@ -188,6 +186,9 @@ async function main(): Promise<void> {
         await page
           .getByRole('button', { name: gap.options?.[Number(accepted)] ?? '', exact: true })
           .tap();
+      } else if (type === 'bedeutung') {
+        if (!seen.has(type)) await shot(page, `p-05-${type}`);
+        await page.getByRole('button', { name: meaningOf(item.lemmaId), exact: true }).tap();
       } else {
         await page
           .locator('#answer')
@@ -197,7 +198,7 @@ async function main(): Promise<void> {
               : accepted,
           );
       }
-      if (type !== 'wer_tut_was') {
+      if (type !== 'wer_tut_was' && type !== 'bedeutung') {
         if (!seen.has(type)) await shot(page, `p-05-${type}`);
         await page.getByRole('button', { name: 'Prüfen' }).tap();
       }

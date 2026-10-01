@@ -3,10 +3,11 @@ import type { ReactNode } from 'react';
 import { api } from '../api';
 import { runtime } from '../runtime/runtime';
 import type { SyncState } from '../runtime/runtime';
-import { AnswerInput, WordDetail } from '../components/parts';
+import { WordDetail } from '../components/parts';
 import { useT } from '../i18n';
 import type { Home, Me, PlacementItem, RoundSummary, Today as TodayData } from '../types';
 import { ScoreLine } from './Competition';
+import { Choices } from './Session';
 import { ChoreCatalog, RewardCatalog, SharedSettings } from './Mehr';
 
 export function Loading(): ReactNode {
@@ -280,7 +281,6 @@ export function Placement({ onDone }: { onDone: () => void }): ReactNode {
   const [sample, setSample] = useState<PlacementItem[] | null>(null);
   const [started, setStarted] = useState(false);
   const [index, setIndex] = useState(0);
-  const [answer, setAnswer] = useState('');
   const [answers, setAnswers] = useState<{ lemmaId: number; answer: string }[]>([]);
   const [result, setResult] = useState<number | null>(null);
   useEffect(() => {
@@ -330,7 +330,6 @@ export function Placement({ onDone }: { onDone: () => void }): ReactNode {
   const record = (value: string) => {
     const all = [...answers, { lemmaId: item?.lemmaId ?? 0, answer: value }];
     setAnswers(all);
-    setAnswer('');
     if (index + 1 >= sample.length) finish(all);
     else setIndex(index + 1);
   };
@@ -340,22 +339,10 @@ export function Placement({ onDone }: { onDone: () => void }): ReactNode {
       <p className="muted">{t('progress', { n: index + 1, total: sample.length })}</p>
       {item.sentence && <p className="de">{item.sentence}</p>}
       <p>{t('bedeutungTask', { word: item.text })}</p>
-      <AnswerInput
-        key={item.lemmaId}
-        value={answer}
-        onChange={setAnswer}
-        onSubmit={() => record(answer)}
-        placeholder={t('bedeutungPlaceholder')}
-        label={t('bedeutungTask', { word: item.text })}
-        umlauts={false}
-        autoFocus
-      />
+      <Choices key={item.lemmaId} options={item.options} onPick={record} />
       <div className="btn-row">
         <button type="button" className="btn btn-quiet" onClick={() => record('')}>
           {t('dontKnow')}
-        </button>
-        <button type="button" className="btn btn-primary" onClick={() => record(answer)}>
-          {t('next')}
         </button>
       </div>
       <button type="button" className="link" onClick={() => finish(answers)}>

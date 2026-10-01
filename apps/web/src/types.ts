@@ -68,9 +68,10 @@ export type Prompt =
       tokens: string[];
       highlightIndex: number;
       word: string;
-      hint: string;
+      options: string[];
+      en: string | null;
     }
-  | { type: 'en_de_chunk'; prompt: string; pos: Pos }
+  | { type: 'en_de_chunk'; prompt: string; pos: Pos; hint: string }
   | { type: 'umformen'; instruction: 'dat_pl' | 'perfekt' | 'du_form'; source: string }
   | { type: 'satzbau'; chunks: string[]; frame: 'hauptsatz' | 'nebensatz' | 'perfekt' | 'zu' }
   | { type: 'wer_tut_was'; de: string; options: string[] }
@@ -177,6 +178,7 @@ export interface PlacementItem {
   text: string;
   pos: Pos;
   sentence: string | null;
+  options: string[];
 }
 
 // M5: competition, chores, joint goal, rewards, settings.

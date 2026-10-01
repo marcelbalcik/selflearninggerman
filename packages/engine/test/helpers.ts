@@ -1,6 +1,6 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { FakeClock, dayStart } from '@wortduell/core';
+import { FakeClock, dayStart, meaningLabel, shortMeanings } from '@wortduell/core';
 import Database from 'better-sqlite3';
 import { importContent } from '../src/content';
 import { migrate } from '../src/db';
@@ -106,7 +106,24 @@ export function rightAnswer(db: Db, sentenceId: number): { answer: string; tappe
   if (type === 'fehlersuche')
     return { answer: String(gap.correct ?? ''), tappedIndex: gap.error_index ?? 0 };
   if (type === 'diktat') return { answer: s.de };
+  if (type === 'bedeutung') {
+    const { lemma_id } = db
+      .prepare<[number], { lemma_id: number }>('SELECT lemma_id FROM sentence WHERE id = ?')
+      .get(sentenceId) as { lemma_id: number };
+    return { answer: meaningOf(db, lemma_id) };
+  }
   return { answer: accepted[0] ?? '' };
+}
+
+/** The right option of a meaning question about a lemma. */
+export function meaningOf(db: Db, lemmaId: number): string {
+  const r = db
+    .prepare<[number], { pos: string; gloss_en: string; glosses_accepted: string }>(
+      'SELECT pos, gloss_en, glosses_accepted FROM lemma WHERE id = ?',
+    )
+    .get(lemmaId);
+  if (!r) throw new Error(`no lemma ${lemmaId}`);
+  return meaningLabel(shortMeanings(r.pos, r.gloss_en, JSON.parse(r.glosses_accepted) as string[]));
 }
 
 /** 08:00 Berlin time on a learning day, for any date (DST-safe). */

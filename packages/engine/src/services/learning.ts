@@ -4,6 +4,7 @@
  */
 import { PLACEMENT, dayKey, dayStart, gradeGloss, recall } from '@wortduell/core';
 import type { FacetKey, StoredCard } from '@wortduell/core';
+import { meaningChoice } from '../choices';
 import { json } from '../db';
 import type { Db } from '../db';
 import { Ids } from '../ids';
@@ -61,15 +62,20 @@ export class Learning {
   }
 
   /** Placement sample: every Nth core lemma below the A2.1 start rank. */
-  placementSample(
-    userId: number,
-  ): { lemmaId: number; text: string; pos: string; sentence: string | null }[] {
+  placementSample(userId: number): {
+    lemmaId: number;
+    text: string;
+    pos: string;
+    sentence: string | null;
+    options: string[];
+  }[] {
     return this.placementBlocks(userId).map(({ sample }) => ({
       lemmaId: sample.id,
       text: sample.text,
       pos: sample.pos,
       sentence:
         this.repo.sentences(sample.id).find((s) => s.exerciseType === 'bedeutung')?.de ?? null,
+      options: meaningChoice(this.repo, sample, -sample.id).options,
     }));
   }
 
@@ -91,7 +97,7 @@ export class Learning {
   }
 
   /**
-   * Placement answers (typed English meanings, graded here): a passed sample
+   * Placement answers (a chosen meaning, graded here): a passed sample
    * introduces its whole block with one Good review per card; a failed sample
    * leaves the block in the normal new-word queue. Allowed once per user.
    */
@@ -112,12 +118,13 @@ export class Learning {
     if (done?.placement_done_at) return { introduced: 0, passed: 0, results: [] };
     const results = answers.map((a) => {
       const lemma = this.repo.lemma(a.lemmaId);
-      const g = gradeGloss(lemma?.glossesAccepted ?? [], a.answer);
-      return {
-        lemmaId: a.lemmaId,
-        correct: lemma !== null && g.correct,
-        expected: lemma?.gloss ?? '',
-      };
+      if (!lemma) return { lemmaId: a.lemmaId, correct: false, expected: '' };
+      // A tapped option; typed meanings (older logs) are still graded as typed.
+      const choice = meaningChoice(this.repo, lemma, -lemma.id);
+      const correct = choice.options.includes(a.answer)
+        ? a.answer === choice.answer
+        : gradeGloss(lemma.glossesAccepted, a.answer).correct;
+      return { lemmaId: a.lemmaId, correct, expected: choice.answer };
     });
     const passed = new Set(results.filter((r) => r.correct).map((r) => r.lemmaId));
     let introduced = 0;

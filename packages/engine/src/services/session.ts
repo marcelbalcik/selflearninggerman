@@ -19,10 +19,12 @@ import {
   displayTable,
   isDue,
   lemmaFacetKey,
+  meaningLabel,
   sentenceFacets,
   skillFacetKey,
 } from '@wortduell/core';
 import type { ExerciseType, FacetKey, StoredCard } from '@wortduell/core';
+import { meaningChoice } from '../choices';
 import { json } from '../db';
 import { Settings } from './settings';
 import type { Db } from '../db';
@@ -60,10 +62,18 @@ export type Prompt =
       tokens: string[];
       highlightIndex: number;
       word: string;
-      /** "Tipp": first letter of the expected meaning. */
+      /** Meanings to choose from (choices.ts). */
+      options: string[];
+      /** Translation of the sentence, shown after answering. */
+      en: string | null;
+    }
+  | {
+      type: 'en_de_chunk';
+      prompt: string;
+      pos: Lemma['pos'];
+      /** "Tipp": first letter of the German word. */
       hint: string;
     }
-  | { type: 'en_de_chunk'; prompt: string; pos: Lemma['pos'] }
   | { type: 'umformen'; instruction: 'dat_pl' | 'perfekt' | 'du_form'; source: string }
   | { type: 'satzbau'; chunks: string[]; frame: string }
   | { type: 'wer_tut_was'; de: string; options: string[] }
@@ -123,7 +133,7 @@ export class Sessions {
       id: lemma.id,
       text: lemma.text,
       pos: lemma.pos,
-      gloss: lemma.gloss,
+      gloss: lemma.meanings.join(', '),
       article: lemma.noun?.gender
         ? ARTICLE[lemma.noun.gender]
         : lemma.noun?.pluralOnly
@@ -149,7 +159,13 @@ export class Sessions {
       case 'fehlersuche':
         return { type: 'fehlersuche', tokens: g.tokens };
       case 'en_de_chunk':
-        return { type: 'en_de_chunk', prompt: g.prompt ?? s.en ?? '', pos: lemma.pos };
+        return {
+          type: 'en_de_chunk',
+          // A single word asks for its short meaning; a phrase keeps its own English.
+          prompt: g.features ? (g.prompt ?? s.en ?? '') : meaningLabel(lemma.meanings),
+          pos: lemma.pos,
+          hint: lemma.text.charAt(0),
+        };
       case 'umformen':
         return { type: 'umformen', instruction: g.instruction ?? 'dat_pl', source: g.source ?? '' };
       case 'satzbau': {
@@ -174,7 +190,8 @@ export class Sessions {
           tokens: g.tokens,
           highlightIndex: g.highlight_index ?? 0,
           word: lemma.text,
-          hint: (s.accepted[0] ?? '').charAt(0),
+          options: meaningChoice(this.repo, lemma, s.id).options,
+          en: s.en,
         };
     }
   }
