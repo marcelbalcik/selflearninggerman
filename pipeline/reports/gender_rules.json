@@ -1,0 +1,244 @@
+{
+  "nouns": 974,
+  "note": "hint shown only at accuracy ≥ 0.9 and n ≥ 20",
+  "rules": [
+    {
+      "suffix": "-ung",
+      "gender": "f",
+      "dataset_accuracy": 1.0,
+      "n": 83,
+      "active": true,
+      "exceptions": []
+    },
+    {
+      "suffix": "-heit",
+      "gender": "f",
+      "dataset_accuracy": 1.0,
+      "n": 9,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-keit",
+      "gender": "f",
+      "dataset_accuracy": 1.0,
+      "n": 7,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-schaft",
+      "gender": "f",
+      "dataset_accuracy": 1.0,
+      "n": 9,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-ion",
+      "gender": "f",
+      "dataset_accuracy": 0.966,
+      "n": 29,
+      "active": true,
+      "exceptions": [
+        "Stadion"
+      ]
+    },
+    {
+      "suffix": "-tät",
+      "gender": "f",
+      "dataset_accuracy": 1.0,
+      "n": 4,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-ik",
+      "gender": "f",
+      "dataset_accuracy": 1.0,
+      "n": 8,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-ei",
+      "gender": "f",
+      "dataset_accuracy": 1.0,
+      "n": 2,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-ie",
+      "gender": "f",
+      "dataset_accuracy": 1.0,
+      "n": 13,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-ur",
+      "gender": "f",
+      "dataset_accuracy": 1.0,
+      "n": 8,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-enz",
+      "gender": "f",
+      "dataset_accuracy": 1.0,
+      "n": 1,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-anz",
+      "gender": "f",
+      "dataset_accuracy": 0.0,
+      "n": 0,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-chen",
+      "gender": "n",
+      "dataset_accuracy": 1.0,
+      "n": 3,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-lein",
+      "gender": "n",
+      "dataset_accuracy": 0.0,
+      "n": 0,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-ment",
+      "gender": "n",
+      "dataset_accuracy": 0.889,
+      "n": 9,
+      "active": false,
+      "exceptions": [
+        "Moment"
+      ]
+    },
+    {
+      "suffix": "-um",
+      "gender": "n",
+      "dataset_accuracy": 0.9,
+      "n": 10,
+      "active": false,
+      "exceptions": [
+        "Zeitraum"
+      ]
+    },
+    {
+      "suffix": "-ma",
+      "gender": "n",
+      "dataset_accuracy": 0.333,
+      "n": 3,
+      "active": false,
+      "exceptions": [
+        "Firma",
+        "Mama"
+      ]
+    },
+    {
+      "suffix": "-tum",
+      "gender": "n",
+      "dataset_accuracy": 1.0,
+      "n": 1,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-ling",
+      "gender": "m",
+      "dataset_accuracy": 1.0,
+      "n": 1,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-ismus",
+      "gender": "m",
+      "dataset_accuracy": 0.0,
+      "n": 0,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-or",
+      "gender": "m",
+      "dataset_accuracy": 1.0,
+      "n": 6,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-ig",
+      "gender": "m",
+      "dataset_accuracy": 1.0,
+      "n": 1,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-ich",
+      "gender": "m",
+      "dataset_accuracy": 1.0,
+      "n": 2,
+      "active": false,
+      "exceptions": []
+    },
+    {
+      "suffix": "-ant",
+      "gender": "m",
+      "dataset_accuracy": 0.0,
+      "n": 1,
+      "active": false,
+      "exceptions": [
+        "Restaurant"
+      ]
+    },
+    {
+      "suffix": "-ent",
+      "gender": "m",
+      "dataset_accuracy": 0.357,
+      "n": 14,
+      "active": false,
+      "exceptions": [
+        "Prozent",
+        "Moment",
+        "Parlament",
+        "Element",
+        "Argument",
+        "Dokument",
+        "Instrument",
+        "Engagement",
+        "Management"
+      ]
+    },
+    {
+      "suffix": "nominalised infinitive",
+      "gender": "n",
+      "dataset_accuracy": 0.529,
+      "n": 17,
+      "active": false,
+      "exceptions": [
+        "Rahmen",
+        "Laden",
+        "Schaden",
+        "Wagen",
+        "Rücken",
+        "Nutzen",
+        "Regen",
+        "Posten"
+      ]
+    }
+  ]
+}

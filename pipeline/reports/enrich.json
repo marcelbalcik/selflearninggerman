@@ -1,0 +1,1839 @@
+{
+  "with_semantic_field": 689,
+  "without_semantic_field": 1343,
+  "cefr_hint": {
+    "A1": 507,
+    "A2": 711,
+    "B1": 814
+  },
+  "verbs": 485,
+  "frames_approved": 300,
+  "frames_for_review": 190,
+  "frame_source_disagreements": [
+    {
+      "verb": "werden",
+      "wiktionary": [
+        "dat"
+      ],
+      "corpus": [],
+      "corpus_uses": 61928
+    },
+    {
+      "verb": "können",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 40935
+    },
+    {
+      "verb": "geben",
+      "wiktionary": [
+        "dat"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 15574
+    },
+    {
+      "verb": "wollen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 20892
+    },
+    {
+      "verb": "sagen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 27014
+    },
+    {
+      "verb": "tun",
+      "wiktionary": [
+        "dat"
+      ],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 16260
+    },
+    {
+      "verb": "denken",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 8430
+    },
+    {
+      "verb": "dürfen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 3254
+    },
+    {
+      "verb": "zeigen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 2158
+    },
+    {
+      "verb": "glauben",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 9014
+    },
+    {
+      "verb": "stellen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 2060
+    },
+    {
+      "verb": "gehören",
+      "wiktionary": [
+        "dat"
+      ],
+      "corpus": [
+        "dat",
+        "akk"
+      ],
+      "corpus_uses": 3526
+    },
+    {
+      "verb": "versuchen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 3763
+    },
+    {
+      "verb": "fahren",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 4941
+    },
+    {
+      "verb": "bestehen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 2014
+    },
+    {
+      "verb": "laufen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 1771
+    },
+    {
+      "verb": "setzen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 1551
+    },
+    {
+      "verb": "fallen",
+      "wiktionary": [],
+      "corpus": [
+        "dat"
+      ],
+      "corpus_uses": 3215
+    },
+    {
+      "verb": "beginnen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 2076
+    },
+    {
+      "verb": "meinen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 1629
+    },
+    {
+      "verb": "lernen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 5784
+    },
+    {
+      "verb": "passieren",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 3046
+    },
+    {
+      "verb": "sterben",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 2897
+    },
+    {
+      "verb": "wählen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 938
+    },
+    {
+      "verb": "handeln",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 849
+    },
+    {
+      "verb": "entscheiden",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 1094
+    },
+    {
+      "verb": "warten",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 4055
+    },
+    {
+      "verb": "vorstellen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 973
+    },
+    {
+      "verb": "erscheinen",
+      "wiktionary": [],
+      "corpus": [
+        "dat"
+      ],
+      "corpus_uses": 646
+    },
+    {
+      "verb": "legen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 1134
+    },
+    {
+      "verb": "ansehen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 1496
+    },
+    {
+      "verb": "bieten",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 349
+    },
+    {
+      "verb": "verwenden",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 725
+    },
+    {
+      "verb": "unterstützen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 363
+    },
+    {
+      "verb": "darstellen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 262
+    },
+    {
+      "verb": "benutzen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 1364
+    },
+    {
+      "verb": "reichen",
+      "wiktionary": [],
+      "corpus": [
+        "dat",
+        "akk"
+      ],
+      "corpus_uses": 655
+    },
+    {
+      "verb": "schicken",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 1093
+    },
+    {
+      "verb": "zählen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 682
+    },
+    {
+      "verb": "erfahren",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 1126
+    },
+    {
+      "verb": "bezahlen",
+      "wiktionary": [
+        "akk",
+        "dat"
+      ],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 1581
+    },
+    {
+      "verb": "berichten",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 146
+    },
+    {
+      "verb": "einsetzen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 179
+    },
+    {
+      "verb": "holen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 585
+    },
+    {
+      "verb": "veröffentlichen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 190
+    },
+    {
+      "verb": "erleben",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 363
+    },
+    {
+      "verb": "teilen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 457
+    },
+    {
+      "verb": "schauen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 782
+    },
+    {
+      "verb": "dauern",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 956
+    },
+    {
+      "verb": "leisten",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 838
+    },
+    {
+      "verb": "gelingen",
+      "wiktionary": [],
+      "corpus": [
+        "dat"
+      ],
+      "corpus_uses": 770
+    },
+    {
+      "verb": "beschäftigen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 1406
+    },
+    {
+      "verb": "bestätigen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 198
+    },
+    {
+      "verb": "stecken",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 717
+    },
+    {
+      "verb": "bestimmen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 519
+    },
+    {
+      "verb": "vorkommen",
+      "wiktionary": [],
+      "corpus": [
+        "dat"
+      ],
+      "corpus_uses": 597
+    },
+    {
+      "verb": "sorgen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 495
+    },
+    {
+      "verb": "anschauen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 630
+    },
+    {
+      "verb": "besitzen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 736
+    },
+    {
+      "verb": "behandeln",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 563
+    },
+    {
+      "verb": "erlauben",
+      "wiktionary": [
+        "dat"
+      ],
+      "corpus": [
+        "dat",
+        "akk"
+      ],
+      "corpus_uses": 777
+    },
+    {
+      "verb": "feststellen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 268
+    },
+    {
+      "verb": "herstellen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 334
+    },
+    {
+      "verb": "kriegen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 369
+    },
+    {
+      "verb": "erhöhen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 159
+    },
+    {
+      "verb": "betreffen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 208
+    },
+    {
+      "verb": "verbieten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 446
+    },
+    {
+      "verb": "entsprechen",
+      "wiktionary": [
+        "dat",
+        "akk"
+      ],
+      "corpus": [
+        "dat"
+      ],
+      "corpus_uses": 192
+    },
+    {
+      "verb": "singen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 1440
+    },
+    {
+      "verb": "wechseln",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 433
+    },
+    {
+      "verb": "rufen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 860
+    },
+    {
+      "verb": "trennen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 402
+    },
+    {
+      "verb": "präsentieren",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 38
+    },
+    {
+      "verb": "ermöglichen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 173
+    },
+    {
+      "verb": "gebären",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 1189
+    },
+    {
+      "verb": "erzielen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 106
+    },
+    {
+      "verb": "angreifen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 299
+    },
+    {
+      "verb": "beweisen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 339
+    },
+    {
+      "verb": "sichern",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 69
+    },
+    {
+      "verb": "lachen",
+      "wiktionary": [
+        "dat"
+      ],
+      "corpus": [],
+      "corpus_uses": 986
+    },
+    {
+      "verb": "anziehen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 750
+    },
+    {
+      "verb": "überlegen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 504
+    },
+    {
+      "verb": "überlegen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 504
+    },
+    {
+      "verb": "diskutieren",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 293
+    },
+    {
+      "verb": "gestalten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 82
+    },
+    {
+      "verb": "begleiten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 377
+    },
+    {
+      "verb": "landen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 225
+    },
+    {
+      "verb": "prüfen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 109
+    },
+    {
+      "verb": "anzeigen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 91
+    },
+    {
+      "verb": "brechen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 718
+    },
+    {
+      "verb": "hängen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 423
+    },
+    {
+      "verb": "belegen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 100
+    },
+    {
+      "verb": "fassen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 449
+    },
+    {
+      "verb": "aufstellen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 138
+    },
+    {
+      "verb": "produzieren",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 136
+    },
+    {
+      "verb": "untersuchen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 251
+    },
+    {
+      "verb": "eingehen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 258
+    },
+    {
+      "verb": "schenken",
+      "wiktionary": [],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 926
+    },
+    {
+      "verb": "umsetzen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 106
+    },
+    {
+      "verb": "leiten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 141
+    },
+    {
+      "verb": "kritisieren",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 203
+    },
+    {
+      "verb": "umgehen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 388
+    },
+    {
+      "verb": "verfügen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 252
+    },
+    {
+      "verb": "ausmachen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 507
+    },
+    {
+      "verb": "mitteilen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "dat",
+        "akk"
+      ],
+      "corpus_uses": 473
+    },
+    {
+      "verb": "abschließen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 417
+    },
+    {
+      "verb": "versprechen",
+      "wiktionary": [],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 1236
+    },
+    {
+      "verb": "greifen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 156
+    },
+    {
+      "verb": "lohnen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 258
+    },
+    {
+      "verb": "schmecken",
+      "wiktionary": [],
+      "corpus": [
+        "dat"
+      ],
+      "corpus_uses": 929
+    },
+    {
+      "verb": "klappen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 126
+    },
+    {
+      "verb": "absehen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 92
+    },
+    {
+      "verb": "drohen",
+      "wiktionary": [
+        "akk",
+        "dat"
+      ],
+      "corpus": [
+        "dat"
+      ],
+      "corpus_uses": 195
+    },
+    {
+      "verb": "beantworten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 789
+    },
+    {
+      "verb": "gucken",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 235
+    },
+    {
+      "verb": "durchsetzen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 87
+    },
+    {
+      "verb": "vertrauen",
+      "wiktionary": [
+        "dat"
+      ],
+      "corpus": [
+        "dat",
+        "akk"
+      ],
+      "corpus_uses": 647
+    },
+    {
+      "verb": "organisieren",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 112
+    },
+    {
+      "verb": "betonen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 83
+    },
+    {
+      "verb": "vermitteln",
+      "wiktionary": [],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 73
+    },
+    {
+      "verb": "verurteilen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 197
+    },
+    {
+      "verb": "übertragen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 94
+    },
+    {
+      "verb": "erledigen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 771
+    },
+    {
+      "verb": "schneiden",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 378
+    },
+    {
+      "verb": "einrichten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 96
+    },
+    {
+      "verb": "fällen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "dat",
+        "akk"
+      ],
+      "corpus_uses": 530
+    },
+    {
+      "verb": "achten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 371
+    },
+    {
+      "verb": "besetzen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 117
+    },
+    {
+      "verb": "investieren",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 67
+    },
+    {
+      "verb": "erweitern",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 71
+    },
+    {
+      "verb": "rennen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 232
+    },
+    {
+      "verb": "ankündigen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 115
+    },
+    {
+      "verb": "vorschlagen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 511
+    },
+    {
+      "verb": "aufweisen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 44
+    },
+    {
+      "verb": "verstärken",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 36
+    },
+    {
+      "verb": "beeinflussen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 145
+    },
+    {
+      "verb": "anwenden",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 168
+    },
+    {
+      "verb": "auszeichnen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 157
+    },
+    {
+      "verb": "beitragen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 137
+    },
+    {
+      "verb": "auslösen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 114
+    },
+    {
+      "verb": "mitbringen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 572
+    },
+    {
+      "verb": "errichten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 125
+    },
+    {
+      "verb": "verlaufen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 237
+    },
+    {
+      "verb": "bedürfen",
+      "wiktionary": [],
+      "corpus": [
+        "dat"
+      ],
+      "corpus_uses": 166
+    },
+    {
+      "verb": "beibringen",
+      "wiktionary": [],
+      "corpus": [
+        "dat",
+        "akk"
+      ],
+      "corpus_uses": 707
+    },
+    {
+      "verb": "berücksichtigen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 75
+    },
+    {
+      "verb": "aussetzen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 168
+    },
+    {
+      "verb": "verweisen",
+      "wiktionary": [],
+      "corpus": [
+        "dat",
+        "akk"
+      ],
+      "corpus_uses": 42
+    },
+    {
+      "verb": "herausfinden",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 393
+    },
+    {
+      "verb": "senden",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 180
+    },
+    {
+      "verb": "aufheben",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 183
+    },
+    {
+      "verb": "anhalten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 370
+    },
+    {
+      "verb": "bewerten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 34
+    },
+    {
+      "verb": "wahrnehmen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 127
+    },
+    {
+      "verb": "vorliegen",
+      "wiktionary": [
+        "dat"
+      ],
+      "corpus": [],
+      "corpus_uses": 60
+    },
+    {
+      "verb": "verheiraten",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [],
+      "corpus_uses": 724
+    },
+    {
+      "verb": "verraten",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 391
+    },
+    {
+      "verb": "empfinden",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 266
+    },
+    {
+      "verb": "nachweisen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 36
+    },
+    {
+      "verb": "definieren",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 74
+    },
+    {
+      "verb": "anerkennen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 110
+    },
+    {
+      "verb": "prägen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 57
+    },
+    {
+      "verb": "auswählen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 190
+    },
+    {
+      "verb": "übergeben",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 143
+    },
+    {
+      "verb": "ausziehen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 359
+    },
+    {
+      "verb": "fortsetzen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 143
+    },
+    {
+      "verb": "anhören",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 309
+    },
+    {
+      "verb": "verhalten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 229
+    },
+    {
+      "verb": "ausschließen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 129
+    },
+    {
+      "verb": "festlegen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 51
+    },
+    {
+      "verb": "vereinen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 64
+    },
+    {
+      "verb": "beachten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 182
+    },
+    {
+      "verb": "berühren",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 270
+    },
+    {
+      "verb": "füllen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 243
+    },
+    {
+      "verb": "vorsehen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 57
+    },
+    {
+      "verb": "verlieben",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 930
+    },
+    {
+      "verb": "antreten",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 89
+    },
+    {
+      "verb": "verleihen",
+      "wiktionary": [
+        "akk"
+      ],
+      "corpus": [
+        "akk",
+        "dat"
+      ],
+      "corpus_uses": 130
+    },
+    {
+      "verb": "versichern",
+      "wiktionary": [
+        "dat"
+      ],
+      "corpus": [
+        "dat",
+        "akk"
+      ],
+      "corpus_uses": 139
+    },
+    {
+      "verb": "auflösen",
+      "wiktionary": [],
+      "corpus": [
+        "akk"
+      ],
+      "corpus_uses": 99
+    }
+  ],
+  "semantic_fields": [
+    "Academic grades",
+    "Accounting",
+    "Administrative divisions",
+    "Advertising",
+    "Age",
+    "Agriculture",
+    "Aircraft",
+    "Alcoholic beverages",
+    "Anatomy",
+    "Animal body parts",
+    "Animal dwellings",
+    "Animals",
+    "Appearance",
+    "Architecture",
+    "Arithmetic",
+    "Art",
+    "Artists",
+    "Astronautics",
+    "Astronomy",
+    "Atmosphere",
+    "Austria",
+    "Automotive",
+    "Aviation",
+    "Awards",
+    "Babies",
+    "Bags",
+    "Ball games",
+    "Bavaria, Germany",
+    "Berlin",
+    "Bible",
+    "Bicycle parts",
+    "Biology",
+    "Blues",
+    "Board games",
+    "Bodies of water",
+    "Bodily functions",
+    "Bodybuilding",
+    "Books",
+    "Botany",
+    "Breads",
+    "Broadcasting",
+    "Buildings",
+    "Business",
+    "Businesses",
+    "Cakes and pastries",
+    "Calendar",
+    "Canids",
+    "Capital cities",
+    "Card games",
+    "Catholicism",
+    "Cats",
+    "Celery family plants",
+    "Chemical elements",
+    "Chemistry",
+    "Chess",
+    "Children",
+    "China",
+    "Christianity",
+    "Christmas",
+    "Cinematography",
+    "Clothing",
+    "Coffee",
+    "Colors",
+    "Comedy",
+    "Compass points",
+    "Computer science",
+    "Computing",
+    "Containers",
+    "Cooking",
+    "Crime",
+    "Crying",
+    "Currencies",
+    "Currency",
+    "Cutlery",
+    "Dance",
+    "Day",
+    "Days of the week",
+    "Death",
+    "Democracy",
+    "Dentistry",
+    "Design",
+    "Differential geometry",
+    "Diplomacy",
+    "Dogs",
+    "Drinking",
+    "Drugs",
+    "Ecology",
+    "Economics",
+    "Education",
+    "Eggs",
+    "Electrical engineering",
+    "Electronics",
+    "Emotions",
+    "Engineering",
+    "Ethics",
+    "Ethology",
+    "Europe",
+    "Family members",
+    "Fear",
+    "Female family members",
+    "Fiction",
+    "Film",
+    "Finance",
+    "Fingers",
+    "Fire",
+    "Firearms",
+    "Firefighting",
+    "Fish",
+    "Food and drink",
+    "Food and drink containers",
+    "Football (soccer)",
+    "Footwear",
+    "Forests",
+    "Forms of government",
+    "France",
+    "Furniture",
+    "Future",
+    "Gaits",
+    "Games",
+    "Genitalia",
+    "Geology",
+    "Geometry",
+    "German politics",
+    "Germany",
+    "Government",
+    "Grammar",
+    "Graph theory",
+    "Greece",
+    "Gymnastics",
+    "Hair",
+    "Happiness",
+    "Hatred",
+    "Heads of state",
+    "Health",
+    "Healthcare occupations",
+    "Heather family plants",
+    "Heraldry",
+    "Hobbies",
+    "Horticulture",
+    "Housing",
+    "Human",
+    "Human migration",
+    "Hunting",
+    "Individuals",
+    "Insurance",
+    "Internet",
+    "Italy",
+    "Jewelry",
+    "Landforms",
+    "Languages",
+    "Law",
+    "Law enforcement",
+    "Law of obligations",
+    "Leaders",
+    "Linguistics",
+    "Literature",
+    "Logic",
+    "Love",
+    "Machines",
+    "Male",
+    "Male children",
+    "Male family members",
+    "Male people",
+    "Manufacturing",
+    "Marketing",
+    "Marriage",
+    "Mass media",
+    "Mathematics",
+    "Meals",
+    "Mechanics",
+    "Media",
+    "Medicine",
+    "Military",
+    "Milk",
+    "Mining",
+    "Mobile phones",
+    "Money",
+    "Music",
+    "Narratology",
+    "Nationalities",
+    "Natural resources",
+    "Nautical",
+    "Nazism",
+    "Night",
+    "Numbers",
+    "Object-oriented programming",
+    "Occupations",
+    "One",
+    "Onomastics",
+    "Pain",
+    "Parents",
+    "Past",
+    "People",
+    "Perception",
+    "Periodicals",
+    "Pharmacology",
+    "Philosophy",
+    "Phonetics",
+    "Photography",
+    "Physics",
+    "Places",
+    "Planets of the Solar System",
+    "Plants",
+    "Politics",
+    "Post",
+    "Pregnancy",
+    "Present",
+    "Prison",
+    "Procedural law",
+    "Programming",
+    "Publishing",
+    "Radio",
+    "Rail transportation",
+    "Recreational drugs",
+    "Religion",
+    "Restaurants",
+    "Roads",
+    "Roman Catholicism",
+    "Rooms",
+    "Roses",
+    "Rugby",
+    "Sadness",
+    "Schools",
+    "Sciences",
+    "Scientists",
+    "Seasons",
+    "Semantics",
+    "Sex",
+    "Shapes",
+    "Shops",
+    "Size",
+    "Sleep",
+    "Smell",
+    "Social media",
+    "Sound",
+    "Sports",
+    "Starlings",
+    "Stock characters",
+    "Switzerland",
+    "Talking",
+    "Taste",
+    "Taxonomy",
+    "Telecommunications",
+    "Television",
+    "Tennis",
+    "Textual division",
+    "Theater",
+    "Thinking",
+    "Time",
+    "Timekeeping",
+    "Times of day",
+    "Titles",
+    "Travel",
+    "Trees",
+    "Typography",
+    "United Kingdom",
+    "Units of measure",
+    "Units of time",
+    "Vehicles",
+    "Video games",
+    "Violence",
+    "Vision",
+    "War",
+    "Water",
+    "Watercraft",
+    "Weapons",
+    "Weather",
+    "Wind",
+    "Wine",
+    "Writing"
+  ]
+}

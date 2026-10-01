@@ -1,0 +1,23 @@
+{
+  "content_version": "740c7c44f8a91cfc",
+  "lemma_rows": 2032,
+  "status": {
+    "ok": 2028,
+    "rejected": 4
+  },
+  "review_reasons": {
+    "engine": 1,
+    "no_declension_table": 2,
+    "table_mismatch": 2
+  },
+  "noun_table_mismatches": 3,
+  "sentences": 18282,
+  "active_gender_rules": 2,
+  "dictionary_entries": {
+    "adj": 15339,
+    "adv": 1694,
+    "noun": 53347,
+    "verb": 9226
+  },
+  "catalog_words_missing": []
+}

@@ -1,0 +1,61 @@
+{
+  "lemma_rows": 2032,
+  "by_pos": {
+    "verb": 490,
+    "adv": 202,
+    "adj": 363,
+    "noun": 977
+  },
+  "split_by_sense": [
+    "übersetzen (verb): insep, sep",
+    "Leiter (noun): f, m",
+    "Alter (noun): n, m",
+    "Band (noun): n, m, f",
+    "Brand (noun): m, n",
+    "Bund (noun): m, n",
+    "Euro (noun): m, f",
+    "Fall (noun): m, n",
+    "Gang (noun): m, f",
+    "Laden (noun): m, n",
+    "Moment (noun): m, n",
+    "See (noun): m, f",
+    "Service (noun): m, n",
+    "Single (noun): f, m, n",
+    "Tausend (noun): n, f",
+    "Messer (noun): n, m",
+    "Morgen (noun): m, n",
+    "Teil (noun): m, n",
+    "Ort (noun): m, n",
+    "umgehen (verb): insep, sep",
+    "Steuer (noun): f, n",
+    "Kunde (noun): m, f",
+    "Mangel (noun): m, f",
+    "durchsetzen (verb): sep, insep",
+    "Foto (noun): n, m",
+    "überlegen (verb): insep, sep",
+    "wiederholen (verb): insep, sep",
+    "Gehalt (noun): m, n",
+    "Erkenntnis (noun): f, n",
+    "Ex (noun): m, f"
+  ],
+  "extraction_issues": {
+    "Morgen": [
+      "no_declension_table"
+    ],
+    "Start": [
+      "no_declension_table"
+    ],
+    "Englisch": [
+      "no_declension_table"
+    ],
+    "Laden": [
+      "no_declension_table"
+    ],
+    "Posten": [
+      "no_declension_table"
+    ],
+    "Vorstand": [
+      "no_declension_table"
+    ]
+  }
+}

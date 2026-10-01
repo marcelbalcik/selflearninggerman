@@ -1,18 +1,30 @@
 {
-  "name": "selflearninggerman",
-  "version": "1.0.0",
-  "description": "Self-paced German learning from short, interesting texts with translation and level-appropriate grammar.",
+  "name": "wortduell",
+  "private": true,
   "type": "module",
-  "main": "server.js",
-  "scripts": {
-    "build": "node scripts/build-data.mjs",
-    "start": "npm run build && node server.js",
-    "serve": "node server.js"
-  },
+  "packageManager": "pnpm@10.33.0",
   "engines": {
-    "node": ">=18"
+    "node": ">=22.12"
   },
-  "dependencies": {
-    "express": "^4.19.2"
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
+    "core:cli": "pnpm --silent --filter @wortduell/core cli",
+    "core:decline": "pnpm --silent --filter @wortduell/core cli decline",
+    "build": "pnpm --filter @wortduell/web build",
+    "dev": "pnpm --filter @wortduell/web dev",
+    "e2e": "pnpm build && pnpm --filter @wortduell/web e2e"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.11.0",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.9",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.70.1"
   }
 }

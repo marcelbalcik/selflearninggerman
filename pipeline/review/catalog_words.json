@@ -1,0 +1,33 @@
+{
+  "_comment": "Words used by the seed chore catalog (SPEC §12). The export copies their Wiktionary data (stored forms, separable prefix) into content.sqlite's catalog_word table so chore vouchers can show the declension strip and the separable split without inventing grammar.",
+  "noun": [
+    "Spülmaschine",
+    "Müll",
+    "Wäsche",
+    "Pfandflasche",
+    "Tisch",
+    "Bad",
+    "Wohnung",
+    "Bett",
+    "Woche",
+    "Kühlschrank",
+    "Küche",
+    "Fenster",
+    "Abstellraum",
+    "Backofen"
+  ],
+  "verb": [
+    "ausräumen",
+    "rausbringen",
+    "aufhängen",
+    "wegbringen",
+    "abräumen",
+    "putzen",
+    "saugen",
+    "beziehen",
+    "einkaufen",
+    "auswischen",
+    "machen",
+    "aufräumen"
+  ]
+}

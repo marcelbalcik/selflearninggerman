@@ -1,0 +1,15 @@
+[project]
+name = "wortduell-pipeline"
+version = "0.1.0"
+description = "Content pipeline for Wortduell: Wiktionary, Tatoeba and spaCy, no paid APIs"
+requires-python = ">=3.11"
+dependencies = [
+  "spacy>=3.7,<3.9",
+  "wordfreq>=3.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

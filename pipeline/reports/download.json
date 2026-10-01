@@ -1,0 +1,21 @@
+{
+  "fetched": [],
+  "already_present": [
+    "kaikki-de.jsonl",
+    "deu_sentences.tsv.bz2",
+    "deu-eng_links.tsv.bz2",
+    "eng_sentences.tsv.bz2"
+  ],
+  "sizes_mb": {
+    "kaikki-de.jsonl": 1076.8,
+    "deu_sentences.tsv.bz2": 12.1,
+    "deu-eng_links.tsv.bz2": 3.5,
+    "eng_sentences.tsv.bz2": 24.9
+  },
+  "sources": {
+    "kaikki-de.jsonl": "https://kaikki.org/dictionary/German/kaikki.org-dictionary-German.jsonl",
+    "deu_sentences.tsv.bz2": "https://downloads.tatoeba.org/exports/per_language/deu/deu_sentences.tsv.bz2",
+    "deu-eng_links.tsv.bz2": "https://downloads.tatoeba.org/exports/per_language/deu/deu-eng_links.tsv.bz2",
+    "eng_sentences.tsv.bz2": "https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences.tsv.bz2"
+  }
+}
