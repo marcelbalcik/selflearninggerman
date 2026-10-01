@@ -54,7 +54,7 @@ pipeline/        Python content pipeline: Wiktionary, Tatoeba, spaCy, OdeNet
    Keep the token to yourself; never paste it into a chat or an issue.
 
 3. **Pages.** In this repository: Settings → Pages → Source: _GitHub Actions_.
-   The `Pages` workflow publishes the app on every push to `main`, at
+   The `Pages` workflow publishes the app on every push to the default branch, at
    `https://<your-account>.github.io/<this-repository>/`.
 4. **Config, in the browser.** Open that address with `#/einrichten` at the
    end (the first screen also links to it). Enter your two names, the data
