@@ -1,0 +1,16 @@
+{
+  "users": [
+    "Marcel",
+    "Melisa"
+  ],
+  "sync": {
+    "owner": "marcelbalcik",
+    "repo": "wortduell-data",
+    "token": {
+      "salt": "klxVBRU1mT+LQAoHDU7TDQ==",
+      "iv": "CPLNXJNe2JHNA85L",
+      "data": "HFqeb34mzv9r+Z2kE8Pdxj/t6TcQ+LPo7hSZ3SwfvoG2scZ/1wiQ6rZ3NHUaqe5a0dcaWJEjs5o2eViDBMm7fC9CJtBGivRoAowV86hZfQH6vZMj247hGGAT0b2xHBLty+LKPQu3OGQ1LDAqgA==",
+      "iterations": 600000
+    }
+  }
+}
